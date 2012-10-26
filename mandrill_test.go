@@ -94,6 +94,24 @@ func TestTemplateInfo(t *testing.T) {
 	}
 }
 
+func TestTemplateUpdate(t *testing.T) {
+	// add a simple template
+	template, err := mandrill.TemplateAdd("updateTest", "testing 123", true)
+	template, err = mandrill.TemplateUpdate("updateTest", "testing 321", true)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	if template.Name != "updateTest" {
+		t.Errorf("Wrong template name, expecting %s, got %s", "updateTest", template.Name)
+	}
+	if template.Code != "testing 321" {
+		t.Errorf("Wrong template code, expecting %s, got %s", "testing 321", template.Code)
+	}
+	// be nice and tear down after test
+	template, err = mandrill.TemplateDelete("updateTest")
+
+}
+
 func readTemplate(path string) string {
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
