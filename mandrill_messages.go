@@ -110,12 +110,12 @@ type SearchResponse struct {
 }
 
 type SearchRequest struct {
-	Query    string   `json:"query"`
-	DateFrom time.Time   `json:"date_from"`
-	DateTo   time.Time   `json:"date_to"`
-	Tags     []string `json:"tags"`
-	Senders  []string `json:"senders"`
-	Limit    int      `json:"limit"`
+	Query    string    `json:"query"`
+	DateFrom time.Time `json:"date_from"`
+	DateTo   time.Time `json:"date_to"`
+	Tags     []string  `json:"tags"`
+	Senders  []string  `json:"senders"`
+	Limit    int       `json:"limit"`
 }
 
 type Message struct {
@@ -148,15 +148,15 @@ func (m *Message) String() string {
 	return string(b)
 }
 
-func (m *Message) addRecipients(r ...Recipient) {
+func (m *Message) AddRecipients(r ...Recipient) {
 	m.To = append(m.To, r...)
 }
 
-func (m *Message) addGlobalMergeVar(globalvars ...Var) {
+func (m *Message) AddGlobalMergeVar(globalvars ...Var) {
 	m.GlobalMergeVars = append(m.GlobalMergeVars, globalvars...)
 }
 
-func (m *Message) addMergeVar(vars ...MergeVars) {
+func (m *Message) AddMergeVar(vars ...MergeVars) {
 	m.MergeVars = append(m.MergeVars, vars...)
 }
 
@@ -164,23 +164,23 @@ func (m *Message) AddTag(tags ...string) {
 	m.Tags = append(m.Tags, tags...)
 }
 
-func (m *Message) addGoogleAnalyticsDomains(domains ...string) {
+func (m *Message) AddGoogleAnalyticsDomains(domains ...string) {
 	m.GoogleAnalyticsDomains = append(m.GoogleAnalyticsDomains, domains...)
 }
 
-func (m *Message) addGoogleAnalyticsCampaign(campaigns ...string) {
+func (m *Message) AddGoogleAnalyticsCampaign(campaigns ...string) {
 	m.GoogleAnalyticsCampaign = append(m.GoogleAnalyticsCampaign, campaigns...)
 }
 
-func (m *Message) addMetadata(metadata ...map[string]string) {
+func (m *Message) AddMetadata(metadata ...map[string]string) {
 	m.Metadata = append(m.Metadata, metadata...)
 }
 
-func (m *Message) addRecipientMetadata(metadata ...RecipientMetaData) {
+func (m *Message) AddRecipientMetadata(metadata ...RecipientMetaData) {
 	m.RecipientMetadata = append(m.RecipientMetadata, metadata...)
 }
 
-func (m *Message) addAttachments(attachement ...Attachment) {
+func (m *Message) AddAttachments(attachement ...Attachment) {
 	m.Attachments = append(m.Attachments, attachement...)
 }
 

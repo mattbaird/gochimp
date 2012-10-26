@@ -55,7 +55,7 @@ func TestUserSenders(t *testing.T) {
 func TestMessageSending(t *testing.T) {
 	var message Message = Message{Html: "<b>hi there</b>", Text: "hello text", Subject: "Test Mail", FromEmail: user,
 		FromName: user}
-	message.addRecipients(Recipient{Email: user, Name: user})
+	message.AddRecipients(Recipient{Email: user, Name: user})
 	response, err := mandrill.MessageSend(message, false)
 	if err != nil {
 		t.Error("Error:", err)
@@ -193,7 +193,7 @@ func TestMessageTemplateSend(t *testing.T) {
 	mergeVars := []Var{*NewVar("SUBJECT", "Hello, welcome")}
 	var message Message = Message{Subject: "Test Template Mail", FromEmail: user,
 		FromName: user, GlobalMergeVars: mergeVars}
-	message.addRecipients(Recipient{Email: user, Name: user})
+	message.AddRecipients(Recipient{Email: user, Name: user})
 	_, err := mandrill.MessageSendTemplate(testTemplateName, templateContent, message, true)
 	if err != nil {
 		t.Error("Error:", err)
