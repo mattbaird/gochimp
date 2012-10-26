@@ -17,6 +17,7 @@ package gochimp
 
 import (
 	"errors"
+	"time"
 )
 
 // see https://mandrillapp.com/api/docs/urls.html
@@ -57,10 +58,10 @@ func (a *MandrillAPI) UrlTimeSeries(url string) ([]UrlInfo, error) {
 }
 
 type UrlTimeSeriesInfo struct {
-	Time         string `json:"time"`
-	Send         int    `json:"sent"`
-	Clicks       int    `json:"clicks"`
-	UniqueClicks int    `json:"unique_clicks"`
+	Time         time.Duration `json:"time"`
+	Send         int           `json:"sent"`
+	Clicks       int           `json:"clicks"`
+	UniqueClicks int           `json:"unique_clicks"`
 }
 
 type UrlInfo struct {

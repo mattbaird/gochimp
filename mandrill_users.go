@@ -17,6 +17,7 @@ package gochimp
 
 import (
 	"encoding/json"
+	"time"
 )
 
 // see https://mandrillapp.com/api/docs/users.html
@@ -43,7 +44,7 @@ func (a *MandrillAPI) UserSenders() ([]Sender, error) {
 
 type Info struct {
 	Username    string          `json:"username"`
-	CreatedAt   string          `json:"created_at"`
+	CreatedAt   time.Time       `json:"created_at"`
 	PublicId    string          `json:"public_id"`
 	Reputation  int             `json:"reputation"`
 	HourlyQuota int             `json:"hourly_quota"`
@@ -65,16 +66,16 @@ type Stat struct {
 }
 
 type Sender struct {
-	Address     string `json:"address"`
-	CreatedAt   string `json:"created_at"`
-	Sent        int    `json:"sent"`
-	HardBounces int    `json:"hard_bounces"`
-	SoftBounces int    `json:"soft_bounces"`
-	Rejects     int    `json:"rejects"`
-	Complaints  int    `json:"complaints"`
-	Unsubs      int    `json:"unsubs"`
-	Opens       int    `json:"opens"`
-	Clicks      int    `json:"clicks"`
+	Address     string    `json:"address"`
+	CreatedAt   time.Time `json:"created_at"`
+	Sent        int       `json:"sent"`
+	HardBounces int       `json:"hard_bounces"`
+	SoftBounces int       `json:"soft_bounces"`
+	Rejects     int       `json:"rejects"`
+	Complaints  int       `json:"complaints"`
+	Unsubs      int       `json:"unsubs"`
+	Opens       int       `json:"opens"`
+	Clicks      int       `json:"clicks"`
 }
 
 func (s *Sender) String() string {

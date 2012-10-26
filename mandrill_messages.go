@@ -18,6 +18,7 @@ package gochimp
 import (
 	"encoding/json"
 	"errors"
+	"time"
 )
 
 // see https://mandrillapp.com/api/docs/messages.html
@@ -96,7 +97,7 @@ func (a *MandrillAPI) MessageSendRaw(rawMessage string, to []string, from Recipi
 }
 
 type SearchResponse struct {
-	Timestamp int32               `json:"ts"`
+	Timestamp time.Duration       `json:"ts"`
 	Id        string              `json:"_id"`
 	Sender    string              `json:"sender"`
 	Subject   string              `json:"subject"`
@@ -110,8 +111,8 @@ type SearchResponse struct {
 
 type SearchRequest struct {
 	Query    string   `json:"query"`
-	DateFrom string   `json:"date_from"`
-	DateTo   string   `json:"date_to"`
+	DateFrom time.Time   `json:"date_from"`
+	DateTo   time.Time   `json:"date_to"`
 	Tags     []string `json:"tags"`
 	Senders  []string `json:"senders"`
 	Limit    int      `json:"limit"`

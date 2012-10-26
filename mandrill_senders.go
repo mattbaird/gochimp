@@ -17,6 +17,7 @@ package gochimp
 
 import (
 	"errors"
+	"time"
 )
 
 // see https://mandrillapp.com/api/docs/senders.html
@@ -66,20 +67,20 @@ func (a *MandrillAPI) SenderTimeSeries(address string) ([]TimeSeries, error) {
 }
 
 type SenderInfo struct {
-	Address     string `json:"address"`
-	CreatedAt   string `json:"created_at"`
-	Sent        int32  `json:"sent"`
-	HardBounces int32  `json:"hard_bounces"`
-	SoftBounces int32  `json:"soft_bounces"`
-	Rejects     int32  `json:"rejects"`
-	Complaints  int32  `json:"complaints"`
-	Unsubs      int32  `json:"unsubs"`
-	Opens       int32  `json:"opens"`
-	Clicks      int32  `json:"clicks"`
-	Stats       []Stat `json:"stats"`
+	Address     string    `json:"address"`
+	CreatedAt   time.Time `json:"created_at"`
+	Sent        int32     `json:"sent"`
+	HardBounces int32     `json:"hard_bounces"`
+	SoftBounces int32     `json:"soft_bounces"`
+	Rejects     int32     `json:"rejects"`
+	Complaints  int32     `json:"complaints"`
+	Unsubs      int32     `json:"unsubs"`
+	Opens       int32     `json:"opens"`
+	Clicks      int32     `json:"clicks"`
+	Stats       []Stat    `json:"stats"`
 }
 
 type Domain struct {
-	Domain    string `json:"domain"`
-	CreatedAt string `json:"created_at"`
+	Domain    string    `json:"domain"`
+	CreatedAt time.Time `json:"created_at"`
 }

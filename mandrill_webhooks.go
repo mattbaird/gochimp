@@ -17,6 +17,7 @@ package gochimp
 
 import (
 	"errors"
+	"time"
 )
 
 // see https://mandrillapp.com/api/docs/webhooks.html
@@ -54,6 +55,17 @@ func (a *MandrillAPI) WebhookInfo(id int) (Webhook, error) {
 }
 
 // can error with one of the following: Unknown_Webhook, Invalid_Key, ValidationError, GeneralError
+func (a *MandrillAPI) WebhookUpdate(url string, events []string) (Webhook, error) {
+	if url == "" {
+		return Webhook{}, errors.New("url cannot be blank")
+	}
+	var params map[string]interface{} = make(map[string]interface{})
+	params["url"] = url
+	params["events"] = events
+	return getWebhook(a, params, webhooks_delete_endpoint)
+}
+
+// can error with one of the following: Unknown_Webhook, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) WebhookDelete(id int) (Webhook, error) {
 	if id <= 0 {
 		return Webhook{}, errors.New("id must be >= 0")
@@ -70,12 +82,12 @@ func getWebhook(a *MandrillAPI, params map[string]interface{}, endpoint string) 
 }
 
 type Webhook struct {
-	Id          string   `json:"id"`
-	Url         string   `json:"url"`
-	Events      []string `json:"events"`
-	CreatedAt   string   `json:"created_at"`
-	LastSentAt  string   `json:"last_sent_at"`
-	BatchesSent int      `json:"batches_sent"`
-	EventsSent  int      `json:"events_sent"`
-	LastError   string   `json:"last_error"`
+	Id          int       `json:"id"`
+	Url         string    `json:"url"`
+	Events      []string  `json:"events"`
+	CreatedAt   time.Time `json:"created_at"`
+	LastSentAt  time.Time `json:"last_sent_at"`
+	BatchesSent int       `json:"batches_sent"`
+	EventsSent  int       `json:"events_sent"`
+	LastError   string    `json:"last_error"`
 }

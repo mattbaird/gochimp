@@ -18,6 +18,7 @@ package gochimp
 import (
 	"errors"
 	"log"
+	"time"
 )
 
 // see https://mandrillapp.com/api/docs/rejects.html
@@ -66,8 +67,8 @@ func (a *MandrillAPI) RejectsDelete(email string) (bool, error) {
 type Reject struct {
 	Email     string            `json:"email"`
 	Reason    int32             `json:"reason"`
-	CreatedAt int32             `json:"created_at"`
-	ExpiresAt int32             `json:"expires_at"`
-	Expired   int32             `json:"expired"`
+	CreatedAt time.Time         `json:"created_at"`
+	ExpiresAt time.Time         `json:"expires_at"`
+	Expired   bool              `json:"expired"`
 	Sender    map[string]string `json:"sender"`
 }

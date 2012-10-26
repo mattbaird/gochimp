@@ -17,6 +17,7 @@ package gochimp
 
 import (
 	"errors"
+	"time"
 )
 
 // see https://mandrillapp.com/api/docs/tags.html
@@ -67,15 +68,15 @@ func (a *MandrillAPI) TagAllTimeSeries() ([]TimeSeries, error) {
 }
 
 type TimeSeries struct {
-	Time        string `json:"time"`
-	Sent        int32  `json:"sent"`
-	HardBounces int32  `json:"hard_bounces"`
-	SoftBounces int32  `json:"soft_bounces"`
-	Rejects     int32  `json:"rejects"`
-	Complaints  int32  `json:"complaints"`
-	Unsubs      int32  `json:"unsubs"`
-	Opens       int32  `json:"opens"`
-	Clicks      int32  `json:"clicks"`
+	Time        time.Duration `json:"time"`
+	Sent        int32         `json:"sent"`
+	HardBounces int32         `json:"hard_bounces"`
+	SoftBounces int32         `json:"soft_bounces"`
+	Rejects     int32         `json:"rejects"`
+	Complaints  int32         `json:"complaints"`
+	Unsubs      int32         `json:"unsubs"`
+	Opens       int32         `json:"opens"`
+	Clicks      int32         `json:"clicks"`
 }
 
 type TagInfo struct {
