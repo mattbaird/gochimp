@@ -166,7 +166,6 @@ func TestTemplateRender(t *testing.T) {
 	if result != "<!DOCTYPE html>\nHello, welcome" {
 		t.Errorf("Rendered Result incorrect, expecting %s, got %s", "<!DOCTYPE html>Hello, welcome", result)
 	}
-
 }
 
 func TestTemplateRender2(t *testing.T) {
@@ -183,7 +182,23 @@ func TestTemplateRender2(t *testing.T) {
 	if result != "<!DOCTYPE html>\n<div>Hello, welcome</div>" {
 		t.Errorf("Rendered Result incorrect, expecting %s, got %s", "<!DOCTYPE html>\n<div>Hello, welcome</div>", result)
 	}
+}
 
+func TestMessageTemplateSend(t *testing.T) {
+	//make sure it's freshly added
+	mandrill.TemplateDelete(testTemplateName)
+	mandrill.TemplateAdd(testTemplateName, readTemplate("templates/transactional_basic.html"), true)
+	//weak - should check results
+	templateContent := []Var{*NewVar("std_content00", "Hello, welcome")}
+	mergeVars := []Var{*NewVar("SUBJECT", "Hello, welcome")}
+	var message Message = Message{Subject: "Test Template Mail", FromEmail: user,
+		FromName: user, GlobalMergeVars: mergeVars}
+	message.addRecipients(Recipient{Email: user, Name: user})
+	_, err := mandrill.MessageSendTemplate(testTemplateName, templateContent, message, true)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	//todo - how do we test this better?
 }
 
 func readTemplate(path string) string {

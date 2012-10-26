@@ -36,7 +36,7 @@ func (a *MandrillAPI) MessageSend(message Message, async bool) ([]SendResponse, 
 	return response, err
 }
 
-func (a *MandrillAPI) MessageSendTemplate(templateName string, templateContent []TemplateContent, message Message, async bool) ([]SendResponse, error) {
+func (a *MandrillAPI) MessageSendTemplate(templateName string, templateContent []Var, message Message, async bool) ([]SendResponse, error) {
 	var response []SendResponse
 	if templateName == "" {
 		return response, errors.New("templateName cannot be blank")
@@ -117,14 +117,9 @@ type SearchRequest struct {
 	Limit    int      `json:"limit"`
 }
 
-type TemplateContent struct {
-	Name    string `json:"name"`
-	Content string `json:"content"`
-}
-
 type Message struct {
-	Html                    string              `json:"html"`
-	Text                    string              `json:"text"`
+	Html                    string              `json:"html,omitempty"`
+	Text                    string              `json:"text,omitempty"`
 	Subject                 string              `json:"subject"`
 	FromEmail               string              `json:"from_email"`
 	FromName                string              `json:"from_name"`
