@@ -16,6 +16,7 @@
 package gochimp
 
 import (
+	"errors"
 	"log"
 )
 
@@ -33,6 +34,12 @@ const templates_render_endpoint string = "/templates/render.json"           //In
 
 // can error with one of the following: Unknown_Template, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) TemplateAdd(name string, code string, publish bool) (Template, error) {
+	if name == "" {
+		return Template{}, errors.New("name cannot be blank")
+	}
+	if code == "" {
+		return Template{}, errors.New("code cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["name"] = name
 	params["code"] = code
@@ -42,6 +49,9 @@ func (a *MandrillAPI) TemplateAdd(name string, code string, publish bool) (Templ
 
 // can error with one of the following: Unknown_Template, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) TemplateInfo(name string) (Template, error) {
+	if name == "" {
+		return Template{}, errors.New("name cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["name"] = name
 	return execute(a, params, templates_publish_endpoint)
@@ -49,6 +59,12 @@ func (a *MandrillAPI) TemplateInfo(name string) (Template, error) {
 
 // can error with one of the following: Unknown_Template, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) TemplateUpdate(name string, code string, publish bool) (Template, error) {
+	if name == "" {
+		return Template{}, errors.New("name cannot be blank")
+	}
+	if code == "" {
+		return Template{}, errors.New("code cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["name"] = name
 	params["code"] = code
@@ -58,6 +74,9 @@ func (a *MandrillAPI) TemplateUpdate(name string, code string, publish bool) (Te
 
 // can error with one of the following: Unknown_Template, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) TemplatePublish(name string) (Template, error) {
+	if name == "" {
+		return Template{}, errors.New("name cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["name"] = name
 	return execute(a, params, templates_publish_endpoint)
@@ -65,6 +84,9 @@ func (a *MandrillAPI) TemplatePublish(name string) (Template, error) {
 
 // can error with one of the following: Unknown_Template, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) TemplateDelete(name string) (Template, error) {
+	if name == "" {
+		return Template{}, errors.New("name cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["name"] = name
 	return execute(a, params, templates_delete_endpoint)
@@ -80,6 +102,9 @@ func (a *MandrillAPI) TemplateList() ([]Template, error) {
 
 // can error with one of the following: Unknown_Template, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) TemplateTimeSeries(name string) ([]Template, error) {
+	if name == "" {
+		return []Template{}, errors.New("name cannot be blank")
+	}
 	var response []Template
 	var params map[string]interface{} = make(map[string]interface{})
 	params["name"] = name
@@ -89,6 +114,9 @@ func (a *MandrillAPI) TemplateTimeSeries(name string) ([]Template, error) {
 
 // can error with one of the following: Unknown_Template, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) TemplateRender(templateName string, templateContent []Var, mergeVars []Var) (string, error) {
+	if templateName == "" {
+		return "", errors.New("templateName cannot be blank")
+	}
 	var response map[string]interface{}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["template_name"] = templateName

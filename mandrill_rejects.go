@@ -16,6 +16,7 @@
 package gochimp
 
 import (
+	"errors"
 	"log"
 )
 
@@ -32,6 +33,9 @@ const rejects_delete_endpoint string = "/rejects/delete.json"
 // can error with one of the following: Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) RejectsList(email string, includeExpired bool) ([]Reject, error) {
 	var response []Reject
+	if email == "" {
+		return response, errors.New("email cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["email"] = email
 	params["include_expired"] = includeExpired
@@ -42,10 +46,13 @@ func (a *MandrillAPI) RejectsList(email string, includeExpired bool) ([]Reject, 
 // can error with one of the following: Invalid_Reject, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) RejectsDelete(email string) (bool, error) {
 	var response map[string]interface{}
+	var retval bool = false
+	if email == "" {
+		return retval, errors.New("email cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["email"] = email
 	err := parseMandrillJson(a, rejects_delete_endpoint, params, &response)
-	var retval bool = false
 	var ok bool = false
 	if err == nil {
 		retval, ok = response["deleted"].(bool)

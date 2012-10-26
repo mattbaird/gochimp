@@ -15,7 +15,9 @@
 **/
 package gochimp
 
-import ()
+import (
+	"errors"
+)
 
 // see https://mandrillapp.com/api/docs/senders.html
 const senders_list_endpoint string = "/senders/list.json"               //Return the senders that have tried to use this account.
@@ -42,6 +44,9 @@ func (a *MandrillAPI) SenderDomains() ([]Domain, error) {
 // can error with one of the following: Unknown_Sender, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) SenderInfo(address string) (SenderInfo, error) {
 	var response SenderInfo
+	if address == "" {
+		return response, errors.New("address cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["address"] = address
 	err := parseMandrillJson(a, senders_info_endpoint, params, &response)
@@ -51,6 +56,9 @@ func (a *MandrillAPI) SenderInfo(address string) (SenderInfo, error) {
 // can error with one of the following: Unknown_Sender, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) SenderTimeSeries(address string) ([]TimeSeries, error) {
 	var response []TimeSeries
+	if address == "" {
+		return response, errors.New("address cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["address"] = address
 	err := parseMandrillJson(a, senders_time_series_endpoint, params, &response)

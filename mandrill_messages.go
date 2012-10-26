@@ -17,6 +17,7 @@ package gochimp
 
 import (
 	"encoding/json"
+	"errors"
 )
 
 // see https://mandrillapp.com/api/docs/messages.html
@@ -37,6 +38,9 @@ func (a *MandrillAPI) MessageSend(message Message, async bool) ([]SendResponse, 
 
 func (a *MandrillAPI) MessageSendTemplate(templateName string, templateContent []TemplateContent, message Message, async bool) ([]SendResponse, error) {
 	var response []SendResponse
+	if templateName == "" {
+		return response, errors.New("templateName cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["message"] = message
 	params["template_name"] = templateName
@@ -50,7 +54,6 @@ func (a *MandrillAPI) MessageSearch(searchRequest SearchRequest) ([]SearchRespon
 	var response []SearchResponse
 	var params map[string]interface{} = make(map[string]interface{})
 	//todo remove this hack
-	params["key"] = searchRequest.Key
 	params["query"] = searchRequest.Query
 	params["date_from"] = searchRequest.DateFrom
 	params["date_to"] = searchRequest.DateTo
@@ -63,6 +66,9 @@ func (a *MandrillAPI) MessageSearch(searchRequest SearchRequest) ([]SearchRespon
 
 func (a *MandrillAPI) MessageParse(rawMessage string, async bool) (Message, error) {
 	var response Message
+	if rawMessage == "" {
+		return response, errors.New("rawMessage cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["raw_message"] = rawMessage
 	err := parseMandrillJson(a, messages_parse_endpoint, params, &response)
@@ -72,6 +78,13 @@ func (a *MandrillAPI) MessageParse(rawMessage string, async bool) (Message, erro
 // Can return oneof Invalid_Key, ValidationError or GeneralError
 func (a *MandrillAPI) MessageSendRaw(rawMessage string, to []string, from Recipient, async bool) ([]SendResponse, error) {
 	var response []SendResponse
+	if rawMessage == "" {
+		return response, errors.New("rawMessage cannot be blank")
+	}
+	if len(to) <= 0 {
+		return response, errors.New("You need at least one recipient in the To array")
+	}
+
 	var params map[string]interface{} = make(map[string]interface{})
 	params["raw_message"] = rawMessage
 	params["from_email"] = from.Email
@@ -96,7 +109,6 @@ type SearchResponse struct {
 }
 
 type SearchRequest struct {
-	Key      string   `json:"key"`
 	Query    string   `json:"query"`
 	DateFrom string   `json:"date_from"`
 	DateTo   string   `json:"date_to"`

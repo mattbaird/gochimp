@@ -15,7 +15,9 @@
 **/
 package gochimp
 
-import ()
+import (
+	"errors"
+)
 
 // see https://mandrillapp.com/api/docs/webhooks.html
 const webhooks_list_endpoint string = "/webhooks/list.json"     //Get the list of all webhooks defined on the account
@@ -32,6 +34,9 @@ func (a *MandrillAPI) WebhooksList() (Webhook, error) {
 
 // can error with one of the following: Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) WebhookAdd(url string, events []string) (Webhook, error) {
+	if url == "" {
+		return Webhook{}, errors.New("url cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["url"] = url
 	params["events"] = events
@@ -40,6 +45,9 @@ func (a *MandrillAPI) WebhookAdd(url string, events []string) (Webhook, error) {
 
 // can error with one of the following: Unknown_Webhook, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) WebhookInfo(id int) (Webhook, error) {
+	if id <= 0 {
+		return Webhook{}, errors.New("id must be >= 0")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["id"] = id
 	return getWebhook(a, params, webhooks_info_endpoint)
@@ -47,6 +55,9 @@ func (a *MandrillAPI) WebhookInfo(id int) (Webhook, error) {
 
 // can error with one of the following: Unknown_Webhook, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) WebhookDelete(id int) (Webhook, error) {
+	if id <= 0 {
+		return Webhook{}, errors.New("id must be >= 0")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["id"] = id
 	return getWebhook(a, params, webhooks_delete_endpoint)

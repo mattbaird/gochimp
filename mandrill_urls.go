@@ -15,7 +15,9 @@
 **/
 package gochimp
 
-import ()
+import (
+	"errors"
+)
 
 // see https://mandrillapp.com/api/docs/urls.html
 const urls_list_endpoint string = "/urls/list.json"               //Get the 100 most clicked URLs
@@ -33,6 +35,9 @@ func (a *MandrillAPI) UrlList() ([]UrlInfo, error) {
 // can error with one of the following: Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) UrlSearch(q string) ([]UrlInfo, error) {
 	var response []UrlInfo
+	if q == "" {
+		return response, errors.New("query[q] cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["q"] = q
 	err := parseMandrillJson(a, urls_search_endpoint, params, &response)
@@ -42,6 +47,9 @@ func (a *MandrillAPI) UrlSearch(q string) ([]UrlInfo, error) {
 // can error with one of the following: Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) UrlTimeSeries(url string) ([]UrlInfo, error) {
 	var response []UrlInfo
+	if url == "" {
+		return response, errors.New("url cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["url"] = url
 	err := parseMandrillJson(a, urls_time_series_endpoint, params, &response)

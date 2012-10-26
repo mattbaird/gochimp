@@ -15,7 +15,9 @@
 **/
 package gochimp
 
-import ()
+import (
+	"errors"
+)
 
 // see https://mandrillapp.com/api/docs/tags.html
 const tags_list_endpoint string = "/tags/list.json"                       // Return all of the user-defined tag information
@@ -34,6 +36,10 @@ func (a *MandrillAPI) TagList() ([]ListResponse, error) {
 // can error with one of the following: Invalid_Tag_Name, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) TagInfo(tag string) (TagInfo, error) {
 	var response TagInfo
+	if tag == "" {
+		return response, errors.New("tag cannot be blank")
+	}
+
 	var params map[string]interface{} = make(map[string]interface{})
 	params["tag"] = tag
 	err := parseMandrillJson(a, tags_info_endpoint, params, &response)
@@ -43,6 +49,9 @@ func (a *MandrillAPI) TagInfo(tag string) (TagInfo, error) {
 // can error with one of the following: Invalid_Tag_Name, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) TagTimeSeries(tag string) ([]TimeSeries, error) {
 	var response []TimeSeries
+	if tag == "" {
+		return response, errors.New("tag cannot be blank")
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["tag"] = tag
 	err := parseMandrillJson(a, tags_time_series_endpoint, params, &response)

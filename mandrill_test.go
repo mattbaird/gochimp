@@ -31,7 +31,7 @@ func TestPing(t *testing.T) {
 	}
 }
 
-func TestInfo(t *testing.T) {
+func TestUserInfo(t *testing.T) {
 	response, err := mandrill.UserInfo()
 	if err != nil {
 		t.Error("Error:", err)
@@ -41,7 +41,7 @@ func TestInfo(t *testing.T) {
 	}
 }
 
-func TestSenders(t *testing.T) {
+func TestUserSenders(t *testing.T) {
 	response, err := mandrill.UserSenders()
 	if response == nil {
 		t.Error("response was nil", err)
@@ -51,7 +51,7 @@ func TestSenders(t *testing.T) {
 	}
 }
 
-func TestSending(t *testing.T) {
+func TestMessageSending(t *testing.T) {
 	var message Message = Message{Html: "<b>hi there</b>", Text: "hello text", Subject: "Test Mail", FromEmail: user,
 		FromName: user}
 	message.addRecipients(Recipient{Email: user, Name: user})
