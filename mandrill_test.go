@@ -109,7 +109,32 @@ func TestTemplateUpdate(t *testing.T) {
 	}
 	// be nice and tear down after test
 	template, err = mandrill.TemplateDelete("updateTest")
+}
 
+func TestTemplatePublish(t *testing.T) {
+	mandrill.TemplateDelete("publishTest")
+	// add a simple template
+	template, err := mandrill.TemplateAdd("publishTest", "testing 123", false)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	if template.Name != "publishTest" {
+		t.Errorf("Wrong template name, expecting %s, got %s", testTemplateName, template.Name)
+	}
+	if template.PublishCode != "" {
+		t.Errorf("Template should not have a publish code, got %s", template.PublishCode)
+	}
+	template, err = mandrill.TemplatePublish("publishTest")
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	if template.Name != "publishTest" {
+		t.Errorf("Wrong template name, expecting %s, got %s", testTemplateName, template.Name)
+	}
+	if template.PublishCode == "" {
+		t.Errorf("Template should have a publish code, got %s", template.PublishCode)
+	}
+	mandrill.TemplateDelete("publishTest")
 }
 
 func readTemplate(path string) string {
