@@ -50,7 +50,7 @@ func (a *MandrillAPI) Delete(email string) (bool, error) {
 	if err == nil {
 		retval, ok = response["deleted"].(bool)
 		if ok != true {
-			log.Fatal("received response with deleted parameter, however type was not bool, this should not happen")
+			log.Fatal("Received response with deleted parameter, however type was not bool, this should not happen")
 		}
 	}
 	return retval, err
