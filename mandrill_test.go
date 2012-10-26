@@ -50,3 +50,16 @@ func TestSenders(t *testing.T) {
 		t.Error("Error:", err)
 	}
 }
+
+func TestSending(t *testing.T) {
+	var message Message = Message{Html: "<b>hi there</b>", Text: "hello text", Subject: "Test Mail", FromEmail: user,
+		FromName: user}
+	message.addRecipients(Recipient{Email: user, Name: user})
+	response, err := mandrill.Send(message, false)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	if response[0].Email != user {
+		t.Errorf("Wrong email recipient, expecting %s, got %s", user, response[0].Email)
+	}
+}

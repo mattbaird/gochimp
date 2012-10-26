@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strconv"
 )
 
 const mandrill_uri string = "mandrillapp.com/api/"
@@ -121,6 +122,13 @@ func runMandrill(api *MandrillAPI, path string, parameters map[string]interface{
 		return nil, err
 	}
 	return body, nil
+}
+
+func parseString(body []byte, err error) (string, error) {
+	if err != nil {
+		return "", err
+	}
+	return strconv.Unquote(string(body))
 }
 
 func parseMandrillJson(api *MandrillAPI, path string, parameters map[string]interface{}, retval interface{}) error {
