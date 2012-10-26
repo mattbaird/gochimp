@@ -84,6 +84,21 @@ func TestTemplateAdd(t *testing.T) {
 	}
 }
 
+func TestTemplateList(t *testing.T) {
+	_, err := mandrill.TemplateAdd("listTest", "testing 123", true)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	templates, err := mandrill.TemplateList()
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	if len(templates) <= 0 {
+		t.Errorf("Should have retrieved templates")
+	}
+	mandrill.TemplateDelete("listTest")
+}
+
 func TestTemplateInfo(t *testing.T) {
 	template, err := mandrill.TemplateInfo(testTemplateName)
 	if err != nil {
@@ -108,7 +123,7 @@ func TestTemplateUpdate(t *testing.T) {
 		t.Errorf("Wrong template code, expecting %s, got %s", "testing 321", template.Code)
 	}
 	// be nice and tear down after test
-	template, err = mandrill.TemplateDelete("updateTest")
+	mandrill.TemplateDelete("updateTest")
 }
 
 func TestTemplatePublish(t *testing.T) {
