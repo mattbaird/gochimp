@@ -20,14 +20,94 @@ import (
 )
 
 // see https://mandrillapp.com/api/docs/messages.html
-const messages_send_endpoint string = "/messages/send.json" //Send a new transactional message through Mandrill
+const messages_send_endpoint string = "/messages/send.json"                   // Send a new transactional message through Mandrill
+const messages_send_template_endpoint string = "/messages/send-template.json" // Send a new transactional message through Mandrill using a template
+const messages_search_endpoint string = "/messages/search.json"               // Search the content of recently sent messages and optionally narrow by date range, tags and senders
+const messages_parse_endpoint string = "/messages/parse.json"                 // Parse the full MIME document for an email message, returning the content of the message broken into its constituent pieces
+const messages_send_raw_endpoint string = "/messages/send-raw.json"           // Take a raw MIME document for a message, and send it exactly as if it were sent over the SMTP protocol
 
 func (a *MandrillAPI) Send(message Message, async bool) ([]SendResponse, error) {
 	var response []SendResponse
 	var params map[string]interface{} = make(map[string]interface{})
 	params["message"] = message
+	params["async"] = async
 	err := parseMandrillJson(a, messages_send_endpoint, params, &response)
 	return response, err
+}
+
+func (a *MandrillAPI) SendTemplate(templateName string, templateContent []TemplateContent, message Message, async bool) ([]SendResponse, error) {
+	var response []SendResponse
+	var params map[string]interface{} = make(map[string]interface{})
+	params["message"] = message
+	params["template_name"] = templateName
+	params["async"] = async
+	params["template_content"] = templateContent
+	err := parseMandrillJson(a, messages_send_template_endpoint, params, &response)
+	return response, err
+}
+
+func (a *MandrillAPI) Search(searchRequest SearchRequest) ([]SearchResponse, error) {
+	var response []SearchResponse
+	var params map[string]interface{} = make(map[string]interface{})
+	//todo remove this hack
+	params["key"] = searchRequest.Key
+	params["query"] = searchRequest.Query
+	params["date_from"] = searchRequest.DateFrom
+	params["date_to"] = searchRequest.DateTo
+	params["tags"] = searchRequest.Tags
+	params["senders"] = searchRequest.Senders
+	params["limit"] = searchRequest.Limit
+	err := parseMandrillJson(a, messages_search_endpoint, params, &response)
+	return response, err
+}
+
+func (a *MandrillAPI) Parse(rawMessage string, async bool) (Message, error) {
+	var response Message
+	var params map[string]interface{} = make(map[string]interface{})
+	params["raw_message"] = rawMessage
+	err := parseMandrillJson(a, messages_parse_endpoint, params, &response)
+	return response, err
+}
+
+// Can return oneof Invalid_Key, ValidationError or GeneralError
+func (a *MandrillAPI) SendRaw(rawMessage string, to []string, from Recipient, async bool) ([]SendResponse, error) {
+	var response []SendResponse
+	var params map[string]interface{} = make(map[string]interface{})
+	params["raw_message"] = rawMessage
+	params["from_email"] = from.Email
+	params["from_name"] = from.Name
+	params["to"] = to
+	params["async"] = async
+	err := parseMandrillJson(a, messages_send_raw_endpoint, params, &response)
+	return response, err
+}
+
+type SearchResponse struct {
+	Timestamp int32               `json:"ts"`
+	Id        string              `json:"_id"`
+	Sender    string              `json:"sender"`
+	Subject   string              `json:"subject"`
+	Email     string              `json:"email"`
+	Tags      []string            `json:"tags"`
+	Opens     int                 `json:"opens"`
+	Clicks    int                 `json:"clicks"`
+	State     string              `json:"state"`
+	Metadata  []map[string]string `json:"metadata"`
+}
+
+type SearchRequest struct {
+	Key      string   `json:"key"`
+	Query    string   `json:"query"`
+	DateFrom string   `json:"date_from"`
+	DateTo   string   `json:"date_to"`
+	Tags     []string `json:"tags"`
+	Senders  []string `json:"senders"`
+	Limit    int      `json:"limit"`
+}
+
+type TemplateContent struct {
+	Name    string `json:"name"`
+	Content string `json:"content"`
 }
 
 type Message struct {

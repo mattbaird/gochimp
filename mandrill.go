@@ -20,13 +20,15 @@ import (
 	"fmt"
 )
 
-// three types of error
+// four types of error
 // Invalid_Key
 // - The provided API key is not a valid Mandrill API key
 // ValidationError
 // - The parameters passed to the API call are invalid or not provided when required
 // GeneralError
 // - An unexpected error occurred processing the request. Mandrill developers will be notified.
+// Unknown_Template
+// - The requested template does not exist
 type MandrillError struct {
 	Status  string `json:"status"`
 	Code    int    `json:"code"`

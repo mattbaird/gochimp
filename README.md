@@ -1,7 +1,7 @@
 gochimp
 =======
 
-Go based API for Mailchimp, including Mandrill
+Go based API for Mailchimp, starting with Mandrill
 
 to run tests, set a couple env variables:
 ```bash
