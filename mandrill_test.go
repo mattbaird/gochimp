@@ -23,7 +23,7 @@ import (
 )
 
 var mandrill, err = NewMandrill(os.Getenv("MANDRILL_KEY"))
-var user = os.Getenv("MANDRILL_USER")
+var user string = os.Getenv("MANDRILL_USER")
 
 func TestPing(t *testing.T) {
 	response, err := mandrill.Ping()
@@ -207,4 +207,24 @@ func readTemplate(path string) string {
 		panic(err)
 	}
 	return string(b)
+}
+
+// senders tests
+
+func TestSendersList(t *testing.T) {
+	//make sure it's freshly added
+	results, err := mandrill.SenderList()
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	var foundUser = false
+	for i := range results {
+		var info Sender = results[i]
+		if info.Address == user {
+			foundUser = true
+		}
+	}
+	if !foundUser {
+		t.Errorf("should have found User %s in [%s] length array", user, len(results))
+	}
 }

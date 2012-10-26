@@ -15,7 +15,9 @@
 **/
 package gochimp
 
-import ()
+import (
+	"encoding/json"
+)
 
 // see https://mandrillapp.com/api/docs/users.html
 const users_info_endpoint string = "/users/info.json"       //Return the information about the API-connected user
@@ -63,14 +65,19 @@ type Stat struct {
 }
 
 type Sender struct {
-	Address     int `json:"address"`
-	CreatedAt   int `json:"created_at"`
-	Sent        int `json:"sent"`
-	HardBounces int `json:"hard_bounces"`
-	SoftBounces int `json:"soft_bounces"`
-	Rejects     int `json:"rejects"`
-	Complaints  int `json:"complaints"`
-	Unsubs      int `json:"unsubs"`
-	Opens       int `json:"opens"`
-	Clicks      int `json:"clicks"`
+	Address     string `json:"address"`
+	CreatedAt   string `json:"created_at"`
+	Sent        int    `json:"sent"`
+	HardBounces int    `json:"hard_bounces"`
+	SoftBounces int    `json:"soft_bounces"`
+	Rejects     int    `json:"rejects"`
+	Complaints  int    `json:"complaints"`
+	Unsubs      int    `json:"unsubs"`
+	Opens       int    `json:"opens"`
+	Clicks      int    `json:"clicks"`
+}
+
+func (s *Sender) String() string {
+	b, _ := json.Marshal(s)
+	return string(b)
 }
