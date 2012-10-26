@@ -40,7 +40,7 @@ func (a *MandrillAPI) RejectsList(email string, includeExpired bool) ([]Reject, 
 }
 
 // can error with one of the following: Invalid_Reject, Invalid_Key, ValidationError, GeneralError
-func (a *MandrillAPI) Delete(email string) (bool, error) {
+func (a *MandrillAPI) RejectsDelete(email string) (bool, error) {
 	var response map[string]interface{}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["email"] = email

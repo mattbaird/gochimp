@@ -26,7 +26,7 @@ const messages_search_endpoint string = "/messages/search.json"               //
 const messages_parse_endpoint string = "/messages/parse.json"                 // Parse the full MIME document for an email message, returning the content of the message broken into its constituent pieces
 const messages_send_raw_endpoint string = "/messages/send-raw.json"           // Take a raw MIME document for a message, and send it exactly as if it were sent over the SMTP protocol
 
-func (a *MandrillAPI) Send(message Message, async bool) ([]SendResponse, error) {
+func (a *MandrillAPI) MessageSend(message Message, async bool) ([]SendResponse, error) {
 	var response []SendResponse
 	var params map[string]interface{} = make(map[string]interface{})
 	params["message"] = message
@@ -35,7 +35,7 @@ func (a *MandrillAPI) Send(message Message, async bool) ([]SendResponse, error) 
 	return response, err
 }
 
-func (a *MandrillAPI) SendTemplate(templateName string, templateContent []TemplateContent, message Message, async bool) ([]SendResponse, error) {
+func (a *MandrillAPI) MessageSendTemplate(templateName string, templateContent []TemplateContent, message Message, async bool) ([]SendResponse, error) {
 	var response []SendResponse
 	var params map[string]interface{} = make(map[string]interface{})
 	params["message"] = message
@@ -46,7 +46,7 @@ func (a *MandrillAPI) SendTemplate(templateName string, templateContent []Templa
 	return response, err
 }
 
-func (a *MandrillAPI) Search(searchRequest SearchRequest) ([]SearchResponse, error) {
+func (a *MandrillAPI) MessageSearch(searchRequest SearchRequest) ([]SearchResponse, error) {
 	var response []SearchResponse
 	var params map[string]interface{} = make(map[string]interface{})
 	//todo remove this hack
@@ -61,7 +61,7 @@ func (a *MandrillAPI) Search(searchRequest SearchRequest) ([]SearchResponse, err
 	return response, err
 }
 
-func (a *MandrillAPI) Parse(rawMessage string, async bool) (Message, error) {
+func (a *MandrillAPI) MessageParse(rawMessage string, async bool) (Message, error) {
 	var response Message
 	var params map[string]interface{} = make(map[string]interface{})
 	params["raw_message"] = rawMessage
@@ -70,7 +70,7 @@ func (a *MandrillAPI) Parse(rawMessage string, async bool) (Message, error) {
 }
 
 // Can return oneof Invalid_Key, ValidationError or GeneralError
-func (a *MandrillAPI) SendRaw(rawMessage string, to []string, from Recipient, async bool) ([]SendResponse, error) {
+func (a *MandrillAPI) MessageSendRaw(rawMessage string, to []string, from Recipient, async bool) ([]SendResponse, error) {
 	var response []SendResponse
 	var params map[string]interface{} = make(map[string]interface{})
 	params["raw_message"] = rawMessage

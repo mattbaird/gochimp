@@ -23,7 +23,7 @@ const urls_search_endpoint string = "/urls/search.json"           //Return the 1
 const urls_time_series_endpoint string = "/urls/time-series.json" //Return the recent history (hourly stats for the last 30 days) for a url
 
 // can error with one of the following: Invalid_Key, ValidationError, GeneralError
-func (a *MandrillAPI) UrlsList() ([]UrlInfo, error) {
+func (a *MandrillAPI) UrlList() ([]UrlInfo, error) {
 	var response []UrlInfo
 	var params map[string]interface{} = make(map[string]interface{})
 	err := parseMandrillJson(a, urls_list_endpoint, params, &response)

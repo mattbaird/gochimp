@@ -24,7 +24,7 @@ const tags_time_series_endpoint string = "/tags/time-series.json"         // Ret
 const tags_all_time_series_endpoint string = "/tags/all-time-series.json" // Return the recent history (hourly stats for the last 30 days) for a tag
 
 // can error with one of the following: Invalid_Key, ValidationError, GeneralError
-func (a *MandrillAPI) List() ([]ListResponse, error) {
+func (a *MandrillAPI) TagList() ([]ListResponse, error) {
 	var response []ListResponse
 	var params map[string]interface{} = make(map[string]interface{})
 	err := parseMandrillJson(a, tags_list_endpoint, params, &response)
@@ -41,7 +41,7 @@ func (a *MandrillAPI) TagInfo(tag string) (TagInfo, error) {
 }
 
 // can error with one of the following: Invalid_Tag_Name, Invalid_Key, ValidationError, GeneralError
-func (a *MandrillAPI) TimeSeries(tag string) ([]TimeSeries, error) {
+func (a *MandrillAPI) TagTimeSeries(tag string) ([]TimeSeries, error) {
 	var response []TimeSeries
 	var params map[string]interface{} = make(map[string]interface{})
 	params["tag"] = tag
@@ -50,7 +50,7 @@ func (a *MandrillAPI) TimeSeries(tag string) ([]TimeSeries, error) {
 }
 
 // can error with one of the following: Invalid_Key, ValidationError, GeneralError
-func (a *MandrillAPI) AllTimeSeries() ([]TimeSeries, error) {
+func (a *MandrillAPI) TagAllTimeSeries() ([]TimeSeries, error) {
 	var response []TimeSeries
 	var params map[string]interface{} = make(map[string]interface{})
 	err := parseMandrillJson(a, tags_all_time_series_endpoint, params, &response)

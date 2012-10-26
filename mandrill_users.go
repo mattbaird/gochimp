@@ -27,13 +27,13 @@ func (a *MandrillAPI) Ping() (string, error) {
 	return parseString(runMandrill(a, users_ping_endpoint, nil))
 }
 
-func (a *MandrillAPI) Info() (Info, error) {
+func (a *MandrillAPI) UserInfo() (Info, error) {
 	var info Info
 	err := parseMandrillJson(a, users_info_endpoint, nil, &info)
 	return info, err
 }
 
-func (a *MandrillAPI) Senders() ([]Sender, error) {
+func (a *MandrillAPI) UserSenders() ([]Sender, error) {
 	var senders []Sender
 	err := parseMandrillJson(a, users_senders_endpoint, nil, &senders)
 	return senders, err

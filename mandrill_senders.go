@@ -32,7 +32,7 @@ func (a *MandrillAPI) SenderList() ([]Sender, error) {
 }
 
 // can error with one of the following: Invalid_Key, ValidationError, GeneralError
-func (a *MandrillAPI) Domains() ([]Domain, error) {
+func (a *MandrillAPI) SenderDomains() ([]Domain, error) {
 	var response []Domain
 	var params map[string]interface{} = make(map[string]interface{})
 	err := parseMandrillJson(a, senders_domains_endpoint, params, &response)
@@ -40,7 +40,7 @@ func (a *MandrillAPI) Domains() ([]Domain, error) {
 }
 
 // can error with one of the following: Unknown_Sender, Invalid_Key, ValidationError, GeneralError
-func (a *MandrillAPI) SendersInfo(address string) (SenderInfo, error) {
+func (a *MandrillAPI) SenderInfo(address string) (SenderInfo, error) {
 	var response SenderInfo
 	var params map[string]interface{} = make(map[string]interface{})
 	params["address"] = address
@@ -49,7 +49,7 @@ func (a *MandrillAPI) SendersInfo(address string) (SenderInfo, error) {
 }
 
 // can error with one of the following: Unknown_Sender, Invalid_Key, ValidationError, GeneralError
-func (a *MandrillAPI) SendersTimeSeries(address string) ([]TimeSeries, error) {
+func (a *MandrillAPI) SenderTimeSeries(address string) ([]TimeSeries, error) {
 	var response []TimeSeries
 	var params map[string]interface{} = make(map[string]interface{})
 	params["address"] = address

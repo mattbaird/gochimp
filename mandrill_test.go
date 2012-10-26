@@ -32,7 +32,7 @@ func TestPing(t *testing.T) {
 }
 
 func TestInfo(t *testing.T) {
-	response, err := mandrill.Info()
+	response, err := mandrill.UserInfo()
 	if err != nil {
 		t.Error("Error:", err)
 	}
@@ -42,7 +42,7 @@ func TestInfo(t *testing.T) {
 }
 
 func TestSenders(t *testing.T) {
-	response, err := mandrill.Senders()
+	response, err := mandrill.UserSenders()
 	if response == nil {
 		t.Error("response was nil", err)
 	}
@@ -55,7 +55,7 @@ func TestSending(t *testing.T) {
 	var message Message = Message{Html: "<b>hi there</b>", Text: "hello text", Subject: "Test Mail", FromEmail: user,
 		FromName: user}
 	message.addRecipients(Recipient{Email: user, Name: user})
-	response, err := mandrill.Send(message, false)
+	response, err := mandrill.MessageSend(message, false)
 	if err != nil {
 		t.Error("Error:", err)
 	}
