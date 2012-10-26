@@ -44,7 +44,7 @@ func (a *MandrillAPI) TemplateAdd(name string, code string, publish bool) (Templ
 	params["name"] = name
 	params["code"] = code
 	params["publish"] = publish
-	return execute(a, params, templates_publish_endpoint)
+	return execute(a, params, templates_add_endpoint)
 }
 
 // can error with one of the following: Unknown_Template, Invalid_Key, ValidationError, GeneralError
@@ -54,7 +54,7 @@ func (a *MandrillAPI) TemplateInfo(name string) (Template, error) {
 	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["name"] = name
-	return execute(a, params, templates_publish_endpoint)
+	return execute(a, params, templates_info_endpoint)
 }
 
 // can error with one of the following: Unknown_Template, Invalid_Key, ValidationError, GeneralError
@@ -69,7 +69,7 @@ func (a *MandrillAPI) TemplateUpdate(name string, code string, publish bool) (Te
 	params["name"] = name
 	params["code"] = code
 	params["publish"] = publish
-	return execute(a, params, templates_publish_endpoint)
+	return execute(a, params, templates_update_endpoint)
 }
 
 // can error with one of the following: Unknown_Template, Invalid_Key, ValidationError, GeneralError

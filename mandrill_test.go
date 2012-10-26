@@ -17,6 +17,7 @@ package gochimp
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -62,4 +63,32 @@ func TestMessageSending(t *testing.T) {
 	if response[0].Email != user {
 		t.Errorf("Wrong email recipient, expecting %s, got %s", user, response[0].Email)
 	}
+}
+
+const testTemplateName string = "test_transactional_template"
+
+func TestTemplateAdd(t *testing.T) {
+	// delete the test template if it exists already
+	mandrill.TemplateDelete(testTemplateName)
+	template, err := mandrill.TemplateAdd(testTemplateName, readTemplate("templates/transactional_basic.html"), true)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	if template.Name != "test_transactional_template" {
+		t.Errorf("Wrong template name, expecting %s, got %s", testTemplateName, template.Name)
+	}
+	// try recreating, should error out
+	template, err = mandrill.TemplateAdd(testTemplateName, readTemplate("templates/transactional_basic.html"), true)
+	if err == nil {
+		t.Error("Should have error'd on duplicate template")
+	}
+
+}
+
+func readTemplate(path string) string {
+	b, err := ioutil.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
 }

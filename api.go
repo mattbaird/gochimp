@@ -52,6 +52,7 @@ func NewMandrill(apiKey string) (*MandrillAPI, error) {
 
 const mailchimp_uri string = "%s.api.mailchimp.com"
 const mailchimp_version string = "/1.3/"
+const debug bool = false
 
 var mailchimp_datacenter = regexp.MustCompile("[a-z]+[0-9]+$")
 
@@ -79,7 +80,9 @@ func runChimp(api *ChimpAPI, path string, parameters map[string]interface{}) ([]
 		return nil, err
 	}
 	requestUrl := fmt.Sprintf("%s%s", api.endpoint, path)
-	log.Printf("Request URL:%s", requestUrl)
+	if debug {
+		log.Printf("Request URL:%s", requestUrl)
+	}
 	resp, err := http.Post(requestUrl, "application/json", bytes.NewBuffer(b))
 	if err != nil {
 		return nil, err
@@ -89,7 +92,9 @@ func runChimp(api *ChimpAPI, path string, parameters map[string]interface{}) ([]
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("Response Body:%s", string(body))
+	if debug {
+		log.Printf("Response Body:%s", string(body))
+	}
 	if err = chimpErrorCheck(body); err != nil {
 		return nil, err
 	}
@@ -102,12 +107,16 @@ func runMandrill(api *MandrillAPI, path string, parameters map[string]interface{
 	}
 	parameters["key"] = api.Key
 	b, err := json.Marshal(parameters)
-	log.Printf("Payload:%s", string(b))
+	if debug {
+		log.Printf("Payload:%s", string(b))
+	}
 	if err != nil {
 		return nil, err
 	}
 	requestUrl := fmt.Sprintf("%s%s", api.endpoint, path)
-	log.Printf("Request URL:%s", requestUrl)
+	if debug {
+		log.Printf("Request URL:%s", requestUrl)
+	}
 	resp, err := http.Post(requestUrl, "application/json", bytes.NewBuffer(b))
 	if err != nil {
 		return nil, err
@@ -117,7 +126,9 @@ func runMandrill(api *MandrillAPI, path string, parameters map[string]interface{
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("Response Body:%s", string(body))
+	if debug {
+		log.Printf("Response Body:%s", string(body))
+	}
 	if err = mandrillErrorCheck(body); err != nil {
 		return nil, err
 	}
