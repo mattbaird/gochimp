@@ -208,6 +208,10 @@ type Var struct {
 	Content string `json:"content"`
 }
 
+func NewVar(name string, content string) *Var {
+	return &Var{Name: name, Content: content}
+}
+
 type Recipient struct {
 	Email string `json:"email"`
 	Name  string `json:"name"`

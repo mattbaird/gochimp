@@ -152,6 +152,40 @@ func TestTemplatePublish(t *testing.T) {
 	mandrill.TemplateDelete("publishTest")
 }
 
+func TestTemplateRender(t *testing.T) {
+	//make sure it's freshly added
+	mandrill.TemplateDelete("renderTest")
+	mandrill.TemplateAdd("renderTest", "*|MC:SUBJECT|*", true)
+	//weak - should check results
+	mergeVars := []Var{*NewVar("SUBJECT", "Hello, welcome")}
+	result, err := mandrill.TemplateRender("renderTest", nil, mergeVars)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	// mandrill adds DOCTYPE
+	if result != "<!DOCTYPE html>\nHello, welcome" {
+		t.Errorf("Rendered Result incorrect, expecting %s, got %s", "<!DOCTYPE html>Hello, welcome", result)
+	}
+
+}
+
+func TestTemplateRender2(t *testing.T) {
+	//make sure it's freshly added
+	mandrill.TemplateDelete("renderTest")
+	mandrill.TemplateAdd("renderTest", "<div mc:edit=\"std_content00\"></div>", true)
+	//weak - should check results
+	templateContent := []Var{*NewVar("std_content00", "Hello, welcome")}
+	result, err := mandrill.TemplateRender("renderTest", templateContent, nil)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	// mandrill adds DOCTYPE
+	if result != "<!DOCTYPE html>\n<div>Hello, welcome</div>" {
+		t.Errorf("Rendered Result incorrect, expecting %s, got %s", "<!DOCTYPE html>\n<div>Hello, welcome</div>", result)
+	}
+
+}
+
 func readTemplate(path string) string {
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
