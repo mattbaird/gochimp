@@ -82,7 +82,16 @@ func TestTemplateAdd(t *testing.T) {
 	if err == nil {
 		t.Error("Should have error'd on duplicate template")
 	}
+}
 
+func TestTemplateInfo(t *testing.T) {
+	template, err := mandrill.TemplateInfo(testTemplateName)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	if template.Name != "test_transactional_template" {
+		t.Errorf("Wrong template name, expecting %s, got %s", testTemplateName, template.Name)
+	}
 }
 
 func readTemplate(path string) string {
