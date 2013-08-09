@@ -126,13 +126,13 @@ type Message struct {
 	FromName                string              `json:"from_name"`
 	To                      []Recipient         `json:"to"`
 	Headers                 map[string]string   `json:"headers,omitempty"`
-	TrackOpens              bool                `json:"track_opens"`
-	TrackClicks             bool                `json:"track_clicks"`
-	AutoText                bool                `json:"auto_text"`
-	UrlStripQS              bool                `json:"url_strip_qs"`
-	PreserveRecipients      bool                `json:"preserve_recipients"`
+	TrackOpens              bool                `json:"track_opens,omitempty"`
+	TrackClicks             bool                `json:"track_clicks,omitempty"`
+	AutoText                bool                `json:"auto_text,omitempty"`
+	UrlStripQS              bool                `json:"url_strip_qs,omitempty"`
+	PreserveRecipients      bool                `json:"preserve_recipients,omitempty"`
 	BCCAddress              string              `json:"bcc_address"`
-	Merge                   bool                `json:"merge"`
+	Merge                   bool                `json:"merge,omitempty"`
 	GlobalMergeVars         []Var               `json:"global_merge_vars,omitempty"`
 	MergeVars               []MergeVars         `json:"merge_vars,omitempty"`
 	Tags                    []string            `json:"tags,omitempty"`
