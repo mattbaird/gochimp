@@ -31,13 +31,15 @@ const mandrill_uri string = "mandrillapp.com/api/"
 const mandrill_version string = "1.0"
 
 type MandrillAPI struct {
-	Key      string
-	endpoint string
+	Key       string
+	Transport http.RoundTripper
+	endpoint  string
 }
 
 type ChimpAPI struct {
-	Key      string
-	endpoint string
+	Key       string
+	Transport http.RoundTripper
+	endpoint  string
 }
 
 // see https://mandrillapp.com/api/docs/
@@ -47,7 +49,7 @@ func NewMandrill(apiKey string) (*MandrillAPI, error) {
 	u.Scheme = "https"
 	u.Host = mandrill_uri
 	u.Path = mandrill_version
-	return &MandrillAPI{apiKey, u.String()}, nil
+	return &MandrillAPI{Key: apiKey, endpoint: u.String()}, nil
 }
 
 const mailchimp_uri string = "%s.api.mailchimp.com"
@@ -67,7 +69,7 @@ func NewChimp(apiKey string, https bool) (*ChimpAPI, error) {
 	u.Path = mandrill_version
 	u.Host = fmt.Sprintf("%s.api.mailchimp.com", mailchimp_datacenter.FindString(apiKey))
 	u.Path = mailchimp_version
-	return &ChimpAPI{apiKey, u.String() + "?method="}, nil
+	return &ChimpAPI{Key: apiKey, endpoint: u.String() + "?method="}, nil
 }
 
 func runChimp(api *ChimpAPI, path string, parameters map[string]interface{}) ([]byte, error) {
@@ -83,7 +85,8 @@ func runChimp(api *ChimpAPI, path string, parameters map[string]interface{}) ([]
 	if debug {
 		log.Printf("Request URL:%s", requestUrl)
 	}
-	resp, err := http.Post(requestUrl, "application/json", bytes.NewBuffer(b))
+	client := &http.Client{Transport: api.Transport}
+	resp, err := client.Post(requestUrl, "application/json", bytes.NewBuffer(b))
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +120,8 @@ func runMandrill(api *MandrillAPI, path string, parameters map[string]interface{
 	if debug {
 		log.Printf("Request URL:%s", requestUrl)
 	}
-	resp, err := http.Post(requestUrl, "application/json", bytes.NewBuffer(b))
+	client := &http.Client{Transport: api.Transport}
+	resp, err := client.Post(requestUrl, "application/json", bytes.NewBuffer(b))
 	if err != nil {
 		return nil, err
 	}
