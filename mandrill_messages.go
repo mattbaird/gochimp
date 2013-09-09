@@ -128,10 +128,17 @@ type Message struct {
 	Headers                 map[string]string   `json:"headers,omitempty"`
 	TrackOpens              bool                `json:"track_opens,omitempty"`
 	TrackClicks             bool                `json:"track_clicks,omitempty"`
+	ViewContentLink         bool                `json:"view_content_link,omitempty"`
 	AutoText                bool                `json:"auto_text,omitempty"`
+	AutoHtml                bool                `json:"auto_html,omitempty"`
 	UrlStripQS              bool                `json:"url_strip_qs,omitempty"`
+	InlineCss               bool                `json:"inline_css,omitempty"`
 	PreserveRecipients      bool                `json:"preserve_recipients,omitempty"`
-	BCCAddress              string              `json:"bcc_address"`
+	Important               bool                `json:"important,omitempty"`
+	BCCAddress              string              `json:"bcc_address,omitempty"`
+	TrackingDomain          string              `json:"tracking_domain,omitempty"`
+	SigningDomain           string              `json:"signing_domain,omitempty"`
+	ReturnPathDomain        string              `json:"return_path_domain,omitempty"`
 	Merge                   bool                `json:"merge,omitempty"`
 	GlobalMergeVars         []Var               `json:"global_merge_vars,omitempty"`
 	MergeVars               []MergeVars         `json:"merge_vars,omitempty"`
