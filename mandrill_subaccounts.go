@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const subaccounts_list_endpoint string = "/subaccounts/list.json" //Return the senders that have tried to use this account.
+const subaccounts_list_endpoint string = "/subaccounts/list.json"
 const subaccounts_add_endpoint string = "/subaccounts/add.json"
 const subaccounts_info_endpoint string = "/subaccounts/info.json"
 const subaccounts_update_endpoint string = "/subaccounts/update.json"
