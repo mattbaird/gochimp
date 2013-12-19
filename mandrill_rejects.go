@@ -1,16 +1,14 @@
-// Copyright 2012 Matthew Baird
-//
+// Copyright 2013 Matthew Baird
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//
 //     http://www.apache.org/licenses/LICENSE-2.0
-//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package gochimp
 
 import (
@@ -20,12 +18,12 @@ import (
 )
 
 // see https://mandrillapp.com/api/docs/rejects.html
-//Retrieves your email rejection blacklist. You can provide an email address to limit the results. 
-// Returns up to 1000 results. By default, entries that have expired are excluded from the results; 
+//Retrieves your email rejection blacklist. You can provide an email address to limit the results.
+// Returns up to 1000 results. By default, entries that have expired are excluded from the results;
 // set include_expired to true to include them.
 const rejects_list_endpoint string = "/rejects/list.json"
 
-//Deletes an email rejection. There is no limit to how many rejections you can remove from your 
+//Deletes an email rejection. There is no limit to how many rejections you can remove from your
 // blacklist, but keep in mind that each deletion has an affect on your reputation.
 const rejects_delete_endpoint string = "/rejects/delete.json"
 
