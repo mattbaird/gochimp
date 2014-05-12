@@ -214,6 +214,7 @@ func NewVar(name string, content string) *Var {
 type Recipient struct {
 	Email string `json:"email"`
 	Name  string `json:"name"`
+	Type string `json:"type"`
 }
 
 type SendResponse struct {
