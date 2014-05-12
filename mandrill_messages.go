@@ -151,6 +151,13 @@ func (m *Message) String() string {
 	return string(b)
 }
 
+func (m *Message) AddHeader(key, value string) {
+	if m.Headers == nil {
+		m.Headers = make(map[string]string)
+	}
+	m.Headers[key] = value
+}
+
 func (m *Message) AddRecipients(r ...Recipient) {
 	m.To = append(m.To, r...)
 }
