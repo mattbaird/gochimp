@@ -51,13 +51,26 @@ func TestUserSenders(t *testing.T) {
 func TestMessageSending(t *testing.T) {
 	var message Message = Message{Html: "<b>hi there</b>", Text: "hello text", Subject: "Test Mail", FromEmail: user,
 		FromName: user}
-	message.AddRecipients(Recipient{Email: user, Name: user})
+	message.AddRecipients(Recipient{Email: user, Name: user, Type: "to"})
+	message.AddRecipients(Recipient{Email: user, Name: user, Type: "cc"})
+	message.AddRecipients(Recipient{Email: user, Name: user, Type: "bcc"})
 	response, err := mandrill.MessageSend(message, false)
 	if err != nil {
 		t.Error("Error:", err)
 	}
-	if response[0].Email != user {
-		t.Errorf("Wrong email recipient, expecting %s, got %s", user, response[0].Email)
+
+	if len(response) != 3 {
+		t.Errorf("Did not send to all users. Expected 3, got %d", len(response))
+	} else {
+		if response[0].Email != user || response[1].Email != user || response[2].Email != user {
+			t.Errorf(
+				"Wrong email recipient, expecting %s,, got (%s, %s, %s)",
+				user,
+				response[0].Email,
+				response[1].Email,
+				response[2].Email,
+			)
+		}
 	}
 }
 
