@@ -51,26 +51,17 @@ func TestUserSenders(t *testing.T) {
 func TestMessageSending(t *testing.T) {
 	var message Message = Message{Html: "<b>hi there</b>", Text: "hello text", Subject: "Test Mail", FromEmail: user,
 		FromName: user}
-	message.AddRecipients(Recipient{Email: user, Name: user, Type: "to"})
-	message.AddRecipients(Recipient{Email: user, Name: user, Type: "cc"})
-	message.AddRecipients(Recipient{Email: user, Name: user, Type: "bcc"})
+	message.AddRecipients(Recipient{Email: user, Name: user})
 	response, err := mandrill.MessageSend(message, false)
 	if err != nil {
 		t.Error("Error:", err)
 	}
-
-	if len(response) != 3 {
-		t.Errorf("Did not send to all users. Expected 3, got %d", len(response))
-	} else {
-		if response[0].Email != user || response[1].Email != user || response[2].Email != user {
-			t.Errorf(
-				"Wrong email recipient, expecting %s,, got (%s, %s, %s)",
-				user,
-				response[0].Email,
-				response[1].Email,
-				response[2].Email,
-			)
+	if response != nil && len(response) > 0 {
+		if response[0].Email != user {
+			t.Errorf("Wrong email recipient, expecting %s, got %s", user, response[0].Email)
 		}
+	} else {
+		t.Errorf("No response, probably due to API KEY issues")
 	}
 }
 
@@ -143,20 +134,20 @@ func TestTemplatePublish(t *testing.T) {
 		t.Error("Error:", err)
 	}
 	if template.Name != "publishTest" {
-		t.Errorf("Wrong template name, expecting %s, got %s", testTemplateName, template.Name)
+		t.Errorf("Wrong template name, expecting %s, got %v", testTemplateName, template.Name)
 	}
 	if template.PublishCode != "" {
-		t.Errorf("Template should not have a publish code, got %s", template.PublishCode)
+		t.Errorf("Template should not have a publish code, got %v", template.PublishCode)
 	}
 	template, err = mandrill.TemplatePublish("publishTest")
 	if err != nil {
 		t.Error("Error:", err)
 	}
 	if template.Name != "publishTest" {
-		t.Errorf("Wrong template name, expecting %s, got %s", testTemplateName, template.Name)
+		t.Errorf("Wrong template name, expecting %s, got %v", testTemplateName, template.Name)
 	}
 	if template.PublishCode == "" {
-		t.Errorf("Template should have a publish code, got %s", template.PublishCode)
+		t.Errorf("Template should have a publish code, got %v", template.PublishCode)
 	}
 	mandrill.TemplateDelete("publishTest")
 }
@@ -171,9 +162,8 @@ func TestTemplateRender(t *testing.T) {
 	if err != nil {
 		t.Error("Error:", err)
 	}
-	// mandrill adds DOCTYPE
-	if result != "<!DOCTYPE html>\nHello, welcome" {
-		t.Errorf("Rendered Result incorrect, expecting %s, got %s", "<!DOCTYPE html>Hello, welcome", result)
+	if result != "Hello, welcome" {
+		t.Errorf("Rendered Result incorrect, expecting %s, got %v", "Hello, welcome", result)
 	}
 }
 
@@ -187,9 +177,8 @@ func TestTemplateRender2(t *testing.T) {
 	if err != nil {
 		t.Error("Error:", err)
 	}
-	// mandrill adds DOCTYPE
-	if result != "<!DOCTYPE html>\n<div>Hello, welcome</div>" {
-		t.Errorf("Rendered Result incorrect, expecting %s, got %s", "<!DOCTYPE html>\n<div>Hello, welcome</div>", result)
+	if result != "<div>Hello, welcome</div>" {
+		t.Errorf("Rendered Result incorrect, expecting %s, got %s", "<div>Hello, welcome</div>", result)
 	}
 }
 
@@ -229,11 +218,12 @@ func TestSendersList(t *testing.T) {
 	var foundUser = false
 	for i := range results {
 		var info Sender = results[i]
+		fmt.Printf("sender:%v %s", info, info.Address)
 		if info.Address == user {
 			foundUser = true
 		}
 	}
 	if !foundUser {
-		t.Errorf("should have found User %s in [%s] length array", user, len(results))
+		t.Errorf("should have found User %s in [%v] length array", user, len(results))
 	}
 }
