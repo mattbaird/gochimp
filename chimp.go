@@ -18,8 +18,10 @@ import (
 )
 
 type APIError struct {
-	Err  string `json:"error"`
-	Code int
+	Status string `json:"status"`
+	Code   int    `json:"code"`
+	Name   string `json:"name"`
+	Err    string `json:"error"`
 }
 
 func (e APIError) Error() string {

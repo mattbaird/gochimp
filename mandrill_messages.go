@@ -151,13 +151,6 @@ func (m *Message) String() string {
 	return string(b)
 }
 
-func (m *Message) AddHeader(key, value string) {
-	if m.Headers == nil {
-		m.Headers = make(map[string]string)
-	}
-	m.Headers[key] = value
-}
-
 func (m *Message) AddRecipients(r ...Recipient) {
 	m.To = append(m.To, r...)
 }
@@ -221,12 +214,9 @@ func NewVar(name string, content string) *Var {
 type Recipient struct {
 	Email string `json:"email"`
 	Name  string `json:"name"`
-	Type string `json:"type"`
 }
 
 type SendResponse struct {
-	Email          string `json:"email"`
-	Status         string `json:"status"`
-	Id             string `json:"_id"`
-	RejectedReason string `json:"rejected_reason"`
+	Email  string `json:"email"`
+	Status string `json:"status"`
 }

@@ -53,30 +53,24 @@ func NewMandrill(apiKey string) (*MandrillAPI, error) {
 }
 
 const mailchimp_uri string = "%s.api.mailchimp.com"
-const mailchimp_version string = "/2.0/"
+const mailchimp_version string = "/2.0"
 const debug bool = false
 
 var mailchimp_datacenter = regexp.MustCompile("[a-z]+[0-9]+$")
 
-func NewChimp(apiKey string, https bool) (*ChimpAPI, error) {
+func NewChimp(apiKey string, https bool) *ChimpAPI {
 	u := url.URL{}
 	if https {
 		u.Scheme = "https"
 	} else {
 		u.Scheme = "http"
 	}
-	u.Host = mandrill_uri
-	u.Path = mandrill_version
 	u.Host = fmt.Sprintf("%s.api.mailchimp.com", mailchimp_datacenter.FindString(apiKey))
 	u.Path = mailchimp_version
-	return &ChimpAPI{Key: apiKey, endpoint: u.String() + "?method="}, nil
+	return &ChimpAPI{Key: apiKey, endpoint: u.String()}
 }
 
-func runChimp(api *ChimpAPI, path string, parameters map[string]interface{}) ([]byte, error) {
-	if parameters == nil {
-		parameters = make(map[string]interface{})
-	}
-	parameters["key"] = api.Key
+func runChimp(api *ChimpAPI, path string, parameters interface{}) ([]byte, error) {
 	b, err := json.Marshal(parameters)
 	if err != nil {
 		return nil, err
@@ -155,12 +149,15 @@ func parseMandrillJson(api *MandrillAPI, path string, parameters map[string]inte
 	return nil
 }
 
-func parseChimpJson(api *ChimpAPI, method string, parameters map[string]interface{}, retval interface{}) error {
+func parseChimpJson(api *ChimpAPI, method string, parameters interface{}, retval interface{}) error {
 	body, err := runChimp(api, method, parameters)
 	if err != nil {
 		return err
 	}
-	return parseJson(body, retval)
+	if retval != nil {
+		return parseJson(body, retval)
+	}
+	return nil
 }
 
 type JsonAlterer interface {
