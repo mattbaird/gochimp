@@ -122,8 +122,8 @@ type Message struct {
 	FromName                string              `json:"from_name"`
 	To                      []Recipient         `json:"to"`
 	Headers                 map[string]string   `json:"headers,omitempty"`
-	TrackOpens              bool                `json:"track_opens,omitempty"`
-	TrackClicks             bool                `json:"track_clicks,omitempty"`
+	TrackOpens              bool                `json:"track_opens"`
+	TrackClicks             bool                `json:"track_clicks"`
 	ViewContentLink         bool                `json:"view_content_link,omitempty"`
 	AutoText                bool                `json:"auto_text,omitempty"`
 	AutoHtml                bool                `json:"auto_html,omitempty"`
