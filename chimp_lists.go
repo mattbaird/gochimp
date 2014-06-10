@@ -34,7 +34,7 @@ func (a *ChimpAPI) ListsUnsubscribe(req ListsUnsubscribe) error {
 func (a *ChimpAPI) ListsList(req ListsList) (ListsListResponse, error) {
 	req.ApiKey = a.Key
 	var response ListsListResponse
-	err := parseChimpJson(a, lists_unsubscribe_endpoint, req, &response)
+	err := parseChimpJson(a, lists_list_endpoint, req, &response)
 	return response, err
 }
 
