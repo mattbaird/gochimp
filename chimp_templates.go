@@ -31,9 +31,9 @@ type TemplateListType struct {
 type TemplateListFilter struct {
 	Category           string `json:"category"`
 	FolderId           string `json:"folder_id"`
-	IncludeInactive    bool   `json:"include_inactive "`
-	InactiveOnly       bool   `json:"inactive_only "`
-	IncludeDragAndDrop bool   `json:"include_drag_and_drop "`
+	IncludeInactive    bool   `json:"include_inactive"`
+	InactiveOnly       bool   `json:"inactive_only"`
+	IncludeDragAndDrop bool   `json:"include_drag_and_drop"`
 }
 
 type UserTemplate struct {
