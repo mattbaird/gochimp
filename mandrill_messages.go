@@ -139,6 +139,7 @@ type Message struct {
 	GlobalMergeVars         []Var               `json:"global_merge_vars,omitempty"`
 	MergeVars               []MergeVars         `json:"merge_vars,omitempty"`
 	Tags                    []string            `json:"tags,omitempty"`
+	Subaccount              string              `json:"subaccount,omitempty"`
 	GoogleAnalyticsDomains  []string            `json:"google_analytics_domains,omitempty"`
 	GoogleAnalyticsCampaign []string            `json:"google_analytics_campaign,omitempty"`
 	Metadata                []map[string]string `json:"metadata,omitempty"`
