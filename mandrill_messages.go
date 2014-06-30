@@ -188,6 +188,7 @@ func (m *Message) AddMetadata(key, value string) {
 		m.Metadata = make(map[string]string)
 	}
 	m.Metadata[key] = value
+}
 
 func (m *Message) AddRecipientMetadata(metadata ...RecipientMetaData) {
 	m.RecipientMetadata = append(m.RecipientMetadata, metadata...)
