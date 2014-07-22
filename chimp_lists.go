@@ -94,23 +94,23 @@ type ListStat struct {
 }
 
 type ListData struct {
-	Id                string     `json:"id"`
-	WebId             string     `json:"web_id"`
-	Name              string     `json:"name"`
-	DateCreated       string     `json:"date_created"`
-	EmailTypeOption   string     `json:"email_type_option"`
-	UseAwesomeBar     bool       `json:"use_awesomebar"`
-	DefaultFromName   string     `json:"default_from_name"`
-	DefaultFromEmail  string     `json:"default_from_email"`
-	DefaultSubject    string     `json:"default_subject"`
-	DefaultLanguage   string     `json:"default_language"`
-	ListRating        float64    `json:"list_rating"`
-	SubscribeShortUrl string     `json:"subscribe_url_short"`
-	SubscribeLongUrl  string     `json:"subscribe_url_long"`
-	BeamerAddress     string     `json:"beamer_address"`
-	Visibility        string     `json:"visibility"`
-	Stats             []ListStat `json:"stats"`
-	Modules           []string   `json:"modules"`
+	Id                string   `json:"id"`
+	WebId             int      `json:"web_id"`
+	Name              string   `json:"name"`
+	DateCreated       string   `json:"date_created"`
+	EmailTypeOption   bool     `json:"email_type_option"`
+	UseAwesomeBar     bool     `json:"use_awesomebar"`
+	DefaultFromName   string   `json:"default_from_name"`
+	DefaultFromEmail  string   `json:"default_from_email"`
+	DefaultSubject    string   `json:"default_subject"`
+	DefaultLanguage   string   `json:"default_language"`
+	ListRating        float64  `json:"list_rating"`
+	SubscribeShortUrl string   `json:"subscribe_url_short"`
+	SubscribeLongUrl  string   `json:"subscribe_url_long"`
+	BeamerAddress     string   `json:"beamer_address"`
+	Visibility        string   `json:"visibility"`
+	Stats             ListStat `json:"stats"`
+	Modules           []string `json:"modules"`
 }
 
 type ListError struct {
@@ -127,11 +127,11 @@ type ListsListResponse struct {
 
 type ListsList struct {
 	ApiKey        string     `json:"apikey"`
-	Filters       ListFilter `json:"filters"`
-	Start         int        `json:"start"`
-	Limit         int        `json:"limit"`
-	SortField     string     `json:"sort_field"`
-	SortDirection string     `json:"sort_direction"`
+	Filters       ListFilter `json:"filters,omitempty"`
+	Start         int        `json:"start,omitempty"`
+	Limit         int        `json:"limit,omitempty"`
+	SortField     string     `json:"sort_field,omitempty"`
+	SortDirection string     `json:"sort_direction,omitempty"`
 }
 
 type UpdateMember struct {

@@ -54,7 +54,7 @@ func NewMandrill(apiKey string) (*MandrillAPI, error) {
 
 const mailchimp_uri string = "%s.api.mailchimp.com"
 const mailchimp_version string = "/2.0"
-const debug bool = false
+const debug bool = true
 
 var mailchimp_datacenter = regexp.MustCompile("[a-z]+[0-9]+$")
 
@@ -167,9 +167,9 @@ type JsonAlterer interface {
 func parseJson(body []byte, retval interface{}) error {
 	switch r := retval.(type) {
 	case JsonAlterer:
-		json.Unmarshal(r.alterJson(body), retval)
+		return json.Unmarshal(r.alterJson(body), retval)
 	default:
-		json.Unmarshal(body, retval)
+		return json.Unmarshal(body, retval)
 	}
 	return nil
 }
