@@ -54,7 +54,7 @@ func NewMandrill(apiKey string) (*MandrillAPI, error) {
 
 const mailchimp_uri string = "%s.api.mailchimp.com"
 const mailchimp_version string = "/2.0"
-const debug bool = true
+const debug bool = false
 
 var mailchimp_datacenter = regexp.MustCompile("[a-z]+[0-9]+$")
 
