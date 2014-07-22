@@ -15,8 +15,11 @@ import (
 	"fmt"
 )
 
-// see https://mandrillapp.com/api/docs/messages.html
-const get_content_endpoint string = "/campaigns/content.%s" // Get the content (both html and text) for a campaign either as it would appear in the campaign archive or as the raw, original content
+const (
+	get_content_endpoint     string = "/campaigns/content.%s"
+	campaign_create_endpoint string = "/campaigns/create.json"
+	campaign_send_endpoint   string = "/campaigns/send.json"
+)
 
 func (a *ChimpAPI) getContent(apiKey string, cid string, options map[string]interface{}, contentFormat string) ([]SendResponse, error) {
 	var response []SendResponse
@@ -26,4 +29,126 @@ func (a *ChimpAPI) getContent(apiKey string, cid string, options map[string]inte
 	params["options"] = options
 	err := parseChimpJson(a, fmt.Sprintf(get_content_endpoint, contentFormat), params, &response)
 	return response, err
+}
+
+func (a *ChimpAPI) CampaignCreate(req CampaignCreate) (CampaignCreateResponse, error) {
+	req.ApiKey = a.Key
+	var response CampaignCreateResponse
+	err := parseChimpJson(a, campaign_create_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) CampaignSend(cid string) (CampaignSendResponse, error) {
+	req := campaignSend{
+		ApiKey:     a.Key,
+		CampaignId: cid,
+	}
+	var response CampaignSendResponse
+	err := parseChimpJson(a, campaign_send_endpoint, req, &response)
+	return response, err
+}
+
+type campaignSend struct {
+	ApiKey     string `json:"apikey"`
+	CampaignId string `json:"cid"`
+}
+
+type CampaignSendResponse struct {
+	Complete bool `json:"complete"`
+}
+
+type CampaignCreate struct {
+	ApiKey  string                `json:"apikey"`
+	Type    string                `json:"type"`
+	Options CampaignCreateOptions `json:"options"`
+	Content CampaignCreateContent `json:"content"`
+}
+
+type CampaignCreateOptions struct {
+	// ListID is the list to send this campaign to
+	ListID string `json:"list_id"`
+
+	// Subject is the subject line for your campaign message
+	Subject string `json:"subject"`
+
+	// FromEmail is the From: email address for your campaign message
+	FromEmail string `json:"from_email"`
+
+	// FromName is the From: name for your campaign message (not an email address)
+	FromName string `json:"from_name"`
+
+	// ToName is the To: name recipients will see (not email address)
+	ToName string `json:"to_name"`
+}
+
+type CampaignCreateContent struct {
+	// HTML is the raw/pasted HTML content for the campaign
+	HTML string `json:"html"`
+
+	// When using a template instead of raw HTML, each key
+	// in the map should be the unique mc:edit area name from
+	// the template.
+	Sections map[string]string `json:"sections,omitempty"`
+
+	// Text is the plain-text version of the body
+	Text string `json:"text"`
+
+	// MailChimp will pull in content from this URL. Note,
+	// this will override any other content options - for lists
+	// with Email Format options, you'll need to turn on
+	// generate_text as well
+	URL string `json:"url,omitempty"`
+
+	// A Base64 encoded archive file for MailChimp to import all
+	// media from. Note, this will override any other content
+	// options - for lists with Email Format options, you'll
+	// need to turn on generate_text as well
+	Archive string `json:"archive,omitempty"`
+
+	// ArchiveType only applies to the Archive field. Supported
+	// formats are: zip, tar.gz, tar.bz2, tar, tgz, tbz.
+	// If not included, we will default to zip
+	ArchiveType string `json:"archive_options,omitempty"`
+}
+
+type CampaignCreateResponse struct {
+	Id                 string `json:"id"`
+	WebId              int    `json:"web_id"`
+	ListId             string `json:"list_id"`
+	FolderId           int    `json:"folder_id"`
+	TemplateId         int    `json:"template_id"`
+	ContentType        string `json:"content_type"`
+	ContentEditedBy    string `json:"content_edited_by"`
+	Title              string `json:"title"`
+	Type               string `json:"type"`
+	CreateTime         string `json:"create_time"`
+	SendTime           string `json:"send_time"`
+	ContentUpdatedTime string `json:"content_updated_time"`
+	Status             string `json:"status"`
+	FromName           string `json:"from_name"`
+	FromEmail          string `json:"from_email"`
+	Subject            string `json:"subject"`
+	ToName             string `json:"to_name"`
+	ArchiveURL         string `json:"archive_url"`
+	ArchiveURLLong     string `json:"archive_url_long"`
+	EmailsSent         int    `json:"emails_sent"`
+	Analytics          string `json:"analytics"`
+	AnalyticsTag       string `json:"analytics_tag"`
+	InlineCSS          bool   `json:"inline_css"`
+	Authenticate       bool   `json:authenticate"`
+	Ecommm360          bool   `json:"ecomm360"`
+	AutoTweet          bool   `json:"auto_tweet"`
+	AutoFacebookPort   string `json:"auto_fb_post"`
+	AutoFooter         bool   `json:"auto_footer"`
+	Timewarp           bool   `json:"timewarp"`
+	//TimewarpSchedule "timewarp_schedule":null,
+	//"tracking":{"html_clicks":true,"text_clicks":true,"opens":true},
+	//"parent_id":"",
+	//"is_child":false,
+	//"tests_sent":0,
+	//"tests_remain":12,
+	//"segment_text":"No segment used",
+	//"segment_opts":[],
+	//"saved_segment":[],
+	//"type_opts":[]
 }

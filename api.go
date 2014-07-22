@@ -167,9 +167,9 @@ type JsonAlterer interface {
 func parseJson(body []byte, retval interface{}) error {
 	switch r := retval.(type) {
 	case JsonAlterer:
-		json.Unmarshal(r.alterJson(body), retval)
+		return json.Unmarshal(r.alterJson(body), retval)
 	default:
-		json.Unmarshal(body, retval)
+		return json.Unmarshal(body, retval)
 	}
 	return nil
 }
