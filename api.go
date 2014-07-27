@@ -27,8 +27,10 @@ import (
 	"strconv"
 )
 
-const mandrill_uri string = "mandrillapp.com/api/"
-const mandrill_version string = "1.0"
+const (
+      mandrill_uri     = "mandrillapp.com/api/"
+      mandrill_version = "1.0"
+)
 
 type MandrillAPI struct {
 	Key       string
