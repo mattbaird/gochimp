@@ -238,7 +238,7 @@ type CampaignResponse struct {
 	Tracking           CampaignTracking `json:"tracking"`
 	ParentId           string           `json:"parent_id"`
 	IsChild            bool             `json:"is_child"`
-	TestsSent          int              `json:"tests_sent"`
+	TestsSent          string           `json:"tests_sent"`
 	TestsRemaining     int              `json:"tests_remain"`
 	SegmentText        string           `json:"segment_text"`
 }
