@@ -32,9 +32,9 @@ func (a *ChimpAPI) getContent(apiKey string, cid string, options map[string]inte
 	return response, err
 }
 
-func (a *ChimpAPI) CampaignCreate(req CampaignCreate) (CampaignCreateResponse, error) {
+func (a *ChimpAPI) CampaignCreate(req CampaignCreate) (CampaignResponse, error) {
 	req.ApiKey = a.Key
-	var response CampaignCreateResponse
+	var response CampaignResponse
 	err := parseChimpJson(a, campaign_create_endpoint, req, &response)
 	return response, err
 }
@@ -57,6 +57,8 @@ func (a *ChimpAPI) CampaignList(req CampaignList) (CampaignListResponse, error) 
 }
 
 type CampaignListResponse struct {
+	Total     int                `json:"total"`
+	Campaigns []CampaignResponse `json:"data"`
 }
 
 type CampaignList struct {
@@ -202,7 +204,7 @@ type CampaignCreateContent struct {
 	ArchiveType string `json:"archive_options,omitempty"`
 }
 
-type CampaignCreateResponse struct {
+type CampaignResponse struct {
 	Id                 string           `json:"id"`
 	WebId              int              `json:"web_id"`
 	ListId             string           `json:"list_id"`
