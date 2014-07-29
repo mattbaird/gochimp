@@ -112,43 +112,46 @@ type CampaignCreateContent struct {
 }
 
 type CampaignCreateResponse struct {
-	Id                 string `json:"id"`
-	WebId              int    `json:"web_id"`
-	ListId             string `json:"list_id"`
-	FolderId           int    `json:"folder_id"`
-	TemplateId         int    `json:"template_id"`
-	ContentType        string `json:"content_type"`
-	ContentEditedBy    string `json:"content_edited_by"`
-	Title              string `json:"title"`
-	Type               string `json:"type"`
-	CreateTime         string `json:"create_time"`
-	SendTime           string `json:"send_time"`
-	ContentUpdatedTime string `json:"content_updated_time"`
-	Status             string `json:"status"`
-	FromName           string `json:"from_name"`
-	FromEmail          string `json:"from_email"`
-	Subject            string `json:"subject"`
-	ToName             string `json:"to_name"`
-	ArchiveURL         string `json:"archive_url"`
-	ArchiveURLLong     string `json:"archive_url_long"`
-	EmailsSent         int    `json:"emails_sent"`
-	Analytics          string `json:"analytics"`
-	AnalyticsTag       string `json:"analytics_tag"`
-	InlineCSS          bool   `json:"inline_css"`
-	Authenticate       bool   `json:authenticate"`
-	Ecommm360          bool   `json:"ecomm360"`
-	AutoTweet          bool   `json:"auto_tweet"`
-	AutoFacebookPort   string `json:"auto_fb_post"`
-	AutoFooter         bool   `json:"auto_footer"`
-	Timewarp           bool   `json:"timewarp"`
-	//TimewarpSchedule "timewarp_schedule":null,
-	//"tracking":{"html_clicks":true,"text_clicks":true,"opens":true},
-	//"parent_id":"",
-	//"is_child":false,
-	//"tests_sent":0,
-	//"tests_remain":12,
-	//"segment_text":"No segment used",
-	//"segment_opts":[],
-	//"saved_segment":[],
-	//"type_opts":[]
+	Id                 string           `json:"id"`
+	WebId              int              `json:"web_id"`
+	ListId             string           `json:"list_id"`
+	FolderId           int              `json:"folder_id"`
+	TemplateId         int              `json:"template_id"`
+	ContentType        string           `json:"content_type"`
+	ContentEditedBy    string           `json:"content_edited_by"`
+	Title              string           `json:"title"`
+	Type               string           `json:"type"`
+	CreateTime         string           `json:"create_time"`
+	SendTime           string           `json:"send_time"`
+	ContentUpdatedTime string           `json:"content_updated_time"`
+	Status             string           `json:"status"`
+	FromName           string           `json:"from_name"`
+	FromEmail          string           `json:"from_email"`
+	Subject            string           `json:"subject"`
+	ToName             string           `json:"to_name"`
+	ArchiveURL         string           `json:"archive_url"`
+	ArchiveURLLong     string           `json:"archive_url_long"`
+	EmailsSent         int              `json:"emails_sent"`
+	Analytics          string           `json:"analytics"`
+	AnalyticsTag       string           `json:"analytics_tag"`
+	InlineCSS          bool             `json:"inline_css"`
+	Authenticate       bool             `json:authenticate"`
+	Ecommm360          bool             `json:"ecomm360"`
+	AutoTweet          bool             `json:"auto_tweet"`
+	AutoFacebookPort   string           `json:"auto_fb_post"`
+	AutoFooter         bool             `json:"auto_footer"`
+	Timewarp           bool             `json:"timewarp"`
+	TimewarpSchedule   string           `json:"timewarp_schedule,omitempty"`
+	Tracking           CampaignTracking `json:"tracking"`
+	ParentId           string           `json:"parent_id"`
+	IsChild            bool             `json:"is_child"`
+	TestsSent          int              `json:"tests_sent"`
+	TestsRemaining     int              `json:"tests_remain"`
+	SegmentText        string           `json:"segment_text"`
+}
+
+type CampaignTracking struct {
+	HTMLClicks bool `json:"html_clicks"`
+	TextClicks bool `json:"text_clicks"`
+	Opens      bool `json:"opens"`
 }
