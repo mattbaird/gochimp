@@ -228,7 +228,7 @@ type CampaignResponse struct {
 	Analytics          string           `json:"analytics"`
 	AnalyticsTag       string           `json:"analytics_tag"`
 	InlineCSS          bool             `json:"inline_css"`
-	Authenticate       bool             `json:authenticate"`
+	Authenticate       bool             `json:"authenticate"`
 	Ecommm360          bool             `json:"ecomm360"`
 	AutoTweet          bool             `json:"auto_tweet"`
 	AutoFacebookPort   string           `json:"auto_fb_post"`
@@ -238,7 +238,6 @@ type CampaignResponse struct {
 	Tracking           CampaignTracking `json:"tracking"`
 	ParentId           string           `json:"parent_id"`
 	IsChild            bool             `json:"is_child"`
-	TestsSent          string           `json:"tests_sent"`
 	TestsRemaining     int              `json:"tests_remain"`
 	SegmentText        string           `json:"segment_text"`
 }
