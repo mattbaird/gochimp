@@ -21,10 +21,10 @@ const (
 	campaign_send_endpoint   string = "/campaigns/send.json"
 )
 
-func (a *ChimpAPI) getContent(apiKey string, cid string, options map[string]interface{}, contentFormat string) ([]SendResponse, error) {
+func (a *ChimpAPI) getContent(cid string, options map[string]interface{}, contentFormat string) ([]SendResponse, error) {
 	var response []SendResponse
 	var params map[string]interface{} = make(map[string]interface{})
-	params["apikey"] = apiKey
+	params["apikey"] = a.Key
 	params["cid"] = cid
 	params["options"] = options
 	err := parseChimpJson(a, fmt.Sprintf(get_content_endpoint, contentFormat), params, &response)
