@@ -19,6 +19,7 @@ const (
 	get_content_endpoint     string = "/campaigns/content.%s"
 	campaign_create_endpoint string = "/campaigns/create.json"
 	campaign_send_endpoint   string = "/campaigns/send.json"
+	campaign_list_endpoint   string = "/campaigns/list.json"
 )
 
 func (a *ChimpAPI) getContent(cid string, options map[string]interface{}, contentFormat string) ([]SendResponse, error) {
@@ -31,9 +32,9 @@ func (a *ChimpAPI) getContent(cid string, options map[string]interface{}, conten
 	return response, err
 }
 
-func (a *ChimpAPI) CampaignCreate(req CampaignCreate) (CampaignCreateResponse, error) {
+func (a *ChimpAPI) CampaignCreate(req CampaignCreate) (CampaignResponse, error) {
 	req.ApiKey = a.Key
-	var response CampaignCreateResponse
+	var response CampaignResponse
 	err := parseChimpJson(a, campaign_create_endpoint, req, &response)
 	return response, err
 }
@@ -46,6 +47,98 @@ func (a *ChimpAPI) CampaignSend(cid string) (CampaignSendResponse, error) {
 	var response CampaignSendResponse
 	err := parseChimpJson(a, campaign_send_endpoint, req, &response)
 	return response, err
+}
+
+func (a *ChimpAPI) CampaignList(req CampaignList) (CampaignListResponse, error) {
+	req.ApiKey = a.Key
+	var response CampaignListResponse
+	err := parseChimpJson(a, campaign_list_endpoint, req, &response)
+	return response, err
+}
+
+type CampaignListResponse struct {
+	Total     int                `json:"total"`
+	Campaigns []CampaignResponse `json:"data"`
+}
+
+type CampaignList struct {
+	// A valid API Key for your user account. Get by visiting your API dashboard
+	ApiKey string `json:"apikey"`
+
+	// Filters to apply to this query - all are optional:
+	Filter CampaignListFilter `json:"filters,omitempty"`
+
+	// Control paging of campaigns, start results at this campaign #,
+	// defaults to 1st page of data (page 0)
+	Start int `json:"start,omitempty"`
+
+	// Control paging of campaigns, number of campaigns to return with each call, defaults to 25 (max=1000)
+	Limit int `json:"limit,omitempty"`
+
+	// One of "create_time", "send_time", "title", "subject". Invalid values
+	// will fall back on "create_time" - case insensitive.
+	SortField string `json:"sort_field,omitempty"`
+
+	// "DESC" for descending (default), "ASC" for Ascending. Invalid values
+	// will fall back on "DESC" - case insensitive.
+	OrderOrder string `json:"sort_dir,omitempty"`
+}
+
+type CampaignListFilter struct {
+	// Return the campaign using a know campaign_id. Accepts
+	// multiples separated by commas when not using exact matching.
+	CampaignID string `json:"campaign_id,omitempty"`
+
+	// Return the child campaigns using a known parent campaign_id.
+	// Accepts multiples separated by commas when not using exact matching.
+	ParentID string `json:"parent_id,omitempty"`
+
+	// The list to send this campaign to - Get lists using ListList.
+	// Accepts multiples separated by commas when not using exact matching.
+	ListID string `json:"list_id,omitempty"`
+
+	// Only show campaigns from this folder id - get folders using FoldersList.
+	// Accepts multiples separated by commas when not using exact matching.
+	FolderID int `json:"folder_id,omitempty"`
+
+	// Only show campaigns using this template id - get templates using TemplatesList.
+	// Accepts multiples separated by commas when not using exact matching.
+	TemplateID int `json:"template_id,omitempty"`
+
+	// Return campaigns of a specific status - one of "sent", "save", "paused", "schedule", "sending".
+	// Accepts multiples separated by commas when not using exact matching.
+	Status string `json:"status,omitempty"`
+
+	// Return campaigns of a specific type - one of "regular", "plaintext", "absplit", "rss", "auto".
+	// Accepts multiples separated by commas when not using exact matching.
+	Type string `json:"type,omitempty"`
+
+	// Only show campaigns that have this "From Name"
+	FromName string `json:"from_name,omitempty"`
+
+	// Only show campaigns that have this "Reply-to Email"
+	FromEmail string `json:"from_email,omitempty"`
+
+	// Only show campaigns that have this title
+	Title string `json:"title"`
+
+	// Only show campaigns that have this subject
+	Subject string `json:"subject"`
+
+	// Only show campaigns that have been sent since this date/time (in GMT) - -
+	// 24 hour format in GMT, eg "2013-12-30 20:30:00" - if this is invalid the whole call fails
+	SendTimeStart string `json:"sendtime_start,omitempty"`
+
+	// Only show campaigns that have been sent before this date/time (in GMT) - -
+	// 24 hour format in GMT, eg "2013-12-30 20:30:00" - if this is invalid the whole call fails
+	SendTimeEnd string `json:"sendtime_end,omitempty"`
+
+	// Whether to return just campaigns with or without segments
+	UsesSegment bool `json:"uses_segment,omitempty"`
+
+	// Flag for whether to filter on exact values when filtering, or search within content for
+	// filter values - defaults to true. Using this disables the use of any filters that accept multiples.
+	Exact bool `json:"exact,omitempty"`
 }
 
 type campaignSend struct {
@@ -111,44 +204,46 @@ type CampaignCreateContent struct {
 	ArchiveType string `json:"archive_options,omitempty"`
 }
 
-type CampaignCreateResponse struct {
-	Id                 string `json:"id"`
-	WebId              int    `json:"web_id"`
-	ListId             string `json:"list_id"`
-	FolderId           int    `json:"folder_id"`
-	TemplateId         int    `json:"template_id"`
-	ContentType        string `json:"content_type"`
-	ContentEditedBy    string `json:"content_edited_by"`
-	Title              string `json:"title"`
-	Type               string `json:"type"`
-	CreateTime         string `json:"create_time"`
-	SendTime           string `json:"send_time"`
-	ContentUpdatedTime string `json:"content_updated_time"`
-	Status             string `json:"status"`
-	FromName           string `json:"from_name"`
-	FromEmail          string `json:"from_email"`
-	Subject            string `json:"subject"`
-	ToName             string `json:"to_name"`
-	ArchiveURL         string `json:"archive_url"`
-	ArchiveURLLong     string `json:"archive_url_long"`
-	EmailsSent         int    `json:"emails_sent"`
-	Analytics          string `json:"analytics"`
-	AnalyticsTag       string `json:"analytics_tag"`
-	InlineCSS          bool   `json:"inline_css"`
-	Authenticate       bool   `json:authenticate"`
-	Ecommm360          bool   `json:"ecomm360"`
-	AutoTweet          bool   `json:"auto_tweet"`
-	AutoFacebookPort   string `json:"auto_fb_post"`
-	AutoFooter         bool   `json:"auto_footer"`
-	Timewarp           bool   `json:"timewarp"`
-	//TimewarpSchedule "timewarp_schedule":null,
-	//"tracking":{"html_clicks":true,"text_clicks":true,"opens":true},
-	//"parent_id":"",
-	//"is_child":false,
-	//"tests_sent":0,
-	//"tests_remain":12,
-	//"segment_text":"No segment used",
-	//"segment_opts":[],
-	//"saved_segment":[],
-	//"type_opts":[]
+type CampaignResponse struct {
+	Id                 string           `json:"id"`
+	WebId              int              `json:"web_id"`
+	ListId             string           `json:"list_id"`
+	FolderId           int              `json:"folder_id"`
+	TemplateId         int              `json:"template_id"`
+	ContentType        string           `json:"content_type"`
+	ContentEditedBy    string           `json:"content_edited_by"`
+	Title              string           `json:"title"`
+	Type               string           `json:"type"`
+	CreateTime         string           `json:"create_time"`
+	SendTime           string           `json:"send_time"`
+	ContentUpdatedTime string           `json:"content_updated_time"`
+	Status             string           `json:"status"`
+	FromName           string           `json:"from_name"`
+	FromEmail          string           `json:"from_email"`
+	Subject            string           `json:"subject"`
+	ToName             string           `json:"to_name"`
+	ArchiveURL         string           `json:"archive_url"`
+	ArchiveURLLong     string           `json:"archive_url_long"`
+	EmailsSent         int              `json:"emails_sent"`
+	Analytics          string           `json:"analytics"`
+	AnalyticsTag       string           `json:"analytics_tag"`
+	InlineCSS          bool             `json:"inline_css"`
+	Authenticate       bool             `json:"authenticate"`
+	Ecommm360          bool             `json:"ecomm360"`
+	AutoTweet          bool             `json:"auto_tweet"`
+	AutoFacebookPort   string           `json:"auto_fb_post"`
+	AutoFooter         bool             `json:"auto_footer"`
+	Timewarp           bool             `json:"timewarp"`
+	TimewarpSchedule   string           `json:"timewarp_schedule,omitempty"`
+	Tracking           CampaignTracking `json:"tracking"`
+	ParentId           string           `json:"parent_id"`
+	IsChild            bool             `json:"is_child"`
+	TestsRemaining     int              `json:"tests_remain"`
+	SegmentText        string           `json:"segment_text"`
+}
+
+type CampaignTracking struct {
+	HTMLClicks bool `json:"html_clicks"`
+	TextClicks bool `json:"text_clicks"`
+	Opens      bool `json:"opens"`
 }
