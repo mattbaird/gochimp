@@ -142,7 +142,7 @@ type Message struct {
 	Subaccount              string              `json:"subaccount,omitempty"`
 	GoogleAnalyticsDomains  []string            `json:"google_analytics_domains,omitempty"`
 	GoogleAnalyticsCampaign []string            `json:"google_analytics_campaign,omitempty"`
-	Metadata                []map[string]string `json:"metadata,omitempty"`
+	Metadata                map[string]string   `json:"metadata,omitempty"`
 	RecipientMetadata       []RecipientMetaData `json:"recipient_metadata,omitempty"`
 	Attachments             []Attachment        `json:"attachments,omitempty"`
 }
@@ -183,8 +183,11 @@ func (m *Message) AddGoogleAnalyticsCampaign(campaigns ...string) {
 	m.GoogleAnalyticsCampaign = append(m.GoogleAnalyticsCampaign, campaigns...)
 }
 
-func (m *Message) AddMetadata(metadata ...map[string]string) {
-	m.Metadata = append(m.Metadata, metadata...)
+func (m *Message) AddMetadata(key, value string) {
+	if m.Metadata == nil {
+		m.Metadata = make(map[string]string)
+	}
+	m.Metadata[key] = value
 }
 
 func (m *Message) AddRecipientMetadata(metadata ...RecipientMetaData) {
