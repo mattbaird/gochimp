@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"errors"
 	"time"
+	"fmt"
 )
 
 // see https://mandrillapp.com/api/docs/messages.html
@@ -44,6 +45,15 @@ func (a *MandrillAPI) MessageSendTemplate(templateName string, templateContent [
 	params["async"] = async
 	params["template_content"] = templateContent
 	err := parseMandrillJson(a, messages_send_template_endpoint, params, &response)
+	for _, r := range(response) {
+		if r.Status == "rejected" {
+			msg := "email was rejected"
+			if r.RejectedReason != "" {
+				msg = r.RejectedReason
+			}
+			return nil, fmt.Errorf("Unable to send message %s, %s", r.Id, msg)
+		}
+	}
 	return response, err
 }
 
@@ -229,5 +239,5 @@ type SendResponse struct {
 	Email          string `json:"email"`
 	Status         string `json:"status"`
 	Id             string `json:"_id"`
-	RejectedReason string `json:"rejected_reason"`
+	RejectedReason string `json:"reject_reason"`
 }
