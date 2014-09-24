@@ -14,8 +14,8 @@ package gochimp
 import (
 	"encoding/json"
 	"errors"
-	"time"
 	"fmt"
+	"time"
 )
 
 // see https://mandrillapp.com/api/docs/messages.html
@@ -45,7 +45,7 @@ func (a *MandrillAPI) MessageSendTemplate(templateName string, templateContent [
 	params["async"] = async
 	params["template_content"] = templateContent
 	err := parseMandrillJson(a, messages_send_template_endpoint, params, &response)
-	for _, r := range(response) {
+	for _, r := range response {
 		if r.Status == "rejected" {
 			msg := "email was rejected"
 			if r.RejectedReason != "" {
