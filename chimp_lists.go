@@ -17,6 +17,8 @@ const (
 	lists_unsubscribe_endpoint   string = "/lists/unsubscribe.json"
 	lists_list_endpoint          string = "/lists/list.json"
 	lists_update_member_endpoint string = "/lists/update-member.json"
+	lists_members_endpoint       string = "/lists/members.json"
+	lists_member_info_endpoint   string = "/lists/member-info.json"
 )
 
 func (a *ChimpAPI) ListsSubscribe(req ListsSubscribe) (Email, error) {
@@ -41,6 +43,20 @@ func (a *ChimpAPI) ListsList(req ListsList) (ListsListResponse, error) {
 func (a *ChimpAPI) UpdateMember(req UpdateMember) error {
 	req.ApiKey = a.Key
 	return parseChimpJson(a, lists_update_member_endpoint, req, nil)
+}
+
+func (a *ChimpAPI) Members(req ListsMembers) (ListsMembersResponse, error) {
+	req.ApiKey = a.Key
+	var response ListsMembersResponse
+	err := parseChimpJson(a, lists_members_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) MemberInfo(req ListsMemberInfo) (ListsMemberInfoResponse, error) {
+	req.ApiKey = a.Key
+	var response ListsMemberInfoResponse
+	err := parseChimpJson(a, lists_member_info_endpoint, req, &response)
+	return response, err
 }
 
 type ListsUnsubscribe struct {
@@ -131,7 +147,7 @@ type ListsList struct {
 	Start         int        `json:"start,omitempty"`
 	Limit         int        `json:"limit,omitempty"`
 	SortField     string     `json:"sort_field,omitempty"`
-	SortDirection string     `json:"sort_direction,omitempty"`
+	SortDirection string     `json:"sort_dir,omitempty"`
 }
 
 type UpdateMember struct {
@@ -147,4 +163,50 @@ type Email struct {
 	Email string `json:"email"`
 	Euid  string `json:"euid"`
 	Leid  string `json:"leid"`
+}
+
+type ListsMembers struct {
+	ApiKey        string `json:"apikey"`
+	ListId        string `json:"id"`
+	Start         int    `json:"start,omitempty"`
+	Limit         int    `json:"limit,omitempty"`
+	SortField     string `json:"sort_field,omitempty"`
+	SortDirection string `json:"sort_dir,omitempty"`
+}
+
+type ListsMembersResponse struct {
+	Total int          `json:"total"`
+	Data  []MemberInfo `json:"data"`
+}
+
+type ListsMemberInfo struct {
+	ApiKey string  `json:"apikey"`
+	ListId string  `json:"id"`
+	Emails []Email `json:"emails"`
+}
+
+type ListsMemberInfoResponse struct {
+	SuccessCount      int          `json:"success_count"`
+	ErrorCount        int          `json:"error_count"`
+	Errors            []ListError  `json:"errors"`
+	MemberInfoRecords []MemberInfo `json:"data"`
+}
+
+type MemberInfo struct {
+	Email           string                 `json:"email"`
+	Euid            string                 `json:"euid"`
+	EmailType       string                 `json:"email_type"`
+	IpSignup        string                 `json:"ip_signup,omitempty"`
+	TimestampSignup string                 `json:"timestamp_signup,omitempty"`
+	IpOpt           string                 `json:"ip_opt"`
+	TimestampOpt    string                 `json:"timestamp_opt"`
+	MemberRating    int                    `json:"member_rating"`
+	InfoChanged     string                 `json:"info_changed"`
+	Leid            int                    `json:"leid"`
+	Language        string                 `json:"language,omitempty"`
+	ListId          string                 `json:"list_id"`
+	ListName        string                 `json:"list_name"`
+	Merges          map[string]interface{} `json:"merges"`
+	Status          string                 `json:"status"`
+	Timestamp       string                 `json:"timestamp"`
 }
