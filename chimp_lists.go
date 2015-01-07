@@ -13,13 +13,21 @@ package gochimp
 
 // see http://apidocs.mailchimp.com/api/2.0/
 const (
-	lists_subscribe_endpoint     string = "/lists/subscribe.json"
-	lists_unsubscribe_endpoint   string = "/lists/unsubscribe.json"
-	lists_list_endpoint          string = "/lists/list.json"
-	lists_update_member_endpoint string = "/lists/update-member.json"
-	lists_members_endpoint       string = "/lists/members.json"
-	lists_member_info_endpoint   string = "/lists/member-info.json"
+	lists_subscribe_endpoint         string = "/lists/subscribe.json"
+	lists_unsubscribe_endpoint       string = "/lists/unsubscribe.json"
+	lists_list_endpoint              string = "/lists/list.json"
+	lists_update_member_endpoint     string = "/lists/update-member.json"
+	lists_members_endpoint           string = "/lists/members.json"
+	lists_member_info_endpoint       string = "/lists/member-info.json"
+	lists_batch_unsubscribe_endpoint string = "/lists/batch-unsubscribe.json"
 )
+
+func (a *ChimpAPI) BatchUnsubscribe(req BatchUnsubscribe) (BatchResponse, error) {
+	var response BatchResponse
+	req.ApiKey = a.Key
+	err := parseChimpJson(a, lists_batch_unsubscribe_endpoint, req, &response)
+	return response, err
+}
 
 func (a *ChimpAPI) ListsSubscribe(req ListsSubscribe) (Email, error) {
 	var response Email
@@ -57,6 +65,15 @@ func (a *ChimpAPI) MemberInfo(req ListsMemberInfo) (ListsMemberInfoResponse, err
 	var response ListsMemberInfoResponse
 	err := parseChimpJson(a, lists_member_info_endpoint, req, &response)
 	return response, err
+}
+
+type BatchUnsubscribe struct {
+	ApiKey       string  `json:"apikey"`
+	ListId       string  `json:"id"`
+	Batch        []Email `json:"batch"`
+	DeleteMember bool    `json:"delete_member"`
+	SendGoodbye  bool    `json:"send_goodbye"`
+	SendNotify   bool    `json:"send_notify"`
 }
 
 type ListsUnsubscribe struct {
@@ -127,6 +144,18 @@ type ListData struct {
 	Visibility        string   `json:"visibility"`
 	Stats             ListStat `json:"stats"`
 	Modules           []string `json:"modules"`
+}
+
+type BatchResponse struct {
+	Success     int          `json:"success_count"`
+	ErrorCount  int          `json:"error_count"`
+	BatchErrors []BatchError `json:"errors"`
+}
+
+type BatchError struct {
+	Emails Email  `json:"email"`
+	Code   int    `json:"code"`
+	Error  string `json:"error"`
 }
 
 type ListError struct {
