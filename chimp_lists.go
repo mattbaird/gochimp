@@ -195,8 +195,12 @@ type Email struct {
 }
 
 type ListsMembers struct {
-	ApiKey        string `json:"apikey"`
-	ListId        string `json:"id"`
+	ApiKey  string          `json:"apikey"`
+	ListId  string          `json:"id"`
+	Options ListsMembersOpt `json:"opts,omitempty"`
+}
+
+type ListsMembersOpt struct {
 	Start         int    `json:"start,omitempty"`
 	Limit         int    `json:"limit,omitempty"`
 	SortField     string `json:"sort_field,omitempty"`
