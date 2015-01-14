@@ -153,6 +153,7 @@ func parseMandrillJson(api *MandrillAPI, path string, parameters map[string]inte
 
 func parseChimpJson(api *ChimpAPI, method string, parameters interface{}, retval interface{}) error {
 	body, err := runChimp(api, method, parameters)
+
 	if err != nil {
 		return err
 	}

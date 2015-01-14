@@ -10,3 +10,24 @@
 // limitations under the License.
 
 package gochimp
+
+const (
+	helper_inline_css = "/helper/inline-css.json"
+)
+
+func (a *ChimpAPI) InlineCSS(req InlineCSSRequest) (InlineCSSResponse, error) {
+	var response InlineCSSResponse
+	req.ApiKey = a.Key
+	err := parseChimpJson(a, helper_inline_css, req, &response)
+	return response, err
+}
+
+type InlineCSSRequest struct {
+	ApiKey   string `json:"apikey"`
+	HTML     string `json:"html"`
+	StripCSS bool   `json:"strip_html"`
+}
+
+type InlineCSSResponse struct {
+	HTML string `json:"html"`
+}
