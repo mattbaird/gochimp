@@ -11,24 +11,20 @@
 
 package gochimp
 
-import (
-	"fmt"
-)
-
 const (
-	get_content_endpoint     string = "/campaigns/content.%s"
+	get_content_endpoint     string = "/campaigns/content.json"
 	campaign_create_endpoint string = "/campaigns/create.json"
 	campaign_send_endpoint   string = "/campaigns/send.json"
 	campaign_list_endpoint   string = "/campaigns/list.json"
 )
 
-func (a *ChimpAPI) getContent(cid string, options map[string]interface{}, contentFormat string) ([]SendResponse, error) {
-	var response []SendResponse
+func (a *ChimpAPI) GetContent(cid string, options map[string]interface{}) (ContentResponse, error) {
+	var response ContentResponse
 	var params map[string]interface{} = make(map[string]interface{})
 	params["apikey"] = a.Key
 	params["cid"] = cid
 	params["options"] = options
-	err := parseChimpJson(a, fmt.Sprintf(get_content_endpoint, contentFormat), params, &response)
+	err := parseChimpJson(a, get_content_endpoint, params, &response)
 	return response, err
 }
 
@@ -246,4 +242,9 @@ type CampaignTracking struct {
 	HTMLClicks bool `json:"html_clicks"`
 	TextClicks bool `json:"text_clicks"`
 	Opens      bool `json:"opens"`
+}
+
+type ContentResponse struct {
+	Html string `json:"html"`
+	Text string `json:"text"`
 }
