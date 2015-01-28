@@ -197,6 +197,7 @@ type Email struct {
 type ListsMembers struct {
 	ApiKey  string          `json:"apikey"`
 	ListId  string          `json:"id"`
+	Status  string          `json:"status"`
 	Options ListsMembersOpt `json:"opts,omitempty"`
 }
 
