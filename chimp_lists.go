@@ -20,7 +20,15 @@ const (
 	lists_members_endpoint           string = "/lists/members.json"
 	lists_member_info_endpoint       string = "/lists/member-info.json"
 	lists_batch_unsubscribe_endpoint string = "/lists/batch-unsubscribe.json"
+	lists_batch_subscribe_endpoint   string = "/lists/batch-subscribe.json"
 )
+
+func (a *ChimpAPI) BatchSubscribe(req BatchSubscribe) (BatchSubscribeResponse, error) {
+	var response BatchSubscribeResponse
+	req.ApiKey = a.Key
+	err := parseChimpJson(a, lists_batch_subscribe_endpoint, req, &response)
+	return response, err
+}
 
 func (a *ChimpAPI) BatchUnsubscribe(req BatchUnsubscribe) (BatchResponse, error) {
 	var response BatchResponse
@@ -74,6 +82,15 @@ type BatchUnsubscribe struct {
 	DeleteMember bool    `json:"delete_member"`
 	SendGoodbye  bool    `json:"send_goodbye"`
 	SendNotify   bool    `json:"send_notify"`
+}
+
+type BatchSubscribe struct {
+	ApiKey           string        `json:"apikey"`
+	ListId           string        `json:"id"`
+	Batch            []ListsMember `json:"batch"`
+	DoubleOptin      bool          `json:"double_optin"`
+	UpdateExisting   bool          `json:"update_existing"`
+	ReplaceInterests bool          `json:"replace_interests"`
 }
 
 type ListsUnsubscribe struct {
@@ -152,10 +169,26 @@ type BatchResponse struct {
 	BatchErrors []BatchError `json:"errors"`
 }
 
+type BatchSubscribeResponse struct {
+	AddCount    int                    `json:"add_count"`
+	Adds        []Email                `json:"adds"`
+	UpdateCount int                    `json:"update_count"`
+	Updates     []Email                `json:"updates"`
+	ErrorCount  int                    `json:"error_count"`
+	Error       []BatchSubscriberError `json:"error"`
+}
+
 type BatchError struct {
 	Emails Email  `json:"email"`
 	Code   int    `json:"code"`
 	Error  string `json:"error"`
+}
+
+type BatchSubscriberError struct {
+	Emails Email       `json:"email"`
+	Code   int         `json:"code"`
+	Error  string      `json:"error"`
+	Row    interface{} `json:"row"`
 }
 
 type ListError struct {
@@ -198,6 +231,12 @@ type ListsMembers struct {
 	ApiKey  string          `json:"apikey"`
 	ListId  string          `json:"id"`
 	Options ListsMembersOpt `json:"opts,omitempty"`
+}
+
+type ListsMember struct {
+	Email     Email                  `json:"email"`
+	EmailType string                 `json:"emailtype"`
+	MergeVars map[string]interface{} `json:"merge_vars,omitempty"`
 }
 
 type ListsMembersOpt struct {
