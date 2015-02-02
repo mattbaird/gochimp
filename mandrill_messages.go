@@ -232,5 +232,5 @@ type SendResponse struct {
 	Email          string `json:"email"`
 	Status         string `json:"status"`
 	Id             string `json:"_id"`
-	RejectedReason string `json:"rejected_reason"`
+	RejectedReason string `json:"reject_reason"`
 }
