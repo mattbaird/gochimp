@@ -1,7 +1,9 @@
 gochimp
 =======
 
-Go based API for Mailchimp, starting with Mandrill
+Go based API for Mailchimp, starting with Mandrill.
+
+https://godoc.org/github.com/mattbaird/gochimp
 
 to run tests, set a couple env variables:
 ```bash
