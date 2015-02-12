@@ -11,20 +11,36 @@
 
 package gochimp
 
+import (
+	"fmt"
+	"strings"
+)
+
 const (
-	get_content_endpoint     string = "/campaigns/content.json"
+	get_content_endpoint     string = "/campaigns/content.%s"
 	campaign_create_endpoint string = "/campaigns/create.json"
 	campaign_send_endpoint   string = "/campaigns/send.json"
 	campaign_list_endpoint   string = "/campaigns/list.json"
 )
 
-func (a *ChimpAPI) GetContent(cid string, options map[string]interface{}) (ContentResponse, error) {
+func (a *ChimpAPI) GetContentAsXML(cid string, options map[string]interface{}) (ContentResponse, error) {
+	return a.GetContent(cid, options, "xml")
+}
+
+func (a *ChimpAPI) GetContentAsJson(cid string, options map[string]interface{}) (ContentResponse, error) {
+	return a.GetContent(cid, options, "json")
+}
+
+func (a *ChimpAPI) GetContent(cid string, options map[string]interface{}, contentFormat string) (ContentResponse, error) {
 	var response ContentResponse
+	if !strings.EqualFold(strings.ToLower(contentFormat), "xml") && strings.EqualFold(strings.ToLower(contentFormat), "json") {
+		return response, fmt.Errorf("contentFormat should be one of xml or json, you passed an unsupported value %s", contentFormat)
+	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["apikey"] = a.Key
 	params["cid"] = cid
 	params["options"] = options
-	err := parseChimpJson(a, get_content_endpoint, params, &response)
+	err := parseChimpJson(a, fmt.Sprintf(get_content_endpoint, contentFormat), params, &response)
 	return response, err
 }
 
