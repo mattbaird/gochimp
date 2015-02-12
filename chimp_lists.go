@@ -175,7 +175,7 @@ type BatchSubscribeResponse struct {
 	UpdateCount int                    `json:"update_count"`
 	Updates     []Email                `json:"updates"`
 	ErrorCount  int                    `json:"error_count"`
-	Error       []BatchSubscriberError `json:"error"`
+	Error       []BatchSubscriberError `json:"errors"`
 }
 
 type BatchError struct {
