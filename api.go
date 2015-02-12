@@ -174,5 +174,4 @@ func parseJson(body []byte, retval interface{}) error {
 	default:
 		return json.Unmarshal(body, retval)
 	}
-	return nil
 }
