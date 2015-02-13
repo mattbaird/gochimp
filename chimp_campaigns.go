@@ -173,6 +173,10 @@ type CampaignCreateOptions struct {
 	// ListID is the list to send this campaign to
 	ListID string `json:"list_id"`
 
+	// TemplateID is the user-created template from which the HTML
+	// content of the campaign should be created
+	TemplateID string `json:"template_id"`
+
 	// Subject is the subject line for your campaign message
 	Subject string `json:"subject"`
 
