@@ -14,7 +14,6 @@ package gochimp
 import (
 	"errors"
 	"log"
-	"time"
 )
 
 // see https://mandrillapp.com/api/docs/rejects.html

@@ -2,7 +2,6 @@ package gochimp
 
 import (
 	"errors"
-	"time"
 )
 
 const subaccounts_list_endpoint string = "/subaccounts/list.json"

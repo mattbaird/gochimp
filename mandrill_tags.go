@@ -13,7 +13,6 @@ package gochimp
 
 import (
 	"errors"
-	"time"
 )
 
 // see https://mandrillapp.com/api/docs/tags.html

@@ -13,7 +13,6 @@ package gochimp
 
 import (
 	"encoding/json"
-	"time"
 )
 
 // see https://mandrillapp.com/api/docs/users.html
