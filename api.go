@@ -147,7 +147,10 @@ func parseMandrillJson(api *MandrillAPI, path string, parameters map[string]inte
 	if err != nil {
 		return err
 	}
-	json.Unmarshal(body, retval)
+	if err := json.Unmarshal(body, retval); err != nil {
+		return err
+	}
+
 	return nil
 }
 

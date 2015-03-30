@@ -14,7 +14,6 @@ package gochimp
 import (
 	"errors"
 	"log"
-	"time"
 )
 
 // see https://mandrillapp.com/api/docs/templates.html
@@ -138,10 +137,10 @@ func execute(a *MandrillAPI, params map[string]interface{}, endpoint string) (Te
 }
 
 type Template struct {
-	Name        string    `json:"name"`
-	Code        string    `json:"code"`
-	PublishName string    `json:"publish_name"`
-	PublishCode string    `json:"publish_code"`
-	CreatedAt   time.Time `json:"published_at"`
-	UpdateAt    time.Time `json:"updated_at"`
+	Name        string  `json:"name"`
+	Code        string  `json:"code"`
+	PublishName string  `json:"publish_name"`
+	PublishCode string  `json:"publish_code"`
+	CreatedAt   APITime `json:"published_at"`
+	UpdateAt    APITime `json:"updated_at"`
 }
