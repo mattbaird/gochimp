@@ -64,28 +64,33 @@ func (a *MandrillAPI) TagAllTimeSeries() ([]TimeSeries, error) {
 }
 
 type TimeSeries struct {
-	Time        time.Duration `json:"time"`
-	Sent        int32         `json:"sent"`
-	HardBounces int32         `json:"hard_bounces"`
-	SoftBounces int32         `json:"soft_bounces"`
-	Rejects     int32         `json:"rejects"`
-	Complaints  int32         `json:"complaints"`
-	Unsubs      int32         `json:"unsubs"`
-	Opens       int32         `json:"opens"`
-	Clicks      int32         `json:"clicks"`
+	Time         APITime `json:"time"`
+	Sent         int32   `json:"sent"`
+	HardBounces  int32   `json:"hard_bounces"`
+	SoftBounces  int32   `json:"soft_bounces"`
+	Rejects      int32   `json:"rejects"`
+	Complaints   int32   `json:"complaints"`
+	Unsubs       int32   `json:"unsubs"`
+	Opens        int32   `json:"opens"`
+	UniqueOpens  int32   `json:"unique_opens"`
+	Clicks       int32   `json:"clicks"`
+	UniqueClicks int32   `json:"unique_clicks"`
 }
 
 type TagInfo struct {
-	Tag         string `json:"tag"`
-	Sent        int32  `json:"sent"`
-	HardBounces int32  `json:"hard_bounces"`
-	SoftBounces int32  `json:"soft_bounces"`
-	Rejects     int32  `json:"rejects"`
-	Complaints  int32  `json:"complaints"`
-	Unsubs      int32  `json:"unsubs"`
-	Opens       int32  `json:"opens"`
-	Clicks      int32  `json:"clicks"`
-	Stats       []Stat `json:"stats"`
+	Tag          string `json:"tag"`
+	Reputation   int32  `json:"reputation,omitempty"`
+	Sent         int32  `json:"sent"`
+	HardBounces  int32  `json:"hard_bounces"`
+	SoftBounces  int32  `json:"soft_bounces"`
+	Rejects      int32  `json:"rejects"`
+	Complaints   int32  `json:"complaints"`
+	Unsubs       int32  `json:"unsubs"`
+	Opens        int32  `json:"opens"`
+	Clicks       int32  `json:"clicks"`
+	UniqueOpens  int32  `json:"unique_opens"`
+	UniqueClicks int32  `json:"unique_clicks"`
+	Stats        []Stat `json:"stats,omitempty"`
 }
 
 type ListResponse struct {

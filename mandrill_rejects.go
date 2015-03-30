@@ -61,10 +61,12 @@ func (a *MandrillAPI) RejectsDelete(email string) (bool, error) {
 }
 
 type Reject struct {
-	Email     string            `json:"email"`
-	Reason    int32             `json:"reason"`
-	CreatedAt time.Time         `json:"created_at"`
-	ExpiresAt time.Time         `json:"expires_at"`
-	Expired   bool              `json:"expired"`
-	Sender    map[string]string `json:"sender"`
+	Email       string  `json:"email"`
+	Reason      string  `json:"reason"`
+	Detail      string  `json:"detail"`
+	CreatedAt   APITime `json:"created_at"`
+	LastEventAt APITime `json:"last_event_at"`
+	ExpiresAt   APITime `json:"expires_at"`
+	Expired     bool    `json:"expired"`
+	Sender      Sender  `json:"sender"`
 }

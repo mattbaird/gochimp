@@ -40,7 +40,7 @@ func (a *MandrillAPI) UserSenders() ([]Sender, error) {
 
 type Info struct {
 	Username    string          `json:"username"`
-	CreatedAt   time.Time       `json:"created_at"`
+	CreatedAt   APITime         `json:"created_at"`
 	PublicId    string          `json:"public_id"`
 	Reputation  int             `json:"reputation"`
 	HourlyQuota int             `json:"hourly_quota"`
@@ -62,16 +62,19 @@ type Stat struct {
 }
 
 type Sender struct {
-	Address     string    `json:"address"`
-	CreatedAt   time.Time `json:"created_at"`
-	Sent        int       `json:"sent"`
-	HardBounces int       `json:"hard_bounces"`
-	SoftBounces int       `json:"soft_bounces"`
-	Rejects     int       `json:"rejects"`
-	Complaints  int       `json:"complaints"`
-	Unsubs      int       `json:"unsubs"`
-	Opens       int       `json:"opens"`
-	Clicks      int       `json:"clicks"`
+	Sent         int     `json:"sent"`
+	HardBounces  int     `json:"hard_bounces"`
+	SoftBounces  int     `json:"soft_bounces"`
+	Rejects      int     `json:"rejects"`
+	Complaints   int     `json:"complaints"`
+	Unsubs       int     `json:"unsubs"`
+	Opens        int     `json:"opens"`
+	Clicks       int     `json:"clicks"`
+	UniqueOpens  int     `json:"unique_opens"`
+	UniqueClicks int     `json:"unique_clicks"`
+	Reputation   int     `json:"reputation"`
+	Address      string  `json:"address"`
+	CreatedAt    APITime `json:"created_at"`
 }
 
 func (s *Sender) String() string {

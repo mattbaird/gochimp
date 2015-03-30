@@ -27,20 +27,20 @@ type SubaccountTimeSeries struct {
 }
 
 type SubaccountInfo struct {
-	Id          string    `json:"id"`
-	Name        string    `json:"name"`
-	Notes       string    `json:"notes"`
-	CustomQuota int32     `json:"custom_quota"`
-	Status      string    `json:"status"`
-	Reputation  int32     `json:"reputation"`
-	CreatedAt   time.Time `json:"created_at"`
-	FirstSentAt time.Time `json:"first_sent_at"`
-	SentWeekly  int32     `json:"sent_weekly"`
-	SentMonthly int32     `json:"sent_monthly"`
-	SentTotal   int32     `json:"sent_total"`
-	SentHourly  int32     `json:"sent_hourly"`
-	HourlyQuota int32     `json:"hourly_quota"`
-	Last30Days  SubaccountTimeSeries
+	Id          string               `json:"id"`
+	Name        string               `json:"name"`
+	Notes       string               `json:"notes"`
+	CustomQuota int32                `json:"custom_quota"`
+	Status      string               `json:"status"`
+	Reputation  int32                `json:"reputation"`
+	CreatedAt   APITime              `json:"created_at"`
+	FirstSentAt APITime              `json:"first_sent_at"`
+	SentWeekly  int32                `json:"sent_weekly"`
+	SentMonthly int32                `json:"sent_monthly"`
+	SentTotal   int32                `json:"sent_total"`
+	SentHourly  int32                `json:"sent_hourly"`
+	HourlyQuota int32                `json:"hourly_quota"`
+	Last30Days  SubaccountTimeSeries `json:"last_30_days"`
 }
 
 func (a *MandrillAPI) SubaccountList() (response []SubaccountInfo, err error) {

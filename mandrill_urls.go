@@ -54,15 +54,15 @@ func (a *MandrillAPI) UrlTimeSeries(url string) ([]UrlInfo, error) {
 }
 
 type UrlTimeSeriesInfo struct {
-	Time         time.Duration `json:"time"`
-	Send         int           `json:"sent"`
-	Clicks       int           `json:"clicks"`
-	UniqueClicks int           `json:"unique_clicks"`
+	Time         APITime `json:"time"`
+	Sent         int     `json:"sent"`
+	Clicks       int     `json:"clicks"`
+	UniqueClicks int     `json:"unique_clicks"`
 }
 
 type UrlInfo struct {
 	Url          string `json:"url"`
-	Send         int    `json:"sent"`
+	Sent         int    `json:"sent"`
 	Clicks       int    `json:"clicks"`
 	UniqueClicks int    `json:"unique_clicks"`
 }

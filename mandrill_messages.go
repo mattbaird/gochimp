@@ -24,6 +24,7 @@ const messages_search_endpoint string = "/messages/search.json"               //
 const messages_parse_endpoint string = "/messages/parse.json"                 // Parse the full MIME document for an email message, returning the content of the message broken into its constituent pieces
 const messages_send_raw_endpoint string = "/messages/send-raw.json"           // Take a raw MIME document for a message, and send it exactly as if it were sent over the SMTP protocol
 
+//todo: add send_at, ip_pool and key to messagesend
 func (a *MandrillAPI) MessageSend(message Message, async bool) ([]SendResponse, error) {
 	var response []SendResponse
 	var params map[string]interface{} = make(map[string]interface{})
@@ -106,12 +107,12 @@ type SearchResponse struct {
 }
 
 type SearchRequest struct {
-	Query    string    `json:"query"`
-	DateFrom time.Time `json:"date_from"`
-	DateTo   time.Time `json:"date_to"`
-	Tags     []string  `json:"tags"`
-	Senders  []string  `json:"senders"`
-	Limit    int       `json:"limit"`
+	Query    string   `json:"query"`
+	DateFrom APITime  `json:"date_from"`
+	DateTo   APITime  `json:"date_to"`
+	Tags     []string `json:"tags"`
+	Senders  []string `json:"senders"`
+	Limit    int      `json:"limit"`
 }
 
 type Message struct {
@@ -122,6 +123,7 @@ type Message struct {
 	FromName                string              `json:"from_name"`
 	To                      []Recipient         `json:"to"`
 	Headers                 map[string]string   `json:"headers,omitempty"`
+	Important               bool                `json:"important,omitempty"`
 	TrackOpens              bool                `json:"track_opens"`
 	TrackClicks             bool                `json:"track_clicks"`
 	ViewContentLink         bool                `json:"view_content_link,omitempty"`
@@ -130,7 +132,6 @@ type Message struct {
 	UrlStripQS              bool                `json:"url_strip_qs,omitempty"`
 	InlineCss               bool                `json:"inline_css,omitempty"`
 	PreserveRecipients      bool                `json:"preserve_recipients,omitempty"`
-	Important               bool                `json:"important,omitempty"`
 	BCCAddress              string              `json:"bcc_address,omitempty"`
 	TrackingDomain          string              `json:"tracking_domain,omitempty"`
 	SigningDomain           string              `json:"signing_domain,omitempty"`
