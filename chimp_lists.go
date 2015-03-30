@@ -138,9 +138,9 @@ type ListStat struct {
 	MergeVarCount             float64 `json:"merge_var_count"`
 	AvgSubRate                float64 `json:"avg_sub_rate"`
 	AvgUnsubRate              float64 `json:"avg_unsub_rate"`
-	TargetSubRate             float64 `json:"target_sub_rate "`
-	OpenRate                  float64 `json:"open_rate "`
-	ClickRate                 float64 `json:"click_rate "`
+	TargetSubRate             float64 `json:"target_sub_rate"`
+	OpenRate                  float64 `json:"open_rate"`
+	ClickRate                 float64 `json:"click_rate"`
 }
 
 type ListData struct {
