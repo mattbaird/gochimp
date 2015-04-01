@@ -13,14 +13,20 @@ package gochimp
 
 // see http://apidocs.mailchimp.com/api/2.0/
 const (
-	lists_subscribe_endpoint         string = "/lists/subscribe.json"
-	lists_unsubscribe_endpoint       string = "/lists/unsubscribe.json"
-	lists_list_endpoint              string = "/lists/list.json"
-	lists_update_member_endpoint     string = "/lists/update-member.json"
-	lists_members_endpoint           string = "/lists/members.json"
-	lists_member_info_endpoint       string = "/lists/member-info.json"
-	lists_batch_unsubscribe_endpoint string = "/lists/batch-unsubscribe.json"
-	lists_batch_subscribe_endpoint   string = "/lists/batch-subscribe.json"
+	lists_subscribe_endpoint                  string = "/lists/subscribe.json"
+	lists_unsubscribe_endpoint                string = "/lists/unsubscribe.json"
+	lists_list_endpoint                       string = "/lists/list.json"
+	lists_update_member_endpoint              string = "/lists/update-member.json"
+	lists_members_endpoint                    string = "/lists/members.json"
+	lists_member_info_endpoint                string = "/lists/member-info.json"
+	lists_batch_unsubscribe_endpoint          string = "/lists/batch-unsubscribe.json"
+	lists_batch_subscribe_endpoint            string = "/lists/batch-subscribe.json"
+	lists_static_segments_endpoint            string = "/lists/static-segments.json"
+	lists_static_segment_add_endpoint         string = "/lists/static-segment-add.json"
+	lists_static_segment_del_endpoint         string = "/lists/static-segment-del.json"
+	lists_static_segment_members_add_endpoint string = "/lists/static-segment-members-add.json"
+	lists_static_segment_members_del_endpoint string = "/lists/static-segment-members-del.json"
+	lists_static_segment_reset_endpoint       string = "/lists/static-segment-reset.json"
 )
 
 func (a *ChimpAPI) BatchSubscribe(req BatchSubscribe) (BatchSubscribeResponse, error) {
@@ -72,6 +78,48 @@ func (a *ChimpAPI) MemberInfo(req ListsMemberInfo) (ListsMemberInfoResponse, err
 	req.ApiKey = a.Key
 	var response ListsMemberInfoResponse
 	err := parseChimpJson(a, lists_member_info_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) StaticSegments(req ListsStaticSegments) ([]ListsStaticSegmentResponse, error) {
+	req.ApiKey = a.Key
+	var response []ListsStaticSegmentResponse
+	err := parseChimpJson(a, lists_static_segments_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) StaticSegmentAdd(req ListsStaticSegmentAdd) (ListsStaticSegmentAddResponse, error) {
+	req.ApiKey = a.Key
+	var response ListsStaticSegmentAddResponse
+	err := parseChimpJson(a, lists_static_segment_add_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) StaticSegmentDel(req ListsStaticSegment) (ListsStaticSegmentUpdateResponse, error) {
+	req.ApiKey = a.Key
+	var response ListsStaticSegmentUpdateResponse
+	err := parseChimpJson(a, lists_static_segment_del_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) StaticSegmentMembersAdd(req ListsStaticSegmentMembers) (ListsStaticSegmentMembersResponse, error) {
+	req.ApiKey = a.Key
+	var response ListsStaticSegmentMembersResponse
+	err := parseChimpJson(a, lists_static_segment_members_add_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) StaticSegmentMembersDel(req ListsStaticSegmentMembers) (ListsStaticSegmentMembersResponse, error) {
+	req.ApiKey = a.Key
+	var response ListsStaticSegmentMembersResponse
+	err := parseChimpJson(a, lists_static_segment_members_del_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) StaticSegmentReset(req ListsStaticSegment) (ListsStaticSegmentUpdateResponse, error) {
+	req.ApiKey = a.Key
+	var response ListsStaticSegmentUpdateResponse
+	err := parseChimpJson(a, lists_static_segment_reset_endpoint, req, &response)
 	return response, err
 }
 
@@ -282,4 +330,54 @@ type MemberInfo struct {
 	Merges          map[string]interface{} `json:"merges"`
 	Status          string                 `json:"status"`
 	Timestamp       string                 `json:"timestamp"`
+}
+
+type ListsStaticSegments struct {
+	ApiKey    string `json:"apikey"`
+	ListId    string `json:"id"`
+	GetCounts bool   `json:"get_counts,omitempty"`
+	Start     int    `json:"start,omitempty"`
+	Limit     int    `json:"limit,omitempty"`
+}
+
+type ListsStaticSegmentResponse struct {
+	Id          int    `json:"id"`
+	Name        string `json:"name"`
+	MemberCount int    `json:"member_count"`
+	CreatedDate string `json:"created_date"`
+	LastUpdate  string `json:"last_update"`
+	LastReset   string `json:"last_reset"`
+}
+
+type ListsStaticSegmentAdd struct {
+	ApiKey string `json:"apikey"`
+	ListId string `json:"id"`
+	Name   string `json:"name"`
+}
+
+type ListsStaticSegmentAddResponse struct {
+	Id int `json:"id"`
+}
+
+type ListsStaticSegment struct {
+	ApiKey string `json:"apikey"`
+	ListId string `json:"id"`
+	SegId  int    `json:"seg_id"`
+}
+
+type ListsStaticSegmentUpdateResponse struct {
+	Complete bool `json:"complete"`
+}
+
+type ListsStaticSegmentMembers struct {
+	ApiKey string  `json:"apikey"`
+	ListId string  `json:"id"`
+	SegId  int     `json:"seg_id"`
+	Batch  []Email `json:"batch"`
+}
+
+type ListsStaticSegmentMembersResponse struct {
+	SuccessCount int          `json:"success_count"`
+	ErrorCount   int          `json:"error_count"`
+	Errors       []BatchError `json:"errors"`
 }
