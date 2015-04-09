@@ -27,6 +27,9 @@ const (
 	lists_static_segment_members_add_endpoint string = "/lists/static-segment-members-add.json"
 	lists_static_segment_members_del_endpoint string = "/lists/static-segment-members-del.json"
 	lists_static_segment_reset_endpoint       string = "/lists/static-segment-reset.json"
+	lists_webhook_add_endpoint                string = "/lists/webhook-add.json"
+	lists_webhook_del_endpoint                string = "/lists/webhook-del.json"
+	lists_webhooks                            string = "/lists/webhooks.json"
 )
 
 func (a *ChimpAPI) BatchSubscribe(req BatchSubscribe) (BatchSubscribeResponse, error) {
@@ -120,6 +123,27 @@ func (a *ChimpAPI) StaticSegmentReset(req ListsStaticSegment) (ListsStaticSegmen
 	req.ApiKey = a.Key
 	var response ListsStaticSegmentUpdateResponse
 	err := parseChimpJson(a, lists_static_segment_reset_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) WebhookAdd(req ChimpWebhookAddRequest) (ChimpWebhookAddResponse, error) {
+	req.ApiKey = a.Key
+	var response ChimpWebhookAddResponse
+	err := parseChimpJson(a, lists_webhook_add_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) WebhookDel(req ChimpWebhookDelRequest) (ChimpWebhookDelResponse, error) {
+	req.ApiKey = a.Key
+	var response ChimpWebhookDelResponse
+	err := parseChimpJson(a, lists_webhook_del_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) Webhooks(req ChimpWebhooksRequest) ([]ChimpWebhook, error) {
+	req.ApiKey = a.Key
+	var response []ChimpWebhook
+	err := parseChimpJson(a, lists_webhooks, req, &response)
 	return response, err
 }
 
@@ -380,4 +404,50 @@ type ListsStaticSegmentMembersResponse struct {
 	SuccessCount int          `json:"success_count"`
 	ErrorCount   int          `json:"error_count"`
 	Errors       []BatchError `json:"errors"`
+}
+
+type ChimpWebhook struct {
+	Url     string              `json:"url"`
+	Actions ChimpWebhookActions `json:"actions"`
+	Sources ChimpWebhookSources `json:"sources"`
+}
+
+type ChimpWebhookAddRequest struct {
+	ChimpWebhook
+	ApiKey string `json:"apikey"`
+	ListId string `json:"id"`
+}
+
+type ChimpWebhookActions struct {
+	Subscribe   bool `json:"subscribe"`
+	Unsubscribe bool `json:"unsubscribe"`
+	Profile     bool `json:"profile"`
+	Cleaned     bool `json:"cleaned"`
+	Upemail     bool `json:"upemail"`
+	Campaign    bool `json:"campaign"`
+}
+
+type ChimpWebhookSources struct {
+	User  bool `json:"user"`
+	Admin bool `json:"admin"`
+	Api   bool `json:"api"`
+}
+
+type ChimpWebhookAddResponse struct {
+	Id int `json:"id"`
+}
+
+type ChimpWebhookDelRequest struct {
+	ApiKey string `json:"apikey"`
+	ListId string `json:"id"`
+	Url    string `json:"url"`
+}
+
+type ChimpWebhookDelResponse struct {
+	Complete bool `json:"complete"`
+}
+
+type ChimpWebhooksRequest struct {
+	ApiKey string `json:"apikey"`
+	ListId string `json:"id"`
 }
