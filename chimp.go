@@ -50,6 +50,8 @@ func (t *APITime) UnmarshalJSON(data []byte) (err error) {
 		t.Time, err = time.Parse(`"2006-01-02"`, s)
 	case l == 21:
 		t.Time, err = time.Parse(`"2006-01-02 15:04:05"`, s)
+	case l == 27:
+		t.Time, err = time.Parse(`"2006-01-02 15:04:05.00000"`, s)
 	case l == 9:
 		t.Time, err = time.Parse(`"2006-01"`, s)
 	}
