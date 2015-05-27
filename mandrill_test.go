@@ -239,3 +239,117 @@ func TestSendersList(t *testing.T) {
 		t.Errorf("should have found User %s in [%v] length array", user, len(results))
 	}
 }
+
+// incoming tests
+
+func TestInboundDomainListAddCheckDelete(t *testing.T) {
+	domainName := "improbable.example.com"
+	domains, err := mandrill.InboundDomainList()
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	originalCount := len(domains)
+	domain, err := mandrill.InboundDomainAdd(domainName)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	domains, err = mandrill.InboundDomainList()
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	newCount := len(domains)
+	if newCount != originalCount+1 {
+		t.Errorf("Expected %v domains, found %v after adding %v.", originalCount+1, newCount, domainName)
+	}
+	newDomain, err := mandrill.InboundDomainCheck(domainName)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	if domain.CreatedAt != newDomain.CreatedAt {
+		t.Errorf("Domain check of %v and %v do not match.", domain.CreatedAt, newDomain.CreatedAt)
+	}
+	if domain.Domain != newDomain.Domain {
+		t.Errorf("Domain check of %v and %v do not match.", domain.Domain, newDomain.Domain)
+	}
+	if domain.ValidMx != newDomain.ValidMx {
+		t.Errorf("Domain check of %v and %v do not match.", domain.ValidMx, newDomain.ValidMx)
+	}
+	_, err = mandrill.InboundDomainDelete(domainName)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	domains, err = mandrill.InboundDomainList()
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	deletedCount := len(domains)
+	if deletedCount != originalCount {
+		t.Errorf("Expected %v domains, found %v after deleting %v.", originalCount, deletedCount, domainName)
+	}
+}
+
+func TestInboundDomainRoutesAndRaw(t *testing.T) {
+	domainName := "www.google.com"
+	emailAddress := "test"
+	webhookUrl := fmt.Sprintf("http://%v/", domainName)
+	_, err := mandrill.InboundDomainAdd(domainName)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	routeList, err := mandrill.RouteList(domainName)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	count := len(routeList)
+	if count != 0 {
+		t.Errorf("Expected no routes at %v, found %v.", domainName, count)
+	}
+	route, err := mandrill.RouteAdd(domainName, emailAddress, webhookUrl)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	if route.Pattern != emailAddress {
+		t.Errorf("Expected pattern %v, found %v.", emailAddress, route.Pattern)
+	}
+	if route.Url != webhookUrl {
+		t.Errorf("Expected URL %v, found %v.", webhookUrl, route.Url)
+	}
+	newDomainName := "www.google.com"
+	newEmailAddress := "test2"
+	newWebhookUrl := fmt.Sprintf("http://%v/", newDomainName)
+	_, err = mandrill.InboundDomainCheck(newDomainName)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	route, err = mandrill.RouteUpdate(route.Id, newDomainName, newEmailAddress, newWebhookUrl)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	if route.Pattern != newEmailAddress {
+		t.Errorf("Expected pattern %v, found %v.", newEmailAddress, route.Pattern)
+	}
+	if route.Url != newWebhookUrl {
+		t.Errorf("Expected URL %v, found %v.", newWebhookUrl, route.Pattern)
+	}
+	route, err = mandrill.RouteDelete(route.Id)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	routeList, err = mandrill.RouteList(domainName)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	newCount := len(routeList)
+	if newCount != count {
+		t.Errorf("Expected %v routes at %v, found %v.", count, domainName, newCount)
+	}
+	rawMessage := "From: sender@example.com\nTo: test2@www.google.com\nSubject: Some Subject\n\nSome content."
+	_, err = mandrill.SendRawMIME(rawMessage, []string{"test2@www.google.com"}, "test@www.google.com", "", "127.0.0.1")
+	if err != nil {
+		t.Error("Error:", err)
+	}
+	_, err = mandrill.InboundDomainDelete(domainName)
+	if err != nil {
+		t.Error("Error:", err)
+	}
+}
