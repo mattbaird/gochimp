@@ -146,6 +146,7 @@ type Message struct {
 	Metadata                map[string]string   `json:"metadata,omitempty"`
 	RecipientMetadata       []RecipientMetaData `json:"recipient_metadata,omitempty"`
 	Attachments             []Attachment        `json:"attachments,omitempty"`
+	MergeLanguage           string              `json:"merge_language,omitempty"`
 }
 
 func (m *Message) String() string {
