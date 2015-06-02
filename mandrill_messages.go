@@ -215,11 +215,11 @@ type MergeVars struct {
 }
 
 type Var struct {
-	Name    string `json:"name"`
-	Content string `json:"content"`
+	Name    string      `json:"name"`
+	Content interface{} `json:"content"`
 }
 
-func NewVar(name string, content string) *Var {
+func NewVar(name string, content interface{}) *Var {
 	return &Var{Name: name, Content: content}
 }
 
