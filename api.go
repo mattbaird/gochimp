@@ -28,8 +28,8 @@ import (
 )
 
 const (
-	mandrill_uri     = "mandrillapp.com/api/"
-	mandrill_version = "1.0"
+	mandrill_uri     = "mandrillapp.com"
+	mandrill_version = "/api/1.0"
 )
 
 type MandrillAPI struct {
