@@ -5,7 +5,9 @@ Go based API for Mailchimp, starting with Mandrill.
 
 https://godoc.org/github.com/mattbaird/gochimp
 
-to run tests, set a couple env variables:
+
+to run tests, set a couple env variables.
+(replacing values with your own mandrill credentials):
 ```bash
 $ export MANDRILL_KEY=111111111-1111-1111-1111-111111111
 $ export MANDRILL_USER=user@domain.com
@@ -71,4 +73,3 @@ func main() {
 	}
 }
 ```
-
