@@ -69,3 +69,27 @@ type TemplatesListResponse struct {
 	User    []UserTemplate    `json:"user"`
 	Gallery []GalleryTemplate `json:"gallery"`
 }
+
+const (
+	chimp_template_info_endpoint string = "/templates/info.json"
+)
+
+func (a *ChimpAPI) TemplatesInfo(req TemplateInfo) (TemplateInfoResponse, error) {
+	req.ApiKey = a.Key
+	var response TemplateInfoResponse
+	err := parseChimpJson(a, chimp_template_info_endpoint, req, &response)
+	return response, err
+}
+
+type TemplateInfo struct {
+	ApiKey     string `json:"apikey"`
+	TemplateID int    `json:"template_id"`
+	Type       string `json:"type"`
+}
+
+type TemplateInfoResponse struct {
+	DefaultContent interface{}
+	Sections       interface{}
+	Source         string
+	Preview        string
+}
