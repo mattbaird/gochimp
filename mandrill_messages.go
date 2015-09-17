@@ -163,14 +163,14 @@ type SearchRequest struct {
 }
 
 type MessageContent struct {
-	Timestamp TS     `json:"ts"`
-	Id        string `json:"_id"`
-	FromEmail string
-	FromName  string
-	Subject   string
-	To        Recipient
-	Text      string
-	Html      string
+	Timestamp TS        `json:"ts"`
+	Id        string    `json:"_id"`
+	FromEmail string    `json:"from_email"`
+	FromName  string    `json:"from_name"`
+	Subject   string    `json:"subject"`
+	To        Recipient `json:"to"`
+	Text      string    `json:"text"`
+	Html      string    `json:"html"`
 }
 
 type Message struct {
