@@ -14,6 +14,7 @@ package gochimp
 import (
 	"encoding/json"
 	"errors"
+	"strconv"
 	"time"
 )
 
@@ -23,6 +24,23 @@ const messages_send_template_endpoint string = "/messages/send-template.json" //
 const messages_search_endpoint string = "/messages/search.json"               // Search the content of recently sent messages and optionally narrow by date range, tags and senders
 const messages_parse_endpoint string = "/messages/parse.json"                 // Parse the full MIME document for an email message, returning the content of the message broken into its constituent pieces
 const messages_send_raw_endpoint string = "/messages/send-raw.json"           // Take a raw MIME document for a message, and send it exactly as if it were sent over the SMTP protocol
+const messages_content_endpoint string = "/messages/content.json"
+
+func (a *MandrillAPI) MessageContent(id string) (*MessageContent, error) {
+	var response MessageContent
+	var params map[string]interface{} = make(map[string]interface{})
+	params["id"] = id
+	err := parseMandrillJson(a, messages_content_endpoint, params, &response)
+	return &response, err
+}
+
+func (a *MandrillAPI) MessageInfo(id string) (map[string]interface{}, error) {
+	var response map[string]interface{}
+	var params map[string]interface{} = make(map[string]interface{})
+	params["id"] = id
+	err := parseMandrillJson(a, "/messages/info.json", params, &response)
+	return response, err
+}
 
 //todo: add send_at, ip_pool and key to messagesend
 func (a *MandrillAPI) MessageSend(message Message, async bool) ([]SendResponse, error) {
@@ -52,12 +70,25 @@ func (a *MandrillAPI) MessageSearch(searchRequest SearchRequest) ([]SearchRespon
 	var response []SearchResponse
 	var params map[string]interface{} = make(map[string]interface{})
 	//todo remove this hack
-	params["query"] = searchRequest.Query
-	params["date_from"] = searchRequest.DateFrom
-	params["date_to"] = searchRequest.DateTo
-	params["tags"] = searchRequest.Tags
-	params["senders"] = searchRequest.Senders
+	if searchRequest.Query != "" {
+		params["query"] = searchRequest.Query
+	}
+	if !searchRequest.DateFrom.IsZero() {
+		params["date_from"] = searchRequest.DateFrom
+	}
+	if !searchRequest.DateTo.IsZero() {
+		params["date_to"] = searchRequest.DateTo
+	}
+	if len(searchRequest.Tags) > 0 {
+		params["tags"] = searchRequest.Tags
+	}
+	if len(searchRequest.Senders) > 0 {
+		params["senders"] = searchRequest.Senders
+	}
 	params["limit"] = searchRequest.Limit
+	if len(searchRequest.APIKeys) > 0 {
+		params["api_keys"] = searchRequest.APIKeys
+	}
 	err := parseMandrillJson(a, messages_search_endpoint, params, &response)
 	return response, err
 }
@@ -93,8 +124,23 @@ func (a *MandrillAPI) MessageSendRaw(rawMessage string, to []string, from Recipi
 	return response, err
 }
 
+type TS struct {
+	time.Time
+}
+
+func (t *TS) UnmarshalJSON(data []byte) error {
+	i, err := strconv.ParseInt(string(data), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	*t = TS{time.Unix(i, 0)}
+
+	return nil
+}
+
 type SearchResponse struct {
-	Timestamp time.Duration       `json:"ts"`
+	Timestamp TS                  `json:"ts"`
 	Id        string              `json:"_id"`
 	Sender    string              `json:"sender"`
 	Subject   string              `json:"subject"`
@@ -112,7 +158,19 @@ type SearchRequest struct {
 	DateTo   APITime  `json:"date_to"`
 	Tags     []string `json:"tags"`
 	Senders  []string `json:"senders"`
+	APIKeys  []string `json:"api_keys"`
 	Limit    int      `json:"limit"`
+}
+
+type MessageContent struct {
+	Timestamp TS     `json:"ts"`
+	Id        string `json:"_id"`
+	FromEmail string
+	FromName  string
+	Subject   string
+	To        Recipient
+	Text      string
+	Html      string
 }
 
 type Message struct {
