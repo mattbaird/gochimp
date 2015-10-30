@@ -103,7 +103,33 @@ type SearchResponse struct {
 	Opens     int                 `json:"opens"`
 	Clicks    int                 `json:"clicks"`
 	State     string              `json:"state"`
-	Metadata  []map[string]string `json:"metadata"`
+	Metadata  map[string]string   `json:"metadata"`
+	Template     interface{}      `json:"template"`
+	Resends      []Resend         `json:"resends"`
+	SMTPEvents   []SMTPEvent      `json:"smtp_events"`
+	OpensDetail  []ActivityDetail `json:"opens_detail"`
+	ClicksDetail []ActivityDetail `json:"clicks_detail"`
+}
+
+type Resend struct {
+	Timestamp time.Duration `json:"ts"`
+}
+
+type SMTPEvent struct {
+	Timestamp     time.Duration  `json:"ts"`
+	Type          string         `json:"type"`
+	Diagnostics   string         `json:"diag"`
+	SourceIP      string         `json:"source_ip"`
+	DestinationIP string         `json:"destination_ip"`
+	Size          int            `json:"size"`
+}
+
+type ActivityDetail struct {
+	Timestamp time.Duration `json:"ts"`
+	IP        string        `json:"ip"`
+	Url       string        `json:"url"`
+	Location  string        `json:"location"`
+	UserAgent string        `json:"ua"`
 }
 
 type SearchRequest struct {
