@@ -11,10 +11,7 @@
 
 package gochimp
 
-import (
-	"errors"
-	"time"
-)
+import "errors"
 
 // see https://mandrillapp.com/api/docs/webhooks.html
 const webhooks_list_endpoint string = "/webhooks/list.json"     //Get the list of all webhooks defined on the account
@@ -24,9 +21,10 @@ const webhooks_update_endpoint string = "/webhooks/update.json" //Update an exis
 const webhooks_delete_endpoint string = "/webhooks/delete.json" //Delete an existing webhook
 
 // can error with one of the following: Invalid_Key, ValidationError, GeneralError
-func (a *MandrillAPI) WebhooksList() (Webhook, error) {
+func (a *MandrillAPI) WebhooksList() (response []Webhook, err error) {
 	var params map[string]interface{} = make(map[string]interface{})
-	return getWebhook(a, params, webhooks_list_endpoint)
+	err = parseMandrillJson(a, webhooks_list_endpoint, params, &response)
+	return
 }
 
 // can error with one of the following: Invalid_Key, ValidationError, GeneralError
@@ -58,7 +56,7 @@ func (a *MandrillAPI) WebhookUpdate(url string, events []string) (Webhook, error
 	var params map[string]interface{} = make(map[string]interface{})
 	params["url"] = url
 	params["events"] = events
-	return getWebhook(a, params, webhooks_delete_endpoint)
+	return getWebhook(a, params, webhooks_update_endpoint)
 }
 
 // can error with one of the following: Unknown_Webhook, Invalid_Key, ValidationError, GeneralError
@@ -78,12 +76,29 @@ func getWebhook(a *MandrillAPI, params map[string]interface{}, endpoint string) 
 }
 
 type Webhook struct {
-	Id          int       `json:"id"`
-	Url         string    `json:"url"`
-	Events      []string  `json:"events"`
-	CreatedAt   time.Time `json:"created_at"`
-	LastSentAt  time.Time `json:"last_sent_at"`
-	BatchesSent int       `json:"batches_sent"`
-	EventsSent  int       `json:"events_sent"`
-	LastError   string    `json:"last_error"`
+	Id          int      `json:"id"`
+	Url         string   `json:"url"`
+	AuthKey     string   `json:"auth_key"`
+	Events      []string `json:"events"`
+	CreatedAt   APITime  `json:"created_at"`
+	LastSentAt  APITime  `json:"last_sent_at"`
+	BatchesSent int      `json:"batches_sent"`
+	EventsSent  int      `json:"events_sent"`
+	LastError   string   `json:"last_error"`
+}
+
+func (w Webhook) HasAllEvents(events []string) (found bool) {
+	for _, event := range events {
+		found = false
+		for _, hevent := range w.Events {
+			if event == hevent {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return
+		}
+	}
+	return
 }
