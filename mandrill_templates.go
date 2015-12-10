@@ -141,6 +141,8 @@ type Template struct {
 	Code        string  `json:"code"`
 	PublishName string  `json:"publish_name"`
 	PublishCode string  `json:"publish_code"`
+	Slug        string  `json:"slug"`
+	Subject     string  `json:"subject"`
 	CreatedAt   APITime `json:"published_at"`
 	UpdateAt    APITime `json:"updated_at"`
 }
