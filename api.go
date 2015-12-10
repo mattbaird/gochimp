@@ -25,6 +25,7 @@ import (
 	"net/url"
 	"regexp"
 	"strconv"
+	"time"
 )
 
 const (
@@ -35,12 +36,14 @@ const (
 type MandrillAPI struct {
 	Key       string
 	Transport http.RoundTripper
+	Timeout   time.Duration
 	endpoint  string
 }
 
 type ChimpAPI struct {
 	Key       string
 	Transport http.RoundTripper
+	Timeout   time.Duration
 	endpoint  string
 }
 
@@ -82,6 +85,9 @@ func runChimp(api *ChimpAPI, path string, parameters interface{}) ([]byte, error
 		log.Printf("Request URL:%s", requestUrl)
 	}
 	client := &http.Client{Transport: api.Transport}
+	if api.Timeout > 0 {
+		client.Timeout = api.Timeout
+	}
 	resp, err := client.Post(requestUrl, "application/json", bytes.NewBuffer(b))
 	if err != nil {
 		return nil, err
@@ -117,6 +123,9 @@ func runMandrill(api *MandrillAPI, path string, parameters map[string]interface{
 		log.Printf("Request URL:%s", requestUrl)
 	}
 	client := &http.Client{Transport: api.Transport}
+	if api.Timeout > 0 {
+		client.Timeout = api.Timeout
+	}
 	resp, err := client.Post(requestUrl, "application/json", bytes.NewBuffer(b))
 	if err != nil {
 		return nil, err
