@@ -1,33 +1,3 @@
-gochimp
-=======
-
-Go based API for Mailchimp, starting with Mandrill.
-
-https://godoc.org/github.com/mattbaird/gochimp
-
-
-to run tests, set a couple env variables.
-(replacing values with your own mandrill credentials):
-```bash
-$ export MANDRILL_KEY=111111111-1111-1111-1111-111111111
-$ export MANDRILL_USER=user@domain.com
-```
-
-Mandrill Status
-===============
-* API Feature complete on Oct 26/2012
-* Adding tests, making naming conventions consistent, and refactoring error handling
-
-Chimp Status
-============
-* Not started
-
-Getting Started
-===============
-Below is an example approach to rendering custom content into a Mandrill
-template called "welcome email" and sending the rendered email.
-
-```
 package main
 
 import (
@@ -79,5 +49,3 @@ func main() {
 		fmt.Println("Error sending message")
 	}
 }
-
-```
