@@ -20,6 +20,7 @@ import (
 
 // see https://mandrillapp.com/api/docs/messages.html
 const messages_send_endpoint string = "/messages/send.json"                   // Send a new transactional message through Mandrill
+const messages_info_endpoint string = "/messages/info.json"                   // Get info about a message
 const messages_send_template_endpoint string = "/messages/send-template.json" // Send a new transactional message through Mandrill using a template
 const messages_search_endpoint string = "/messages/search.json"               // Search the content of recently sent messages and optionally narrow by date range, tags and senders
 const messages_parse_endpoint string = "/messages/parse.json"                 // Parse the full MIME document for an email message, returning the content of the message broken into its constituent pieces
@@ -38,7 +39,7 @@ func (a *MandrillAPI) MessageInfo(id string) (map[string]interface{}, error) {
 	var response map[string]interface{}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["id"] = id
-	err := parseMandrillJson(a, "/messages/info.json", params, &response)
+	err := parseMandrillJson(a, messages_info_endpoint, params, &response)
 	return response, err
 }
 
@@ -149,6 +150,7 @@ type SearchResponse struct {
 	Opens        int                 `json:"opens"`
 	Clicks       int                 `json:"clicks"`
 	State        string              `json:"state"`
+	Diag         string              `json:"diag"`
 	Metadata     []map[string]string `json:"metadata"`
 	Template     interface{}         `json:"template"`
 	Resends      []Resend            `json:"resends"`
@@ -231,6 +233,7 @@ type Message struct {
 	RecipientMetadata       []RecipientMetaData `json:"recipient_metadata,omitempty"`
 	Attachments             []Attachment        `json:"attachments,omitempty"`
 	MergeLanguage           string              `json:"merge_language,omitempty"`
+	Images                  []Attachment        `json:"images,omitempty"`
 }
 
 func (m *Message) String() string {
@@ -282,6 +285,10 @@ func (m *Message) AddRecipientMetadata(metadata ...RecipientMetaData) {
 
 func (m *Message) AddAttachments(attachement ...Attachment) {
 	m.Attachments = append(m.Attachments, attachement...)
+}
+
+func (m *Message) AddImages(image ...Attachment) {
+	m.Images = append(m.Images, image...)
 }
 
 type Attachment struct {
