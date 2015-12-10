@@ -34,7 +34,7 @@ func TestUserInfo(t *testing.T) {
 		t.Error("Error:", err)
 	}
 	if response.Username != user {
-		t.Error("wrong user")
+		t.Errorf("wrong user, was expecting %s", response.Username)
 	}
 }
 
@@ -56,7 +56,7 @@ func TestMessageSending(t *testing.T) {
 	message.AddRecipients(Recipient{Email: user, Name: user, Type: "bcc"})
 	response, err := mandrill.MessageSend(message, false)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	if response != nil && len(response) > 0 {
 		if len(response) != 3 {
@@ -84,7 +84,7 @@ func TestTemplateAdd(t *testing.T) {
 	mandrill.TemplateDelete(testTemplateName)
 	template, err := mandrill.TemplateAdd(testTemplateName, readTemplate("templates/transactional_basic.html"), true)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error: %v", err)
 	}
 	if template.Name != "test_transactional_template" {
 		t.Errorf("Wrong template name, expecting %s, got %s", testTemplateName, template.Name)
@@ -99,14 +99,14 @@ func TestTemplateAdd(t *testing.T) {
 func TestTemplateList(t *testing.T) {
 	_, err := mandrill.TemplateAdd("listTest", "testing 123", true)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error: %v", err)
 	}
 	templates, err := mandrill.TemplateList()
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	if len(templates) <= 0 {
-		t.Errorf("Should have retrieved templates")
+		t.Error("Should have retrieved templates")
 	}
 	mandrill.TemplateDelete("listTest")
 }
@@ -114,7 +114,7 @@ func TestTemplateList(t *testing.T) {
 func TestTemplateInfo(t *testing.T) {
 	template, err := mandrill.TemplateInfo(testTemplateName)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	if template.Name != "test_transactional_template" {
 		t.Errorf("Wrong template name, expecting %s, got %s", testTemplateName, template.Name)
@@ -126,7 +126,7 @@ func TestTemplateUpdate(t *testing.T) {
 	template, err := mandrill.TemplateAdd("updateTest", "testing 123", true)
 	template, err = mandrill.TemplateUpdate("updateTest", "testing 321", true)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	if template.Name != "updateTest" {
 		t.Errorf("Wrong template name, expecting %s, got %s", "updateTest", template.Name)
@@ -143,7 +143,7 @@ func TestTemplatePublish(t *testing.T) {
 	// add a simple template
 	template, err := mandrill.TemplateAdd("publishTest", "testing 123", false)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	if template.Name != "publishTest" {
 		t.Errorf("Wrong template name, expecting %s, got %v", testTemplateName, template.Name)
@@ -153,7 +153,7 @@ func TestTemplatePublish(t *testing.T) {
 	}
 	template, err = mandrill.TemplatePublish("publishTest")
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	if template.Name != "publishTest" {
 		t.Errorf("Wrong template name, expecting %s, got %v", testTemplateName, template.Name)
@@ -172,7 +172,7 @@ func TestTemplateRender(t *testing.T) {
 	mergeVars := []Var{*NewVar("SUBJECT", "Hello, welcome")}
 	result, err := mandrill.TemplateRender("renderTest", nil, mergeVars)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	if result != "Hello, welcome" {
 		t.Errorf("Rendered Result incorrect, expecting %s, got %v", "Hello, welcome", result)
@@ -187,7 +187,7 @@ func TestTemplateRender2(t *testing.T) {
 	templateContent := []Var{*NewVar("std_content00", "Hello, welcome")}
 	result, err := mandrill.TemplateRender("renderTest", templateContent, nil)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	if result != "<div>Hello, welcome</div>" {
 		t.Errorf("Rendered Result incorrect, expecting %s, got %s", "<div>Hello, welcome</div>", result)
@@ -206,7 +206,7 @@ func TestMessageTemplateSend(t *testing.T) {
 	message.AddRecipients(Recipient{Email: user, Name: user})
 	_, err := mandrill.MessageSendTemplate(testTemplateName, templateContent, message, true)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	//todo - how do we test this better?
 }
@@ -225,7 +225,7 @@ func TestSendersList(t *testing.T) {
 	//make sure it's freshly added
 	results, err := mandrill.SenderList()
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	var foundUser = false
 	for i := range results {
@@ -246,16 +246,16 @@ func TestInboundDomainListAddCheckDelete(t *testing.T) {
 	domainName := "improbable.example.com"
 	domains, err := mandrill.InboundDomainList()
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	originalCount := len(domains)
 	domain, err := mandrill.InboundDomainAdd(domainName)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	domains, err = mandrill.InboundDomainList()
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	newCount := len(domains)
 	if newCount != originalCount+1 {
@@ -263,7 +263,7 @@ func TestInboundDomainListAddCheckDelete(t *testing.T) {
 	}
 	newDomain, err := mandrill.InboundDomainCheck(domainName)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	if domain.CreatedAt != newDomain.CreatedAt {
 		t.Errorf("Domain check of %v and %v do not match.", domain.CreatedAt, newDomain.CreatedAt)
@@ -276,11 +276,11 @@ func TestInboundDomainListAddCheckDelete(t *testing.T) {
 	}
 	_, err = mandrill.InboundDomainDelete(domainName)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	domains, err = mandrill.InboundDomainList()
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	deletedCount := len(domains)
 	if deletedCount != originalCount {
@@ -294,11 +294,11 @@ func TestInboundDomainRoutesAndRaw(t *testing.T) {
 	webhookUrl := fmt.Sprintf("http://%v/", domainName)
 	_, err := mandrill.InboundDomainAdd(domainName)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	routeList, err := mandrill.RouteList(domainName)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	count := len(routeList)
 	if count != 0 {
@@ -306,7 +306,7 @@ func TestInboundDomainRoutesAndRaw(t *testing.T) {
 	}
 	route, err := mandrill.RouteAdd(domainName, emailAddress, webhookUrl)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	if route.Pattern != emailAddress {
 		t.Errorf("Expected pattern %v, found %v.", emailAddress, route.Pattern)
@@ -319,11 +319,11 @@ func TestInboundDomainRoutesAndRaw(t *testing.T) {
 	newWebhookUrl := fmt.Sprintf("http://%v/", newDomainName)
 	_, err = mandrill.InboundDomainCheck(newDomainName)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	route, err = mandrill.RouteUpdate(route.Id, newDomainName, newEmailAddress, newWebhookUrl)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	if route.Pattern != newEmailAddress {
 		t.Errorf("Expected pattern %v, found %v.", newEmailAddress, route.Pattern)
@@ -333,11 +333,11 @@ func TestInboundDomainRoutesAndRaw(t *testing.T) {
 	}
 	route, err = mandrill.RouteDelete(route.Id)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	routeList, err = mandrill.RouteList(domainName)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	newCount := len(routeList)
 	if newCount != count {
@@ -346,10 +346,10 @@ func TestInboundDomainRoutesAndRaw(t *testing.T) {
 	rawMessage := "From: sender@example.com\nTo: test2@www.google.com\nSubject: Some Subject\n\nSome content."
 	_, err = mandrill.SendRawMIME(rawMessage, []string{"test2@www.google.com"}, "test@www.google.com", "", "127.0.0.1")
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 	_, err = mandrill.InboundDomainDelete(domainName)
 	if err != nil {
-		t.Error("Error:", err)
+		t.Errorf("Error:%v", err)
 	}
 }
