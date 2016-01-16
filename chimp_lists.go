@@ -13,20 +13,22 @@ package gochimp
 
 // see http://apidocs.mailchimp.com/api/2.0/
 const (
-	lists_subscribe_endpoint                  string = "/lists/subscribe.json"
-	lists_unsubscribe_endpoint                string = "/lists/unsubscribe.json"
-	lists_list_endpoint                       string = "/lists/list.json"
-	lists_update_member_endpoint              string = "/lists/update-member.json"
-	lists_members_endpoint                    string = "/lists/members.json"
-	lists_member_info_endpoint                string = "/lists/member-info.json"
-	lists_batch_unsubscribe_endpoint          string = "/lists/batch-unsubscribe.json"
 	lists_batch_subscribe_endpoint            string = "/lists/batch-subscribe.json"
-	lists_static_segments_endpoint            string = "/lists/static-segments.json"
+	lists_batch_unsubscribe_endpoint          string = "/lists/batch-unsubscribe.json"
+	lists_interest_group_add_endpoint         string = "/lists/interest-group-add.json"
+	lists_interest_groupings_list_endpoint    string = "/lists/interest-groupings.json"
+	lists_list_endpoint                       string = "/lists/list.json"
+	lists_member_info_endpoint                string = "/lists/member-info.json"
+	lists_members_endpoint                    string = "/lists/members.json"
 	lists_static_segment_add_endpoint         string = "/lists/static-segment-add.json"
 	lists_static_segment_del_endpoint         string = "/lists/static-segment-del.json"
 	lists_static_segment_members_add_endpoint string = "/lists/static-segment-members-add.json"
 	lists_static_segment_members_del_endpoint string = "/lists/static-segment-members-del.json"
 	lists_static_segment_reset_endpoint       string = "/lists/static-segment-reset.json"
+	lists_static_segments_endpoint            string = "/lists/static-segments.json"
+	lists_subscribe_endpoint                  string = "/lists/subscribe.json"
+	lists_unsubscribe_endpoint                string = "/lists/unsubscribe.json"
+	lists_update_member_endpoint              string = "/lists/update-member.json"
 	lists_webhook_add_endpoint                string = "/lists/webhook-add.json"
 	lists_webhook_del_endpoint                string = "/lists/webhook-del.json"
 	lists_webhooks                            string = "/lists/webhooks.json"
@@ -56,6 +58,20 @@ func (a *ChimpAPI) ListsSubscribe(req ListsSubscribe) (Email, error) {
 func (a *ChimpAPI) ListsUnsubscribe(req ListsUnsubscribe) error {
 	req.ApiKey = a.Key
 	return parseChimpJson(a, lists_unsubscribe_endpoint, req, nil)
+}
+
+func (a *ChimpAPI) InterestGroupAdd(req InterestGroupAdd) (InterestGroupAddResponse, error) {
+	req.ApiKey = a.Key
+	var response InterestGroupAddResponse
+	err := parseChimpJson(a, lists_interest_group_add_endpoint, req, &response)
+	return response, err
+}
+
+func (a *ChimpAPI) InterestGroupingsList(req InterestGroupingsList) ([]InterestGroupingsListResponse, error) {
+	req.ApiKey = a.Key
+	var response []InterestGroupingsListResponse
+	err := parseChimpJson(a, lists_interest_groupings_list_endpoint, req, &response)
+	return response, err
 }
 
 func (a *ChimpAPI) ListsList(req ListsList) (ListsListResponse, error) {
@@ -450,4 +466,35 @@ type ChimpWebhookDelResponse struct {
 type ChimpWebhooksRequest struct {
 	ApiKey string `json:"apikey"`
 	ListId string `json:"id"`
+}
+
+type InterestGroupAdd struct {
+	ApiKey     string `json:"apikey"`
+	ListId     string `json:"id"`
+	GroupName  string `json:"group_name"`
+	GroupingId int    `json:"grouping_id,omitempty"`
+}
+
+type InterestGroupAddResponse struct {
+	Complete bool `json:"complete"`
+}
+
+type InterestGroupingsList struct {
+	ApiKey string `json:"apikey"`
+	ListId string `json:"id"`
+	Counts bool   `json:"counts"`
+}
+
+type InterestGroupingsListResponse struct {
+	Id        int          `json:"id"`
+	Name      string       `json:"name"`
+	FormField string       `json:"form_field"`
+	Groups    []ChimpGroup `json:"groups"`
+}
+
+type ChimpGroup struct {
+	Bit          string `json:"bit"`
+	Name         string `json:"name"`
+	DisplayOrder string `json:"display_order"`
+	Subscribers  int    `json:"subscribers"`
 }
