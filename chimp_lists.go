@@ -434,7 +434,7 @@ type ChimpWebhookSources struct {
 }
 
 type ChimpWebhookAddResponse struct {
-	Id int `json:"id"`
+	Id int `json:"id,string"`
 }
 
 type ChimpWebhookDelRequest struct {
