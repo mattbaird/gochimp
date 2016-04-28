@@ -71,7 +71,9 @@ type TemplatesListResponse struct {
 }
 
 const (
-	chimp_template_info_endpoint string = "/templates/info.json"
+	chimp_template_info_endpoint   string = "/templates/info.json"
+	chimp_template_add_endpoint    string = "/templates/add.json"
+	chimp_template_update_endpoint string = "/templates/update.json"
 )
 
 func (a *ChimpAPI) TemplatesInfo(req TemplateInfo) (TemplateInfoResponse, error) {
@@ -92,4 +94,45 @@ type TemplateInfoResponse struct {
 	Sections       interface{}
 	Source         string
 	Preview        string
+}
+
+func (a *ChimpAPI) TemplatesAdd(req TemplatesAdd) (TemplatesAddResponse, error) {
+	req.ApiKey = a.Key
+	var response TemplatesAddResponse
+	err := parseChimpJson(a, chimp_template_add_endpoint, req, &response)
+	return response, err
+}
+
+type TemplatesAdd struct {
+	ApiKey   string `json:"apikey"`
+	Name     string `json:"name"`
+	HTML     string `json:"html"`
+	FolderID int    `json:"folder_id,omitempty"`
+}
+
+type TemplatesAddResponse struct {
+	TemplateID int `json:"template_id"`
+}
+
+func (a *ChimpAPI) TemplatesUpdate(req TemplatesUpdate) (TemplatesUpdateResponse, error) {
+	req.ApiKey = a.Key
+	var response TemplatesUpdateResponse
+	err := parseChimpJson(a, chimp_template_update_endpoint, req, &response)
+	return response, err
+}
+
+type TemplatesUpdate struct {
+	ApiKey     string                `json:"apikey"`
+	TemplateID int                   `json:"template_id"`
+	Values     TemplatesUpdateValues `json:"values"`
+}
+
+type TemplatesUpdateValues struct {
+	Name     string `json:"name"`
+	HTML     string `json:"html"`
+	FolderID int    `json:"folder_id,omitempty"`
+}
+
+type TemplatesUpdateResponse struct {
+	Complete bool `json:"complete"`
 }
