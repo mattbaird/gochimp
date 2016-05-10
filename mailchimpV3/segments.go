@@ -34,8 +34,8 @@ type Segment struct {
 }
 
 type SegmentOptions struct {
-	Match       string               `json:"match"`
-	SegmentType []SegmentConditional `json:"conditions"`
+	Match      string               `json:"match"`
+	Conditions []SegmentConditional `json:"conditions"`
 }
 
 // SegmentConditional represents parameters to filter by
@@ -117,10 +117,5 @@ func (list ListResponse) DeleteSegment(id string) (bool, error) {
 	}
 
 	endpoint := fmt.Sprintf(single_segment_path, list.ID, id)
-	err := list.api.Delete(endpoint)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return list.api.Do("DELETE", endpoint)
 }

@@ -147,12 +147,7 @@ func (list ListResponse) DeleteMember(id string) (bool, error) {
 	}
 
 	endpoint := fmt.Sprintf(single_member_path, list.ID, id)
-	err := list.api.Delete(endpoint)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return list.api.Do("DELETE", endpoint)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -300,10 +295,5 @@ func (mem Member) DeleteNote(id string) (bool, error) {
 	}
 
 	endpoint := fmt.Sprintf(single_member_note_path, mem.ListID, mem.ID, id)
-	err := mem.api.Delete(endpoint)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return mem.api.Do("DELETE", endpoint)
 }

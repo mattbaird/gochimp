@@ -150,12 +150,7 @@ func (api ChimpAPI) UpdateList(id string, body *ListCreationRequest) (*ListRespo
 
 func (api ChimpAPI) DeleteList(id string) (bool, error) {
 	endpoint := fmt.Sprintf(single_list_path, id)
-	err := api.Delete(endpoint)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return api.Do("DELETE", endpoint)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -394,19 +389,15 @@ func (list ListResponse) UpdateInterestCategory(id string, body *InterestCategor
 }
 
 func (list ListResponse) DeleteInterestCategory(id string) (bool, error) {
-	endpoint := fmt.Sprintf(single_interest_category_path, list.ID, id)
-	err := list.api.Delete(endpoint)
-	if err != nil {
-		return false, err
+	if list.ID == "" {
+		return false, errors.New("No ID provided on list")
 	}
 
-	return true, nil
+	endpoint := fmt.Sprintf(single_interest_category_path, list.ID, id)
+	return list.api.Do("DELETE", endpoint)
 }
 
 // ------------------------------------------------------------------------------------------------
 // Merge Fields
 // ------------------------------------------------------------------------------------------------
-
-// ------------------------------------------------------------------------------------------------
-// Web Hooks
-// ------------------------------------------------------------------------------------------------
+// TODO

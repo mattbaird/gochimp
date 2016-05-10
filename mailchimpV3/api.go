@@ -124,28 +124,28 @@ func (api ChimpAPI) Request(method, path string, params QueryParams, body, respo
 	return parseAPIError(data)
 }
 
-func (api ChimpAPI) Delete(path string) error {
-	delete, err := http.NewRequest("DELETE", path, nil)
+func (api ChimpAPI) Do(method, path string) (bool, error) {
+	delete, err := http.NewRequest(method, path, nil)
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	resp, err := api.client.Do(delete)
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		return nil
+		return true, nil
 	}
 	defer resp.Body.Close()
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return false, err
 	}
 
-	return parseAPIError(data)
+	return false, parseAPIError(data)
 }
 
 func parseAPIError(data []byte) error {

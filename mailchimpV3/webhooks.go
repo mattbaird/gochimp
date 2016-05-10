@@ -92,10 +92,5 @@ func (list ListResponse) DeleteWebHook(id string) (bool, error) {
 	}
 
 	endpoint := fmt.Sprintf(single_webhook_path, list.ID, id)
-	err := list.api.Delete(endpoint)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return list.api.Do("DELETE", endpoint)
 }
