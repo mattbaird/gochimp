@@ -1,4 +1,4 @@
-package mailchimpV3
+package gochimp
 
 import (
 	"errors"
@@ -163,7 +163,7 @@ func (auto Automation) PauseSendingAll() (bool, error) {
 
 func (api ChimpAPI) PauseSendingAll(id string) (bool, error) {
 	endpoint := fmt.Sprintf(pause_all_emails_path, id)
-	return api.Do("POST", endpoint)
+	return api.RequestOk("POST", endpoint)
 }
 
 func (auto Automation) StartSendingAll() (bool, error) {
@@ -175,7 +175,7 @@ func (auto Automation) StartSendingAll() (bool, error) {
 
 func (api ChimpAPI) StartSendingAll(id string) (bool, error) {
 	endpoint := fmt.Sprintf(start_all_emails_path, id)
-	return api.Do("POST", endpoint)
+	return api.RequestOk("POST", endpoint)
 }
 
 func (email AutomationEmail) PauseSending() (bool, error) {
@@ -184,7 +184,7 @@ func (email AutomationEmail) PauseSending() (bool, error) {
 
 func (api ChimpAPI) PauseSending(workflowID, emailID string) (bool, error) {
 	endpoint := fmt.Sprintf(pause_single_email_path, workflowID, emailID)
-	return api.Do("POST", endpoint)
+	return api.RequestOk("POST", endpoint)
 }
 
 func (email AutomationEmail) StartSending() (bool, error) {
@@ -193,7 +193,7 @@ func (email AutomationEmail) StartSending() (bool, error) {
 
 func (api ChimpAPI) StartSending(workflowID, emailID string) (bool, error) {
 	endpoint := fmt.Sprintf(start_single_email_path, workflowID, emailID)
-	return api.Do("POST", endpoint)
+	return api.RequestOk("POST", endpoint)
 }
 
 // ------------------------------------------------------------------------------------------------

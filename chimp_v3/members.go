@@ -1,4 +1,4 @@
-package mailchimpV3
+package gochimp
 
 import (
 	"errors"
@@ -147,7 +147,7 @@ func (list ListResponse) DeleteMember(id string) (bool, error) {
 	}
 
 	endpoint := fmt.Sprintf(single_member_path, list.ID, id)
-	return list.api.Do("DELETE", endpoint)
+	return list.api.RequestOk("DELETE", endpoint)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -295,5 +295,5 @@ func (mem Member) DeleteNote(id string) (bool, error) {
 	}
 
 	endpoint := fmt.Sprintf(single_member_note_path, mem.ListID, mem.ID, id)
-	return mem.api.Do("DELETE", endpoint)
+	return mem.api.RequestOk("DELETE", endpoint)
 }

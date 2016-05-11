@@ -1,4 +1,4 @@
-package mailchimpV3
+package gochimp
 
 import "fmt"
 
@@ -92,5 +92,5 @@ func (list ListResponse) DeleteWebHook(id string) (bool, error) {
 	}
 
 	endpoint := fmt.Sprintf(single_webhook_path, list.ID, id)
-	return list.api.Do("DELETE", endpoint)
+	return list.api.RequestOk("DELETE", endpoint)
 }

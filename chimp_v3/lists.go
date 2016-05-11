@@ -1,4 +1,4 @@
-package mailchimpV3
+package gochimp
 
 import (
 	"errors"
@@ -150,7 +150,7 @@ func (api ChimpAPI) UpdateList(id string, body *ListCreationRequest) (*ListRespo
 
 func (api ChimpAPI) DeleteList(id string) (bool, error) {
 	endpoint := fmt.Sprintf(single_list_path, id)
-	return api.Do("DELETE", endpoint)
+	return api.RequestOk("DELETE", endpoint)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -394,7 +394,7 @@ func (list ListResponse) DeleteInterestCategory(id string) (bool, error) {
 	}
 
 	endpoint := fmt.Sprintf(single_interest_category_path, list.ID, id)
-	return list.api.Do("DELETE", endpoint)
+	return list.api.RequestOk("DELETE", endpoint)
 }
 
 // ------------------------------------------------------------------------------------------------

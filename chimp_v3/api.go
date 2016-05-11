@@ -1,4 +1,4 @@
-package mailchimpV3
+package gochimp
 
 import (
 	"bytes"
@@ -21,16 +21,17 @@ const URIFormat string = "%s.api.mailchimp.com"
 const Version string = "/3.0"
 
 // DatacenterRegex defines which datacenter to hit
-var DatacenterRegex = regexp.MustCompile("[a-z]+[0-9]+$")
+var DatacenterRegex = regexp.MustCompile("[^-]\\w+$")
 
 // ChimpAPI represents the origin of the API
 type ChimpAPI struct {
-	User    string
-	Key     string
-	Timeout time.Duration
-	Debug   bool
+	Key       string
+	Timeout   time.Duration
+	Transport http.RoundTripper
 
-	client   *http.Client
+	User  string
+	Debug bool
+
 	endpoint string
 }
 
@@ -45,21 +46,20 @@ func NewChimp(apiKey string, https bool) *ChimpAPI {
 	u.Host = fmt.Sprintf(URIFormat, DatacenterRegex.FindString(apiKey))
 	u.Path = Version
 
-	client := new(http.Client)
-	api := ChimpAPI{
-		User:    "gochimp",
-		Key:     apiKey,
-		Debug:   false,
-		Timeout: 2 * time.Second,
-
+	return &ChimpAPI{
+		User:     "gochimp",
+		Key:      apiKey,
 		endpoint: u.String(),
-		client:   client,
 	}
-	return &api
 }
 
 // Request will make a call to the actual API.
 func (api ChimpAPI) Request(method, path string, params QueryParams, body, response interface{}) error {
+	client := &http.Client{Transport: api.Transport}
+	if api.Timeout > 0 {
+		client.Timeout = api.Timeout
+	}
+
 	requestURL := fmt.Sprintf("%s%s", api.endpoint, path)
 	if api.Debug {
 		log.Printf("Requesting %s: %s\n", method, requestURL)
@@ -96,7 +96,7 @@ func (api ChimpAPI) Request(method, path string, params QueryParams, body, respo
 		}
 	}
 
-	resp, err := api.client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -112,6 +112,11 @@ func (api ChimpAPI) Request(method, path string, params QueryParams, body, respo
 	}
 
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		// Do not unmarshall response is nil
+		if reflect.ValueOf(response).IsNil() {
+			return nil
+		}
+
 		err = json.Unmarshal(data, response)
 		if err != nil {
 			return err
@@ -124,28 +129,13 @@ func (api ChimpAPI) Request(method, path string, params QueryParams, body, respo
 	return parseAPIError(data)
 }
 
-func (api ChimpAPI) Do(method, path string) (bool, error) {
-	delete, err := http.NewRequest(method, path, nil)
+// Make Request ignoring body and return true if HTTP status code is 2xx.
+func (api ChimpAPI) RequestOk(method, path string) (bool, error) {
+	err := api.Request(method, path, nil, nil, nil)
 	if err != nil {
 		return false, err
 	}
-
-	resp, err := api.client.Do(delete)
-	if err != nil {
-		return false, err
-	}
-
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		return true, nil
-	}
-	defer resp.Body.Close()
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return false, err
-	}
-
-	return false, parseAPIError(data)
+	return true, nil
 }
 
 func parseAPIError(data []byte) error {

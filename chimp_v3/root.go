@@ -1,4 +1,4 @@
-package mailchimpV3
+package gochimp
 
 const (
 	root_path = "/"
