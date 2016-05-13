@@ -113,7 +113,7 @@ func (api ChimpAPI) Request(method, path string, params QueryParams, body, respo
 
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		// Do not unmarshall response is nil
-		if reflect.ValueOf(response).IsNil() {
+		if response == nil || reflect.ValueOf(response).IsNil() {
 			return nil
 		}
 
@@ -129,7 +129,7 @@ func (api ChimpAPI) Request(method, path string, params QueryParams, body, respo
 	return parseAPIError(data)
 }
 
-// Make Request ignoring body and return true if HTTP status code is 2xx.
+// RequestOk Make Request ignoring body and return true if HTTP status code is 2xx.
 func (api ChimpAPI) RequestOk(method, path string) (bool, error) {
 	err := api.Request(method, path, nil, nil, nil)
 	if err != nil {
