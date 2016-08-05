@@ -107,6 +107,16 @@ type Customer struct {
 	Links        []Link  `json:"_links"`
 }
 
+// LineItem defines a mailchimp cart or order line item
+type LineItem struct {
+	ProductID           string `json:"product_id"`
+	ProductTitle        string `json:"product_title"`
+	ProductVariantID    string `json:"product_variant_id"`
+	ProductVariantTitle string `json:"product_variant_title"`
+	Quantity            int    `json:"quantity"`
+	Price               int    `json:"price"` // float?
+}
+
 // Contact defines a single contact
 type Contact struct {
 	Company     string `json:"customer"`
