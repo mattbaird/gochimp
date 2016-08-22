@@ -1,6 +1,9 @@
 package gochimp
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 const (
 	store_path  = "/ecommerce/stores/%s"
@@ -12,8 +15,8 @@ const (
 	product_path  = "/ecommerce/stores/%s/products/%s"
 	products_path = "/ecommerce/stores/%s/products"
 
-	variant_path   = "/ecommerce/stores/%s/products/%s/variants/%s"
-	variants_paths = "/ecommerce/stores/%s/products/%s/variants"
+	variant_path  = "/ecommerce/stores/%s/products/%s/variants/%s"
+	variants_path = "/ecommerce/stores/%s/products/%s/variants"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -40,6 +43,14 @@ type Store struct {
 	CreatedAt     string  `json:"created_at"`
 	UpdatedAt     string  `json:"updated_at"`
 	Links         []Link  `json:"_links"`
+}
+
+func (store Store) CanMakeRequest() error {
+	if store.ID == "" {
+		return errors.New("No ID provided on store")
+	}
+
+	return nil
 }
 
 type StoreList struct {
@@ -189,7 +200,10 @@ func (store Store) GetOrder(id string, params *BasicQueryParams) (*Order, error)
 type Product struct {
 	APIError
 
-	ID          string    `json:"id"`
+	api *ChimpAPI
+
+	StoreID     string
+	ID          string    `json:"id,omitempty"`
 	Title       string    `json:"title"`
 	Handle      string    `json:"handle"`
 	URL         string    `json:"url"`
@@ -199,6 +213,15 @@ type Product struct {
 	ImageURL    string    `json:"image_url"`
 	Variants    []Variant `json:"variants"`
 	PublishedAt string    `json:"published_at_foreign"`
+	Links       []Link    `json:"_links"`
+}
+
+func (product Product) CanMakeRequest() error {
+	if product.ID == "" || product.StoreID == "" {
+		return errors.New("No ID provided on product")
+	}
+
+	return nil
 }
 
 type ProductList struct {
@@ -241,11 +264,46 @@ func (store Store) GetProduct(id string, params *BasicQueryParams) (*Product, er
 	return response, nil
 }
 
+func (store Store) CreateProduct(req *Product) (*Product, error) {
+	if err := store.CanMakeRequest(); err != nil {
+		return nil, err
+	}
+
+	endpoint := fmt.Sprintf(products_path, store.ID)
+	res := new(Product)
+	res.api = store.api
+
+	return res, store.api.Request("POST", endpoint, nil, req, res)
+}
+
+func (store Store) UpdateProduct(req *Product) (*Product, error) {
+	if err := store.CanMakeRequest(); err != nil {
+		return nil, err
+	}
+
+	endpoint := fmt.Sprintf(product_path, store.ID, req.ID)
+	res := new(Product)
+	res.api = store.api
+
+	return res, store.api.Request("PATCH", endpoint, nil, req, res)
+}
+
+func (store Store) DeleteProduct(id string) (bool, error) {
+	if err := store.CanMakeRequest(); err != nil {
+		return false, err
+	}
+
+	endpoint := fmt.Sprintf(product_path, store.ID, id)
+	return store.api.RequestOk("DELETE", endpoint)
+}
+
 // ------------------------------------------------------------------------------------------------
 // Variants
 // ------------------------------------------------------------------------------------------------
 type Variant struct {
 	APIError
+
+	api *ChimpAPI
 
 	ID                string  `json:"id"`
 	Title             string  `json:"title"`
@@ -265,4 +323,37 @@ type VariantList struct {
 	Variants   []Variant `json:"variants"`
 	TotalItems int       `json:"total_items"`
 	Links      []Link    `json:"_links"`
+}
+
+func (product Product) CreateVariant(req *Variant) (*Variant, error) {
+	if err := product.CanMakeRequest(); err != nil {
+		return nil, err
+	}
+
+	endpoint := fmt.Sprintf(variants_path, product.StoreID, product.ID)
+	res := new(Variant)
+	res.api = product.api
+
+	return res, product.api.Request("POST", endpoint, nil, req, res)
+}
+
+func (product Product) UpdateVariant(req *Variant) (*Variant, error) {
+	if err := product.CanMakeRequest(); err != nil {
+		return nil, err
+	}
+
+	endpoint := fmt.Sprintf(variant_path, product.StoreID, product.ID, req.ID)
+	res := new(Variant)
+	res.api = product.api
+
+	return res, product.api.Request("PATCH", endpoint, nil, req, res)
+}
+
+func (product Product) DeleteVariant(id string) (bool, error) {
+	if err := product.CanMakeRequest(); err != nil {
+		return false, err
+	}
+
+	endpoint := fmt.Sprintf(variant_path, product.StoreID, product.ID, id)
+	return product.api.RequestOk("DELETE", endpoint)
 }
