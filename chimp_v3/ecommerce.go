@@ -12,6 +12,9 @@ const (
 	cart_path  = "/ecommerce/store/%s/cart/%s"
 	carts_path = "/ecommerce/store/%s/cart"
 
+	order_path  = "/ecommerce/store/%s/order/%s"
+	orders_path = "/ecommerce/store/%s/order"
+
 	product_path  = "/ecommerce/stores/%s/products/%s"
 	products_path = "/ecommerce/stores/%s/products"
 
@@ -72,8 +75,35 @@ func (api ChimpAPI) GetStores(params *ExtendedQueryParams) (*StoreList, error) {
 }
 
 func (api ChimpAPI) GetStore(id string, params QueryParams) (*Store, error) {
+	response := new(Store)
 
-	return nil, nil
+	endpoint := fmt.Sprintf(store_path, id)
+	err := api.Request("GET", endpoint, params, nil, response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
+func (api ChimpAPI) CreateStore(req *Store) (*Store, error) {
+	res := new(Store)
+	res.api = &api
+
+	return res, api.Request("POST", stores_path, nil, req, res)
+}
+
+func (api ChimpAPI) UpdateStore(req *Store) (*Store, error) {
+	res := new(Store)
+	res.api = &api
+
+	endpoint := fmt.Sprintf(store_path, req.ID)
+	return res, api.Request("PATCH", endpoint, nil, req, res)
+}
+
+func (api ChimpAPI) DeleteStore(id string) (bool, error) {
+	endpoint := fmt.Sprintf(store_path, id)
+	return api.RequestOk("DELETE", endpoint)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -135,6 +165,37 @@ func (store Store) GetCart(id string, params *BasicQueryParams) (*Cart, error) {
 	return response, nil
 }
 
+func (store Store) CreateCart(req *Cart) (*Cart, error) {
+	if err := store.CanMakeRequest(); err != nil {
+		return nil, err
+	}
+
+	endpoint := fmt.Sprintf(carts_path, store.ID)
+	res := new(Cart)
+
+	return res, store.api.Request("POST", endpoint, nil, req, res)
+}
+
+func (store Store) UpdateCart(req *Cart) (*Cart, error) {
+	if err := store.CanMakeRequest(); err != nil {
+		return nil, err
+	}
+
+	endpoint := fmt.Sprintf(cart_path, store.ID, req.ID)
+	res := new(Cart)
+
+	return res, store.api.Request("PATCH", endpoint, nil, req, res)
+}
+
+func (store Store) DeleteCart(id string) (bool, error) {
+	if err := store.CanMakeRequest(); err != nil {
+		return false, err
+	}
+
+	endpoint := fmt.Sprintf(cart_path, store.ID, id)
+	return store.api.RequestOk("DELETE", endpoint)
+}
+
 // ------------------------------------------------------------------------------------------------
 // Orders
 // ------------------------------------------------------------------------------------------------
@@ -185,13 +246,44 @@ func (store Store) GetOrder(id string, params *BasicQueryParams) (*Order, error)
 		return nil, fmt.Errorf("The store has an error, can't process request")
 	}
 
-	endpoint := fmt.Sprintf(cart_path, store.ID, id)
+	endpoint := fmt.Sprintf(order_path, store.ID, id)
 	err := store.api.Request("GET", endpoint, params, nil, response)
 	if err != nil {
 		return nil, err
 	}
 
 	return response, nil
+}
+
+func (store Store) CreateOrder(req *Order) (*Order, error) {
+	if err := store.CanMakeRequest(); err != nil {
+		return nil, err
+	}
+
+	endpoint := fmt.Sprintf(orders_path, store.ID)
+	res := new(Order)
+
+	return res, store.api.Request("POST", endpoint, nil, req, res)
+}
+
+func (store Store) UpdateOrder(req *Order) (*Order, error) {
+	if err := store.CanMakeRequest(); err != nil {
+		return nil, err
+	}
+
+	endpoint := fmt.Sprintf(order_path, store.ID, req.ID)
+	res := new(Order)
+
+	return res, store.api.Request("PATCH", endpoint, nil, req, res)
+}
+
+func (store Store) DeleteOrder(id string) (bool, error) {
+	if err := store.CanMakeRequest(); err != nil {
+		return false, err
+	}
+
+	endpoint := fmt.Sprintf(order_path, store.ID, id)
+	return store.api.RequestOk("DELETE", endpoint)
 }
 
 // ------------------------------------------------------------------------------------------------
