@@ -79,16 +79,16 @@ type Link struct {
 
 // Address represents what it says
 type Address struct {
-	Field1       string `json:"address1"`
-	Field2       string `json:"address2"`
-	City         string `json:"city"`
-	Province     string `json:"province"`
-	ProvinceCode string `json:"province_code"`
-	PostalCode   string `json:"postal_code"`
-	Country      string `json:"country"`
-	CountryCode  string `json:"country_code"`
-	Longitude    int    `json:"longitude"` // is this a float?
-	Latitude     int    `json:"latitude"`  // Is this a float?
+	Address1     string  `json:"address1"`
+	Address2     string  `json:"address2"`
+	City         string  `json:"city"`
+	Province     string  `json:"province"`
+	ProvinceCode string  `json:"province_code"`
+	PostalCode   string  `json:"postal_code"`
+	Country      string  `json:"country"`
+	CountryCode  string  `json:"country_code"`
+	Longitude    float64 `json:"longitude"`
+	Latitude     float64 `json:"latitude"`
 }
 
 // Customer defines a mailchimp customer
@@ -100,11 +100,22 @@ type Customer struct {
 	FirstName    string  `json:"first_name"`
 	LastName     string  `json:"last_name"`
 	OrdersCount  int     `json:"orders_count"`
-	TotalSpent   int     `json:"total_spent"` // float
+	TotalSpent   float64 `json:"total_spent"` // float
 	Address      Address `json:"address"`
 	CreatedAt    string  `json:"created_at"`
 	UpdatedAt    string  `json:"updated_at"`
 	Links        []Link  `json:"_links"`
+}
+
+// LineItem defines a mailchimp cart or order line item
+type LineItem struct {
+	ID                  string  `json:"id"`
+	ProductID           string  `json:"product_id"`
+	ProductTitle        string  `json:"product_title"`
+	ProductVariantID    string  `json:"product_variant_id"`
+	ProductVariantTitle string  `json:"product_variant_title"`
+	Quantity            int     `json:"quantity"`
+	Price               float64 `json:"price"`
 }
 
 // Contact defines a single contact
