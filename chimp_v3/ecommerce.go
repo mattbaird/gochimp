@@ -121,17 +121,22 @@ type CartList struct {
 type Cart struct {
 	APIError
 
-	ID           string     `json:"id"`
+	// Required
 	Customer     Customer   `json:"customer"`
-	CampaignID   string     `json:"campaign_id"`
-	CheckoutURL  string     `json:"checkout_url"`
 	CurrencyCode string     `json:"currency_code"`
 	OrderTotal   float64    `json:"order_total"`
-	TaxTotal     float64    `json:"tax_total"`
 	Lines        []LineItem `json:"lines"`
-	CreatedAt    string     `json:"created_at"`
-	UpdatedAt    string     `json:"updated_at"`
-	Links        []Link     `json:"_links"`
+
+	// Optional
+	ID          string  `json:"id"`
+	CampaignID  string  `json:"campaign_id"`
+	CheckoutURL string  `json:"checkout_url"`
+	TaxTotal    float64 `json:"tax_total"`
+
+	// Response only
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+	Links     []Link `json:"_links"`
 }
 
 func (store Store) GetCarts(params *ExtendedQueryParams) (*CartList, error) {
@@ -211,17 +216,30 @@ type OrderList struct {
 type Order struct {
 	APIError
 
+	// Required
 	ID           string     `json:"id"`
 	Customer     Customer   `json:"customer"`
-	CampaignID   string     `json:"campaign_id"`
-	CheckoutURL  string     `json:"checkout_url"`
+	Lines        []LineItem `json:"lines"`
 	CurrencyCode string     `json:"currency_code"`
 	OrderTotal   float64    `json:"order_total"`
-	TaxTotal     float64    `json:"tax_total"`
-	Lines        []LineItem `json:"lines"`
-	CreatedAt    string     `json:"created_at"`
-	UpdatedAt    string     `json:"updated_at"`
-	Links        []Link     `json:"_links"`
+
+	// Optional
+	TaxTotal           float64 `json:"tax_total"`
+	ShippingTotal      float64 `json:"shipping_total"`
+	TrackingCode       string  `json:"tracking_code"`
+	ProcessedAtForeign string  `json:processed_at_foreign`
+	CancelledAtForeign string  `json:cancelled_at_foreign`
+	UpdatedAtForeign   string  `json:updated_at_foreign`
+	CampaignID         string  `json:"campaign_id"`
+	FinancialStatus    string  `json:"financial_status"`
+
+	BillingAddress  Address `json:"billing_address"`
+	ShippingAddress Address `json:"shipping_address"`
+
+	// Response only
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+	Links     []Link `json:"_links"`
 }
 
 func (store Store) GetOrders(params *ExtendedQueryParams) (*OrderList, error) {
