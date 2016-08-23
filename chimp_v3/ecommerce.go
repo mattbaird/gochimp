@@ -232,6 +232,7 @@ type Order struct {
 	UpdatedAtForeign   string  `json:updated_at_foreign`
 	CampaignID         string  `json:"campaign_id"`
 	FinancialStatus    string  `json:"financial_status"`
+	FulfillmentStatus  string  `json:"fulfillment_status"`
 
 	BillingAddress  Address `json:"billing_address"`
 	ShippingAddress Address `json:"shipping_address"`
