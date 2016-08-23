@@ -79,16 +79,16 @@ type Link struct {
 
 // Address represents what it says
 type Address struct {
-	Field1       string `json:"address1"`
-	Field2       string `json:"address2"`
-	City         string `json:"city"`
-	Province     string `json:"province"`
-	ProvinceCode string `json:"province_code"`
-	PostalCode   string `json:"postal_code"`
-	Country      string `json:"country"`
-	CountryCode  string `json:"country_code"`
-	Longitude    int    `json:"longitude"` // is this a float?
-	Latitude     int    `json:"latitude"`  // Is this a float?
+	Address1     string  `json:"address1"`
+	Address2     string  `json:"address2"`
+	City         string  `json:"city"`
+	Province     string  `json:"province"`
+	ProvinceCode string  `json:"province_code"`
+	PostalCode   string  `json:"postal_code"`
+	Country      string  `json:"country"`
+	CountryCode  string  `json:"country_code"`
+	Longitude    float64 `json:"longitude"`
+	Latitude     float64 `json:"latitude"`
 }
 
 // Customer defines a mailchimp customer
