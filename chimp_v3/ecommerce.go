@@ -80,15 +80,16 @@ func (api ChimpAPI) GetStores(params *ExtendedQueryParams) (*StoreList, error) {
 }
 
 func (api ChimpAPI) GetStore(id string, params QueryParams) (*Store, error) {
-	response := new(Store)
+	res := new(Store)
+	res.api = &api
 
 	endpoint := fmt.Sprintf(store_path, id)
-	err := api.Request("GET", endpoint, params, nil, response)
+	err := api.Request("GET", endpoint, params, nil, res)
 	if err != nil {
 		return nil, err
 	}
 
-	return response, nil
+	return res, nil
 }
 
 func (api ChimpAPI) CreateStore(req *Store) (*Store, error) {
@@ -393,6 +394,7 @@ func (store Store) CreateProduct(req *Product) (*Product, error) {
 	endpoint := fmt.Sprintf(products_path, store.ID)
 	res := new(Product)
 	res.api = store.api
+	res.StoreID = store.ID
 
 	return res, store.api.Request("POST", endpoint, nil, req, res)
 }
