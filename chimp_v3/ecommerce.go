@@ -31,21 +31,26 @@ type Store struct {
 
 	api *ChimpAPI
 
-	ID            string  `json:"id"`
-	ListID        string  `json:"list_id"`
-	Name          string  `json:"name"`
-	Platform      string  `json:"platform"`
-	Domain        string  `json:"domain"`
-	EmailAddress  string  `json:"email_address"`
-	CurrencyCode  string  `json:"currency_code"`
-	MoneyFormat   string  `json:"money_format"`
-	PrimaryLocale string  `json:"primary_locale"`
-	Timezone      string  `json:"timezone"`
-	Phone         string  `json:"phone"`
-	Address       Address `json:"address"`
-	CreatedAt     string  `json:"created_at"`
-	UpdatedAt     string  `json:"updated_at"`
-	Links         []Link  `json:"_links,omitempty"`
+	// Required
+	ID           string `json:"id"`
+	ListID       string `json:"list_id"`
+	CurrencyCode string `json:"currency_code"`
+	Name         string `json:"name"`
+
+	// Optional
+	Platform      string  `json:"platform,omitempty"`
+	Domain        string  `json:"domain,omitempty"`
+	EmailAddress  string  `json:"email_address,omitempty"`
+	MoneyFormat   string  `json:"money_format,omitempty"`
+	PrimaryLocale string  `json:"primary_locale,omitempty"`
+	Timezone      string  `json:"timezone,omitempty"`
+	Phone         string  `json:"phone,omitempty"`
+	Address       Address `json:"address,omitempty"`
+
+	// Response
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
+	Links     []Link `json:"_links,omitempty"`
 }
 
 func (store Store) CanMakeRequest() error {
@@ -61,7 +66,7 @@ type StoreList struct {
 
 	Stores     []Store `json:"stores"`
 	TotalItems int     `json:"total_items"`
-	Links      []Link  `json:"_links,omitempty"`
+	Links      []Link  `json:"_links"`
 }
 
 func (api ChimpAPI) GetStores(params *ExtendedQueryParams) (*StoreList, error) {
@@ -115,7 +120,7 @@ type CartList struct {
 
 	Carts      []Cart `json:"cart"`
 	TotalItems int    `json:"total_items"`
-	Links      []Link `json:"_links,omitempty"`
+	Links      []Link `json:"_links"`
 }
 
 type Cart struct {
@@ -128,14 +133,14 @@ type Cart struct {
 	Lines        []LineItem `json:"lines"`
 
 	// Optional
-	ID          string  `json:"id"`
-	CampaignID  string  `json:"campaign_id"`
-	CheckoutURL string  `json:"checkout_url"`
-	TaxTotal    float64 `json:"tax_total"`
+	ID          string  `json:"id,omitempty"`
+	CampaignID  string  `json:"campaign_id,omitempty"`
+	CheckoutURL string  `json:"checkout_url,omitempty"`
+	TaxTotal    float64 `json:"tax_total,omitempty"`
 
 	// Response only
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
 	Links     []Link `json:"_links,omitempty"`
 }
 
@@ -224,22 +229,22 @@ type Order struct {
 	OrderTotal   float64    `json:"order_total"`
 
 	// Optional
-	TaxTotal           float64 `json:"tax_total"`
-	ShippingTotal      float64 `json:"shipping_total"`
-	TrackingCode       string  `json:"tracking_code"`
+	TaxTotal           float64 `json:"tax_total,omitempty"`
+	ShippingTotal      float64 `json:"shipping_total,omitempty"`
+	TrackingCode       string  `json:"tracking_code,omitempty"`
 	ProcessedAtForeign string  `json:processed_at_foreign`
 	CancelledAtForeign string  `json:cancelled_at_foreign`
 	UpdatedAtForeign   string  `json:updated_at_foreign`
-	CampaignID         string  `json:"campaign_id"`
-	FinancialStatus    string  `json:"financial_status"`
-	FulfillmentStatus  string  `json:"fulfillment_status"`
+	CampaignID         string  `json:"campaign_id,omitempty"`
+	FinancialStatus    string  `json:"financial_status,omitempty"`
+	FulfillmentStatus  string  `json:"fulfillment_status,omitempty"`
 
-	BillingAddress  Address `json:"billing_address"`
-	ShippingAddress Address `json:"shipping_address"`
+	BillingAddress  Address `json:"billing_address,omitempty"`
+	ShippingAddress Address `json:"shipping_address,omitempty"`
 
 	// Response only
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
 	Links     []Link `json:"_links,omitempty"`
 }
 
@@ -311,20 +316,25 @@ func (store Store) DeleteOrder(id string) (bool, error) {
 type Product struct {
 	APIError
 
-	api *ChimpAPI
+	api     *ChimpAPI
+	StoreID string
 
-	StoreID     string
-	ID          string    `json:"id,omitempty"`
-	Title       string    `json:"title"`
-	Handle      string    `json:"handle"`
-	URL         string    `json:"url"`
-	Description string    `json:"description"`
-	Type        string    `json:"type"`
-	Vendor      string    `json:"vendor"`
-	ImageURL    string    `json:"image_url"`
-	Variants    []Variant `json:"variants"`
-	PublishedAt string    `json:"published_at_foreign"`
-	Links       []Link    `json:"_links,omitempty"`
+	// Required
+	ID       string    `json:"id"`
+	Title    string    `json:"title"`
+	Variants []Variant `json:"variants"`
+
+	// Optional
+	Handle      string `json:"handle,omitempty"`
+	URL         string `json:"url,omitempty"`
+	Description string `json:"description,omitempty"`
+	Type        string `json:"type,omitempty"`
+	Vendor      string `json:"vendor,omitempty"`
+	ImageURL    string `json:"image_url,omitempty"`
+	PublishedAt string `json:"published_at_foreign,omitempty"`
+
+	// Response only
+	Links []Link `json:"_links,omitempty"`
 }
 
 func (product Product) CanMakeRequest() error {
@@ -341,7 +351,7 @@ type ProductList struct {
 	StoreID    string    `json:"store_id"`
 	Products   []Product `json:"products"`
 	TotalItems int       `json:"total_items"`
-	Links      []Link    `json:"_links,omitempty"`
+	Links      []Link    `json:"_links"`
 }
 
 func (store Store) GetProducts(params *ExtendedQueryParams) (*ProductList, error) {
@@ -416,15 +426,18 @@ type Variant struct {
 
 	api *ChimpAPI
 
-	ID                string  `json:"id"`
-	Title             string  `json:"title"`
-	Url               string  `json:"url"`
-	SKU               string  `json:"sku"`
-	Price             float64 `json:"price"`
-	InventoryQuantity int     `json:"inventory_quantity"`
-	ImageUrl          string  `json:"image_url"`
-	Backorders        string  `json:"backorders"`
-	Visibility        string  `json:"visibility"`
+	// Required
+	ID    string `json:"id"`
+	Title string `json:"title"`
+
+	// Optional
+	Url               string  `json:"url,omitempty"`
+	SKU               string  `json:"sku,omitempty"`
+	Price             float64 `json:"price,omitempty"`
+	InventoryQuantity int     `json:"inventory_quantity,omitempty"`
+	ImageUrl          string  `json:"image_url,omitempty"`
+	Backorders        string  `json:"backorders,omitempty"`
+	Visibility        string  `json:"visibility,omitempty"`
 }
 
 type VariantList struct {
