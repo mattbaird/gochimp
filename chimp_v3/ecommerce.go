@@ -45,7 +45,7 @@ type Store struct {
 	Address       Address `json:"address"`
 	CreatedAt     string  `json:"created_at"`
 	UpdatedAt     string  `json:"updated_at"`
-	Links         []Link  `json:"_links"`
+	Links         []Link  `json:"_links,omitempty"`
 }
 
 func (store Store) CanMakeRequest() error {
@@ -61,7 +61,7 @@ type StoreList struct {
 
 	Stores     []Store `json:"stores"`
 	TotalItems int     `json:"total_items"`
-	Links      []Link  `json:"_link"`
+	Links      []Link  `json:"_links,omitempty"`
 }
 
 func (api ChimpAPI) GetStores(params *ExtendedQueryParams) (*StoreList, error) {
@@ -115,7 +115,7 @@ type CartList struct {
 
 	Carts      []Cart `json:"cart"`
 	TotalItems int    `json:"total_items"`
-	Links      []Link `json:"_links"`
+	Links      []Link `json:"_links,omitempty"`
 }
 
 type Cart struct {
@@ -136,7 +136,7 @@ type Cart struct {
 	// Response only
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
-	Links     []Link `json:"_links"`
+	Links     []Link `json:"_links,omitempty"`
 }
 
 func (store Store) GetCarts(params *ExtendedQueryParams) (*CartList, error) {
@@ -210,7 +210,7 @@ type OrderList struct {
 
 	Orders     []Order `json:"cart"`
 	TotalItems int     `json:"total_items"`
-	Links      []Link  `json:"_links"`
+	Links      []Link  `json:"_links,omitempty"`
 }
 
 type Order struct {
@@ -240,7 +240,7 @@ type Order struct {
 	// Response only
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
-	Links     []Link `json:"_links"`
+	Links     []Link `json:"_links,omitempty"`
 }
 
 func (store Store) GetOrders(params *ExtendedQueryParams) (*OrderList, error) {
@@ -324,7 +324,7 @@ type Product struct {
 	ImageURL    string    `json:"image_url"`
 	Variants    []Variant `json:"variants"`
 	PublishedAt string    `json:"published_at_foreign"`
-	Links       []Link    `json:"_links"`
+	Links       []Link    `json:"_links,omitempty"`
 }
 
 func (product Product) CanMakeRequest() error {
@@ -341,7 +341,7 @@ type ProductList struct {
 	StoreID    string    `json:"store_id"`
 	Products   []Product `json:"products"`
 	TotalItems int       `json:"total_items"`
-	Links      []Link    `json:"_links"`
+	Links      []Link    `json:"_links,omitempty"`
 }
 
 func (store Store) GetProducts(params *ExtendedQueryParams) (*ProductList, error) {
@@ -433,7 +433,7 @@ type VariantList struct {
 	StoreID    string    `json:"store_id"`
 	Variants   []Variant `json:"variants"`
 	TotalItems int       `json:"total_items"`
-	Links      []Link    `json:"_links"`
+	Links      []Link    `json:"_links,omitempty"`
 }
 
 func (product Product) CreateVariant(req *Variant) (*Variant, error) {
