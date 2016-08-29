@@ -7,11 +7,11 @@ import (
 
 // APIError is what the what the api returns on error
 type APIError struct {
-	Type     string `json:"type"`
-	Title    string `json:"title"`
-	Status   int    `json:"status"`
-	Detail   string `json:"detail"`
-	Instance string `json:"instance"`
+	Type     string `json:"type,omitempty"`
+	Title    string `json:"title,omitempty"`
+	Status   int    `json:"status,omitempty"`
+	Detail   string `json:"detail,omitempty"`
+	Instance string `json:"instance,omitempty"`
 }
 
 func (err APIError) String() string {

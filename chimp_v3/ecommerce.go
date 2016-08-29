@@ -318,7 +318,7 @@ type Product struct {
 	APIError
 
 	api     *ChimpAPI
-	StoreID string
+	StoreID string `json:"-"`
 
 	// Required
 	ID       string    `json:"id"`
@@ -371,19 +371,21 @@ func (store Store) GetProducts(params *ExtendedQueryParams) (*ProductList, error
 }
 
 func (store Store) GetProduct(id string, params *BasicQueryParams) (*Product, error) {
-	response := new(Product)
-
 	if store.HasError() {
 		return nil, fmt.Errorf("The store has an error, can't process request")
 	}
 
+	res := new(Product)
+	res.api = store.api
+	res.StoreID = store.ID
+
 	endpoint := fmt.Sprintf(cart_path, store.ID, id)
-	err := store.api.Request("GET", endpoint, params, nil, response)
+	err := store.api.Request("GET", endpoint, params, nil, res)
 	if err != nil {
 		return nil, err
 	}
 
-	return response, nil
+	return res, nil
 }
 
 func (store Store) CreateProduct(req *Product) (*Product, error) {
@@ -407,6 +409,7 @@ func (store Store) UpdateProduct(req *Product) (*Product, error) {
 	endpoint := fmt.Sprintf(product_path, store.ID, req.ID)
 	res := new(Product)
 	res.api = store.api
+	res.StoreID = store.ID
 
 	return res, store.api.Request("PATCH", endpoint, nil, req, res)
 }
@@ -426,7 +429,9 @@ func (store Store) DeleteProduct(id string) (bool, error) {
 type Variant struct {
 	APIError
 
-	api *ChimpAPI
+	api       *ChimpAPI
+	StoreID   string `json:"-"`
+	ProductID string `json:"-"`
 
 	// Required
 	ID    string `json:"id"`
