@@ -9,11 +9,11 @@ const (
 	store_path  = "/ecommerce/stores/%s"
 	stores_path = "/ecommerce/stores"
 
-	cart_path  = "/ecommerce/store/%s/cart/%s"
-	carts_path = "/ecommerce/store/%s/cart"
+	cart_path  = "/ecommerce/stores/%s/carts/%s"
+	carts_path = "/ecommerce/stores/%s/carts"
 
-	order_path  = "/ecommerce/store/%s/order/%s"
-	orders_path = "/ecommerce/store/%s/order"
+	order_path  = "/ecommerce/stores/%s/orders/%s"
+	orders_path = "/ecommerce/stores/%s/orders"
 
 	product_path  = "/ecommerce/stores/%s/products/%s"
 	products_path = "/ecommerce/stores/%s/products"
