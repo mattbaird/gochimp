@@ -114,13 +114,16 @@ type Customer struct {
 
 // LineItem defines a mailchimp cart or order line item
 type LineItem struct {
-	ID                  string  `json:"id"`
-	ProductID           string  `json:"product_id"`
-	ProductTitle        string  `json:"product_title"`
-	ProductVariantID    string  `json:"product_variant_id"`
-	ProductVariantTitle string  `json:"product_variant_title"`
-	Quantity            int     `json:"quantity"`
-	Price               float64 `json:"price"`
+	// Required
+	ID               string  `json:"id"`
+	ProductID        string  `json:"product_id"`
+	ProductVariantID string  `json:"product_variant_id"`
+	Quantity         int     `json:"quantity"`
+	Price            float64 `json:"price"`
+
+	// Optional
+	ProductTitle        string `json:"product_title,omitempty"`
+	ProductVariantTitle string `json:"product_variant_title,omitempty"`
 }
 
 // Contact defines a single contact
