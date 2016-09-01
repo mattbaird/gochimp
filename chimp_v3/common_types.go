@@ -7,11 +7,11 @@ import (
 
 // APIError is what the what the api returns on error
 type APIError struct {
-	Type     string `json:"type"`
-	Title    string `json:"title"`
-	Status   int    `json:"status"`
-	Detail   string `json:"detail"`
-	Instance string `json:"instance"`
+	Type     string `json:"type,omitempty"`
+	Title    string `json:"title,omitempty"`
+	Status   int    `json:"status,omitempty"`
+	Detail   string `json:"detail,omitempty"`
+	Instance string `json:"instance,omitempty"`
 }
 
 func (err APIError) String() string {
@@ -93,29 +93,37 @@ type Address struct {
 
 // Customer defines a mailchimp customer
 type Customer struct {
-	ID           string  `json:"id"`
-	EmailAddress string  `json:"email_address"`
-	OptInStatus  bool    `json:"opt_in_status"`
-	Company      string  `json:"company"`
-	FirstName    string  `json:"first_name"`
-	LastName     string  `json:"last_name"`
-	OrdersCount  int     `json:"orders_count"`
-	TotalSpent   float64 `json:"total_spent"` // float
-	Address      Address `json:"address"`
-	CreatedAt    string  `json:"created_at"`
-	UpdatedAt    string  `json:"updated_at"`
-	Links        []Link  `json:"_links"`
+	// Required
+	ID string `json:"id"`
+
+	// Optional
+	EmailAddress string  `json:"email_address,omitempty"`
+	OptInStatus  bool    `json:"opt_in_status,omitempty"`
+	Company      string  `json:"company,omitempty"`
+	FirstName    string  `json:"first_name,omitempty"`
+	LastName     string  `json:"last_name,omitempty"`
+	OrdersCount  int     `json:"orders_count,omitempty"`
+	TotalSpent   float64 `json:"total_spent,omitempty"`
+	Address      Address `json:"address,omitempty"`
+
+	// Response
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
+	Links     []Link `json:"_links,omitempty"`
 }
 
 // LineItem defines a mailchimp cart or order line item
 type LineItem struct {
-	ID                  string  `json:"id"`
-	ProductID           string  `json:"product_id"`
-	ProductTitle        string  `json:"product_title"`
-	ProductVariantID    string  `json:"product_variant_id"`
-	ProductVariantTitle string  `json:"product_variant_title"`
-	Quantity            int     `json:"quantity"`
-	Price               float64 `json:"price"`
+	// Required
+	ID               string  `json:"id"`
+	ProductID        string  `json:"product_id"`
+	ProductVariantID string  `json:"product_variant_id"`
+	Quantity         int     `json:"quantity"`
+	Price            float64 `json:"price"`
+
+	// Optional
+	ProductTitle        string `json:"product_title,omitempty"`
+	ProductVariantTitle string `json:"product_variant_title,omitempty"`
 }
 
 // Contact defines a single contact

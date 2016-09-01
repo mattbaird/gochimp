@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"reflect"
 	"regexp"
@@ -83,6 +84,7 @@ func (api ChimpAPI) Request(method, path string, params QueryParams, body, respo
 	if err != nil {
 		return err
 	}
+
 	req.Header.Set("Content-Type", "application/json")
 	req.SetBasicAuth(api.User, api.Key)
 
@@ -96,6 +98,11 @@ func (api ChimpAPI) Request(method, path string, params QueryParams, body, respo
 		}
 	}
 
+	if api.Debug {
+		dump, _ := httputil.DumpRequestOut(req, true)
+		log.Printf("%s", string(dump))
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
@@ -103,7 +110,8 @@ func (api ChimpAPI) Request(method, path string, params QueryParams, body, respo
 	defer resp.Body.Close()
 
 	if api.Debug {
-		log.Printf("Got response: %d %s\n", resp.StatusCode, resp.Status)
+		dump, _ := httputil.DumpResponse(resp, true)
+		log.Printf("%s", string(dump))
 	}
 
 	data, err = ioutil.ReadAll(resp.Body)

@@ -9,11 +9,11 @@ const (
 	store_path  = "/ecommerce/stores/%s"
 	stores_path = "/ecommerce/stores"
 
-	cart_path  = "/ecommerce/store/%s/cart/%s"
-	carts_path = "/ecommerce/store/%s/cart"
+	cart_path  = "/ecommerce/stores/%s/carts/%s"
+	carts_path = "/ecommerce/stores/%s/carts"
 
-	order_path  = "/ecommerce/store/%s/order/%s"
-	orders_path = "/ecommerce/store/%s/order"
+	order_path  = "/ecommerce/stores/%s/orders/%s"
+	orders_path = "/ecommerce/stores/%s/orders"
 
 	product_path  = "/ecommerce/stores/%s/products/%s"
 	products_path = "/ecommerce/stores/%s/products"
@@ -31,21 +31,26 @@ type Store struct {
 
 	api *ChimpAPI
 
-	ID            string  `json:"id"`
-	ListID        string  `json:"list_id"`
-	Name          string  `json:"name"`
-	Platform      string  `json:"platform"`
-	Domain        string  `json:"domain"`
-	EmailAddress  string  `json:"email_address"`
-	CurrencyCode  string  `json:"currency_code"`
-	MoneyFormat   string  `json:"money_format"`
-	PrimaryLocale string  `json:"primary_locale"`
-	Timezone      string  `json:"timezone"`
-	Phone         string  `json:"phone"`
-	Address       Address `json:"address"`
-	CreatedAt     string  `json:"created_at"`
-	UpdatedAt     string  `json:"updated_at"`
-	Links         []Link  `json:"_links"`
+	// Required
+	ID           string `json:"id"`
+	ListID       string `json:"list_id"`
+	CurrencyCode string `json:"currency_code"`
+	Name         string `json:"name"`
+
+	// Optional
+	Platform      string  `json:"platform,omitempty"`
+	Domain        string  `json:"domain,omitempty"`
+	EmailAddress  string  `json:"email_address,omitempty"`
+	MoneyFormat   string  `json:"money_format,omitempty"`
+	PrimaryLocale string  `json:"primary_locale,omitempty"`
+	Timezone      string  `json:"timezone,omitempty"`
+	Phone         string  `json:"phone,omitempty"`
+	Address       Address `json:"address,omitempty"`
+
+	// Response
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
+	Links     []Link `json:"_links,omitempty"`
 }
 
 func (store Store) CanMakeRequest() error {
@@ -61,7 +66,7 @@ type StoreList struct {
 
 	Stores     []Store `json:"stores"`
 	TotalItems int     `json:"total_items"`
-	Links      []Link  `json:"_link"`
+	Links      []Link  `json:"_links"`
 }
 
 func (api ChimpAPI) GetStores(params *ExtendedQueryParams) (*StoreList, error) {
@@ -75,15 +80,16 @@ func (api ChimpAPI) GetStores(params *ExtendedQueryParams) (*StoreList, error) {
 }
 
 func (api ChimpAPI) GetStore(id string, params QueryParams) (*Store, error) {
-	response := new(Store)
+	res := new(Store)
+	res.api = &api
 
 	endpoint := fmt.Sprintf(store_path, id)
-	err := api.Request("GET", endpoint, params, nil, response)
+	err := api.Request("GET", endpoint, params, nil, res)
 	if err != nil {
 		return nil, err
 	}
 
-	return response, nil
+	return res, nil
 }
 
 func (api ChimpAPI) CreateStore(req *Store) (*Store, error) {
@@ -128,15 +134,15 @@ type Cart struct {
 	Lines        []LineItem `json:"lines"`
 
 	// Optional
-	ID          string  `json:"id"`
-	CampaignID  string  `json:"campaign_id"`
-	CheckoutURL string  `json:"checkout_url"`
-	TaxTotal    float64 `json:"tax_total"`
+	ID          string  `json:"id,omitempty"`
+	CampaignID  string  `json:"campaign_id,omitempty"`
+	CheckoutURL string  `json:"checkout_url,omitempty"`
+	TaxTotal    float64 `json:"tax_total,omitempty"`
 
 	// Response only
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
-	Links     []Link `json:"_links"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
+	Links     []Link `json:"_links,omitempty"`
 }
 
 func (store Store) GetCarts(params *ExtendedQueryParams) (*CartList, error) {
@@ -210,7 +216,7 @@ type OrderList struct {
 
 	Orders     []Order `json:"cart"`
 	TotalItems int     `json:"total_items"`
-	Links      []Link  `json:"_links"`
+	Links      []Link  `json:"_links,omitempty"`
 }
 
 type Order struct {
@@ -224,23 +230,23 @@ type Order struct {
 	OrderTotal   float64    `json:"order_total"`
 
 	// Optional
-	TaxTotal           float64 `json:"tax_total"`
-	ShippingTotal      float64 `json:"shipping_total"`
-	TrackingCode       string  `json:"tracking_code"`
+	TaxTotal           float64 `json:"tax_total,omitempty"`
+	ShippingTotal      float64 `json:"shipping_total,omitempty"`
+	TrackingCode       string  `json:"tracking_code,omitempty"`
 	ProcessedAtForeign string  `json:processed_at_foreign`
 	CancelledAtForeign string  `json:cancelled_at_foreign`
 	UpdatedAtForeign   string  `json:updated_at_foreign`
-	CampaignID         string  `json:"campaign_id"`
-	FinancialStatus    string  `json:"financial_status"`
-	FulfillmentStatus  string  `json:"fulfillment_status"`
+	CampaignID         string  `json:"campaign_id,omitempty"`
+	FinancialStatus    string  `json:"financial_status,omitempty"`
+	FulfillmentStatus  string  `json:"fulfillment_status,omitempty"`
 
-	BillingAddress  Address `json:"billing_address"`
-	ShippingAddress Address `json:"shipping_address"`
+	BillingAddress  Address `json:"billing_address,omitempty"`
+	ShippingAddress Address `json:"shipping_address,omitempty"`
 
 	// Response only
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
-	Links     []Link `json:"_links"`
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
+	Links     []Link `json:"_links,omitempty"`
 }
 
 func (store Store) GetOrders(params *ExtendedQueryParams) (*OrderList, error) {
@@ -311,20 +317,25 @@ func (store Store) DeleteOrder(id string) (bool, error) {
 type Product struct {
 	APIError
 
-	api *ChimpAPI
+	api     *ChimpAPI
+	StoreID string `json:"-"`
 
-	StoreID     string
-	ID          string    `json:"id,omitempty"`
-	Title       string    `json:"title"`
-	Handle      string    `json:"handle"`
-	URL         string    `json:"url"`
-	Description string    `json:"description"`
-	Type        string    `json:"type"`
-	Vendor      string    `json:"vendor"`
-	ImageURL    string    `json:"image_url"`
-	Variants    []Variant `json:"variants"`
-	PublishedAt string    `json:"published_at_foreign"`
-	Links       []Link    `json:"_links"`
+	// Required
+	ID       string    `json:"id"`
+	Title    string    `json:"title"`
+	Variants []Variant `json:"variants"`
+
+	// Optional
+	Handle      string `json:"handle,omitempty"`
+	URL         string `json:"url,omitempty"`
+	Description string `json:"description,omitempty"`
+	Type        string `json:"type,omitempty"`
+	Vendor      string `json:"vendor,omitempty"`
+	ImageURL    string `json:"image_url,omitempty"`
+	PublishedAt string `json:"published_at_foreign,omitempty"`
+
+	// Response only
+	Links []Link `json:"_links,omitempty"`
 }
 
 func (product Product) CanMakeRequest() error {
@@ -360,19 +371,21 @@ func (store Store) GetProducts(params *ExtendedQueryParams) (*ProductList, error
 }
 
 func (store Store) GetProduct(id string, params *BasicQueryParams) (*Product, error) {
-	response := new(Product)
-
 	if store.HasError() {
 		return nil, fmt.Errorf("The store has an error, can't process request")
 	}
 
+	res := new(Product)
+	res.api = store.api
+	res.StoreID = store.ID
+
 	endpoint := fmt.Sprintf(cart_path, store.ID, id)
-	err := store.api.Request("GET", endpoint, params, nil, response)
+	err := store.api.Request("GET", endpoint, params, nil, res)
 	if err != nil {
 		return nil, err
 	}
 
-	return response, nil
+	return res, nil
 }
 
 func (store Store) CreateProduct(req *Product) (*Product, error) {
@@ -383,6 +396,7 @@ func (store Store) CreateProduct(req *Product) (*Product, error) {
 	endpoint := fmt.Sprintf(products_path, store.ID)
 	res := new(Product)
 	res.api = store.api
+	res.StoreID = store.ID
 
 	return res, store.api.Request("POST", endpoint, nil, req, res)
 }
@@ -395,6 +409,7 @@ func (store Store) UpdateProduct(req *Product) (*Product, error) {
 	endpoint := fmt.Sprintf(product_path, store.ID, req.ID)
 	res := new(Product)
 	res.api = store.api
+	res.StoreID = store.ID
 
 	return res, store.api.Request("PATCH", endpoint, nil, req, res)
 }
@@ -414,17 +429,22 @@ func (store Store) DeleteProduct(id string) (bool, error) {
 type Variant struct {
 	APIError
 
-	api *ChimpAPI
+	api       *ChimpAPI
+	StoreID   string `json:"-"`
+	ProductID string `json:"-"`
 
-	ID                string  `json:"id"`
-	Title             string  `json:"title"`
-	Url               string  `json:"url"`
-	SKU               string  `json:"sku"`
-	Price             float64 `json:"price"`
-	InventoryQuantity int     `json:"inventory_quantity"`
-	ImageUrl          string  `json:"image_url"`
-	Backorders        string  `json:"backorders"`
-	Visibility        string  `json:"visibility"`
+	// Required
+	ID    string `json:"id"`
+	Title string `json:"title"`
+
+	// Optional
+	Url               string  `json:"url,omitempty"`
+	SKU               string  `json:"sku,omitempty"`
+	Price             float64 `json:"price,omitempty"`
+	InventoryQuantity int     `json:"inventory_quantity,omitempty"`
+	ImageUrl          string  `json:"image_url,omitempty"`
+	Backorders        string  `json:"backorders,omitempty"`
+	Visibility        string  `json:"visibility,omitempty"`
 }
 
 type VariantList struct {
@@ -433,7 +453,7 @@ type VariantList struct {
 	StoreID    string    `json:"store_id"`
 	Variants   []Variant `json:"variants"`
 	TotalItems int       `json:"total_items"`
-	Links      []Link    `json:"_links"`
+	Links      []Link    `json:"_links,omitempty"`
 }
 
 func (product Product) CreateVariant(req *Variant) (*Variant, error) {
