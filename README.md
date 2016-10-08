@@ -1,12 +1,11 @@
 gochimp
 =======
 
+[![GoDoc](https://godoc.org/github.com/mattbaird/gochimp?status.svg)](https://godoc.org/github.com/mattbaird/gochimp)
+
 Go based API for Mailchimp, starting with Mandrill.
 
-https://godoc.org/github.com/mattbaird/gochimp
-
-
-to run tests, set a couple env variables.
+To run tests, set a couple env variables.
 (replacing values with your own mandrill credentials):
 ```bash
 $ export MANDRILL_KEY=111111111-1111-1111-1111-111111111
