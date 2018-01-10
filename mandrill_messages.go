@@ -141,22 +141,22 @@ func (t *TS) UnmarshalJSON(data []byte) error {
 }
 
 type SearchResponse struct {
-	Timestamp    time.Duration       `json:"ts"`
-	Id           string              `json:"_id"`
-	Sender       string              `json:"sender"`
-	Subject      string              `json:"subject"`
-	Email        string              `json:"email"`
-	Tags         []string            `json:"tags"`
-	Opens        int                 `json:"opens"`
-	Clicks       int                 `json:"clicks"`
-	State        string              `json:"state"`
-	Diag         string              `json:"diag"`
-	Metadata     []map[string]string `json:"metadata"`
-	Template     interface{}         `json:"template"`
-	Resends      []Resend            `json:"resends"`
-	SMTPEvents   []SMTPEvent         `json:"smtp_events"`
-	OpensDetail  []ActivityDetail    `json:"opens_detail"`
-	ClicksDetail []ActivityDetail    `json:"clicks_detail"`
+	Timestamp    time.Duration     `json:"ts"`
+	Id           string            `json:"_id"`
+	Sender       string            `json:"sender"`
+	Subject      string            `json:"subject"`
+	Email        string            `json:"email"`
+	Tags         []string          `json:"tags"`
+	Opens        int               `json:"opens"`
+	Clicks       int               `json:"clicks"`
+	State        string            `json:"state"`
+	Diag         string            `json:"diag"`
+	Metadata     map[string]string `json:"metadata"`
+	Template     interface{}       `json:"template"`
+	Resends      []Resend          `json:"resends"`
+	SMTPEvents   []SMTPEvent       `json:"smtp_events"`
+	OpensDetail  []ActivityDetail  `json:"opens_detail"`
+	ClicksDetail []ActivityDetail  `json:"clicks_detail"`
 }
 
 type Resend struct {
