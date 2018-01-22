@@ -37,14 +37,14 @@ type MandrillAPI struct {
 	Key       string
 	Transport http.RoundTripper
 	Timeout   time.Duration
-	endpoint  string
+	Endpoint  string
 }
 
 type ChimpAPI struct {
 	Key       string
 	Transport http.RoundTripper
 	Timeout   time.Duration
-	endpoint  string
+	Endpoint  string
 }
 
 // see https://mandrillapp.com/api/docs/
@@ -54,7 +54,7 @@ func NewMandrill(apiKey string) (*MandrillAPI, error) {
 	u.Scheme = "https"
 	u.Host = mandrill_uri
 	u.Path = mandrill_version
-	return &MandrillAPI{Key: apiKey, endpoint: u.String()}, nil
+	return &MandrillAPI{Key: apiKey, Endpoint: u.String()}, nil
 }
 
 const mailchimp_uri string = "%s.api.mailchimp.com"
@@ -70,9 +70,9 @@ func NewChimp(apiKey string, https bool) *ChimpAPI {
 	} else {
 		u.Scheme = "http"
 	}
-	u.Host = fmt.Sprintf("%s.api.mailchimp.com", mailchimp_datacenter.FindString(apiKey))
+	u.Host = fmt.Sprintf(mailchimp_uri, mailchimp_datacenter.FindString(apiKey))
 	u.Path = mailchimp_version
-	return &ChimpAPI{Key: apiKey, endpoint: u.String()}
+	return &ChimpAPI{Key: apiKey, Endpoint: u.String()}
 }
 
 func runChimp(api *ChimpAPI, path string, parameters interface{}) ([]byte, error) {
@@ -80,7 +80,7 @@ func runChimp(api *ChimpAPI, path string, parameters interface{}) ([]byte, error
 	if err != nil {
 		return nil, err
 	}
-	requestUrl := fmt.Sprintf("%s%s", api.endpoint, path)
+	requestUrl := fmt.Sprintf("%s%s", api.Endpoint, path)
 	if debug {
 		log.Printf("Request URL:%s", requestUrl)
 	}
@@ -118,7 +118,7 @@ func runMandrill(api *MandrillAPI, path string, parameters map[string]interface{
 	if err != nil {
 		return nil, err
 	}
-	requestUrl := fmt.Sprintf("%s%s", api.endpoint, path)
+	requestUrl := fmt.Sprintf("%s%s", api.Endpoint, path)
 	if debug {
 		log.Printf("Request URL:%s", requestUrl)
 	}
