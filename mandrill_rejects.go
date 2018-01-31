@@ -13,7 +13,6 @@ package gochimp
 
 import (
 	"errors"
-	"log"
 )
 
 // see https://mandrillapp.com/api/docs/rejects.html
@@ -53,7 +52,7 @@ func (a *MandrillAPI) RejectsDelete(email string) (bool, error) {
 	if err == nil {
 		retval, ok = response["deleted"].(bool)
 		if ok != true {
-			log.Fatal("Received response with deleted parameter, however type was not bool, this should not happen")
+			return retval, errors.New("received response with deleted parameter, however type was not bool")
 		}
 	}
 	return retval, err
