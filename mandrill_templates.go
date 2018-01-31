@@ -13,7 +13,6 @@ package gochimp
 
 import (
 	"errors"
-	"log"
 )
 
 // see https://mandrillapp.com/api/docs/templates.html
@@ -124,7 +123,7 @@ func (a *MandrillAPI) TemplateRender(templateName string, templateContent []Var,
 	if err == nil {
 		retval, ok = response["html"].(string)
 		if ok != true {
-			log.Fatal("Received response with html parameter, however type was not string, this should not happen")
+			return retval, errors.New("received response with html parameter, however type was not string")
 		}
 	}
 	return retval, err
