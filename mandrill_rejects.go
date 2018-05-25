@@ -17,23 +17,23 @@ import (
 )
 
 // see https://mandrillapp.com/api/docs/rejects.html
-//Retrieves your email rejection blacklist. You can provide an email address to limit the results.
-// Returns up to 1000 results. By default, entries that have expired are excluded from the results;
-// set include_expired to true to include them.
 const rejects_list_endpoint string = "/rejects/list.json"
 
 //Deletes an email rejection. There is no limit to how many rejections you can remove from your
 // blacklist, but keep in mind that each deletion has an affect on your reputation.
 const rejects_delete_endpoint string = "/rejects/delete.json"
 
+// RejectsList retrieves your email rejection blacklist. You can provide an email address to limit the results.
+// Returns up to 1000 results. By default, entries that have expired are excluded from the results;
+// set include_expired to true to include them.
+//
 // can error with one of the following: Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) RejectsList(email string, includeExpired bool) ([]Reject, error) {
 	var response []Reject
-	if email == "" {
-		return response, errors.New("email cannot be blank")
-	}
 	var params map[string]interface{} = make(map[string]interface{})
-	params["email"] = email
+	if email != "" {
+		params["email"] = email
+	}
 	params["include_expired"] = includeExpired
 	err := parseMandrillJson(a, rejects_list_endpoint, params, &response)
 	return response, err
