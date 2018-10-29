@@ -138,8 +138,12 @@ func runMandrill(api *MandrillAPI, path string, parameters map[string]interface{
 	if debug {
 		log.Printf("Response Body:%s", string(body))
 	}
-	if err = mandrillErrorCheck(body); err != nil {
+	if err := mandrillErrorCheck(body); err != nil {
 		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK && resp.Header.Get("Content-Type") != "application/json" {
+		// don't bother trying to parse
+		return nil, fmt.Errorf("fetch failure: HTTP %s", resp.Status)
 	}
 	return body, nil
 }
