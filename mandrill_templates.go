@@ -137,12 +137,20 @@ func execute(a *MandrillAPI, params map[string]interface{}, endpoint string) (Te
 }
 
 type Template struct {
-	Name        string  `json:"name"`
-	Code        string  `json:"code"`
-	PublishName string  `json:"publish_name"`
-	PublishCode string  `json:"publish_code"`
-	Slug        string  `json:"slug"`
-	Subject     string  `json:"subject"`
-	CreatedAt   APITime `json:"published_at"`
-	UpdateAt    APITime `json:"updated_at"`
+	Name             string  `json:"name"`
+	Code             string  `json:"code"`
+	PublishName      string  `json:"publish_name"`
+	PublishCode      string  `json:"publish_code"`
+	Slug             string  `json:"slug"`
+	Subject          string  `json:"subject"`
+	CreatedAt        APITime `json:"published_at"`
+	UpdateAt         APITime `json:"updated_at"`
+	FromEmail        string  `json:"from_email"`
+	FromName         string  `json:"from_name"`
+	Text             string  `json:"text"`
+	PublishFromEmail string  `json:"publish_from_email"`
+	PublishFromName  string  `json:"publish_from_name"`
+	PublishText      string  `json:"publish_text"`
+	PublishSubject   string  `json:"publish_subject"`
+	PublishAt        APITime `json:"published_at"`
 }
