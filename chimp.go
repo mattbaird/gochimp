@@ -30,7 +30,10 @@ func (e APIError) Error() string {
 
 func chimpErrorCheck(body []byte) error {
 	var e APIError
-	json.Unmarshal(body, &e)
+	err := json.Unmarshal(body, &e)
+	if err != nil {
+		return err
+	}
 	if e.Err != "" || e.Code != 0 {
 		return e
 	}
@@ -58,9 +61,10 @@ func (t *APITime) UnmarshalJSON(data []byte) (err error) {
 	return
 }
 
-//format string for time.Format
+//APITimeFormat is the format string for time.Format
 const APITimeFormat = "2006-01-02 15:04:05"
 
+// nolint: deadcode, varcheck, unused
 func apiTime(t interface{}) interface{} {
 	switch ti := t.(type) {
 	case time.Time:

@@ -13,7 +13,6 @@ package gochimp
 
 import (
 	"errors"
-	"log"
 )
 
 // see https://mandrillapp.com/api/docs/rejects.html
@@ -42,21 +41,19 @@ func (a *MandrillAPI) RejectsList(email string, includeExpired bool) ([]Reject, 
 // can error with one of the following: Invalid_Reject, Invalid_Key, ValidationError, GeneralError
 func (a *MandrillAPI) RejectsDelete(email string) (bool, error) {
 	var response map[string]interface{}
-	var retval bool = false
 	if email == "" {
-		return retval, errors.New("email cannot be blank")
+		return false, errors.New("email cannot be blank")
 	}
 	var params map[string]interface{} = make(map[string]interface{})
 	params["email"] = email
 	err := parseMandrillJson(a, rejects_delete_endpoint, params, &response)
-	var ok bool = false
 	if err == nil {
-		retval, ok = response["deleted"].(bool)
-		if ok != true {
-			log.Fatal("Received response with deleted parameter, however type was not bool, this should not happen")
+		_, ok := response["deleted"].(bool)
+		if !ok {
+			return false, errors.New("recieved response with deleted parameter, however type was no bool. should not happen")
 		}
 	}
-	return retval, err
+	return true, err
 }
 
 type Reject struct {

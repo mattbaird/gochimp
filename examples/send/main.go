@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/mattbaird/gochimp"
 	"os"
+
+	"github.com/mattbaird/gochimp"
 )
 
 func main() {
@@ -15,19 +16,24 @@ func main() {
 	}
 
 	templateName := "welcome email"
-	contentVar := gochimp.Var{"main", "<h1>Welcome aboard!</h1>"}
+	contentVar := gochimp.Var{
+		Name:    "main",
+		Content: "<h1>Welcome aboard!</h1>",
+	}
 	content := []gochimp.Var{contentVar}
 
 	_, err = mandrillApi.TemplateAdd(templateName, fmt.Sprintf("%s", contentVar.Content), true)
 	if err != nil {
-		fmt.Println("Error adding template: %v", err)
+		fmt.Printf("Error adding template: %s\n", err.Error())
 		return
 	}
-	defer mandrillApi.TemplateDelete(templateName)
+	defer func() {
+		_, _ = mandrillApi.TemplateDelete(templateName)
+	}()
 	renderedTemplate, err := mandrillApi.TemplateRender(templateName, content, nil)
 
 	if err != nil {
-		fmt.Println("Error rendering template: %v", err)
+		fmt.Printf("Error adding template: %s\n", err.Error())
 		return
 	}
 

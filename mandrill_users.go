@@ -16,8 +16,9 @@ import (
 )
 
 // see https://mandrillapp.com/api/docs/users.html
-const users_info_endpoint string = "/users/info.json"       //Return the information about the API-connected user
-const users_ping_endpoint string = "/users/ping.json"       // returns "PONG!"
+const users_info_endpoint string = "/users/info.json" //Return the information about the API-connected user
+const users_ping_endpoint string = "/users/ping.json" // returns "PONG!"
+// nolint: deadcode, varcheck, unused
 const users_ping2_endpoint string = "/users/ping2.json"     // returns 'PING':'PONG!' for anal json parsers
 const users_senders_endpoint string = "/users/senders.json" // Return the senders that have tried to use this account, both verified and unverified
 

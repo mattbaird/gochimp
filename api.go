@@ -33,6 +33,7 @@ const (
 	mandrill_version = "/api/1.0"
 )
 
+// MandrillAPI represents access to the Mandrill API
 type MandrillAPI struct {
 	Key       string
 	Transport http.RoundTripper
@@ -40,6 +41,7 @@ type MandrillAPI struct {
 	endpoint  string
 }
 
+// ChimpAPI represents access to the Mailchimp API
 type ChimpAPI struct {
 	Key       string
 	Transport http.RoundTripper
@@ -70,7 +72,7 @@ func NewChimp(apiKey string, https bool) *ChimpAPI {
 	} else {
 		u.Scheme = "http"
 	}
-	u.Host = fmt.Sprintf("%s.api.mailchimp.com", mailchimp_datacenter.FindString(apiKey))
+	u.Host = fmt.Sprintf(mailchimp_uri, mailchimp_datacenter.FindString(apiKey))
 	u.Path = mailchimp_version
 	return &ChimpAPI{Key: apiKey, endpoint: u.String()}
 }
