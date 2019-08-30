@@ -6,8 +6,10 @@ import (
 	"github.com/lusis/gochimp/mandrill/api"
 )
 
+// Stats are data about various objects in the api
 type Stats = api.StatsResponse
 
+// TimeSeries is more detailed Stat data with additional context related to the time
 type TimeSeries struct {
 	Time         time.Time
 	Sent         int32

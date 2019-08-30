@@ -7,6 +7,7 @@ import (
 	"github.com/lusis/gochimp/mandrill/api"
 )
 
+// Reject represents a rejected email
 type Reject struct {
 	Email       string
 	Reason      string
@@ -19,6 +20,7 @@ type Reject struct {
 	SubAccount  string
 }
 
+// AddReject adds an explicit rejection for the provided email
 func (c *Client) AddReject(email string, comment string) error {
 	req := &api.RejectsAddRequest{
 		Email: email,
@@ -39,6 +41,7 @@ func (c *Client) AddReject(email string, comment string) error {
 	return nil
 }
 
+// ListRejects returns a list of all current Rejects
 func (c *Client) ListRejects(email string, includeExpired bool) ([]*Reject, error) {
 	req := &api.RejectsListRequest{
 		Email:          email,
@@ -83,6 +86,7 @@ func (c *Client) ListRejects(email string, includeExpired bool) ([]*Reject, erro
 	return rejects, nil
 }
 
+// Delete deletes a reject
 func (r *Reject) Delete() error {
 	req := &api.RejectsDeleteRequest{
 		Email: r.Email,

@@ -4,6 +4,7 @@ import (
 	"github.com/lusis/gochimp/mandrill/api"
 )
 
+// Tag represents a tag and its stats
 type Tag struct {
 	Name         string
 	Reputation   int32
@@ -19,6 +20,7 @@ type Tag struct {
 	UniqueClicks int32
 }
 
+// ListTags lists all tags
 func (c *Client) ListTags() ([]*Tag, error) {
 	req := &api.TagsListRequest{}
 	resp := &api.TagsListResponse{}
@@ -46,6 +48,7 @@ func (c *Client) ListTags() ([]*Tag, error) {
 	return tags, nil
 }
 
+// Delete deletes the current Tag
 func (t *Tag) Delete() error {
 	req := &api.TagsDeleteRequest{
 		Tag: t.Name,

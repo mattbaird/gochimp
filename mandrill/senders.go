@@ -6,6 +6,7 @@ import (
 	"github.com/lusis/gochimp/mandrill/api"
 )
 
+// Sender represents a sender in mandrill (a sending email address)
 type Sender struct {
 	Address      string
 	CreatedAt    time.Time
@@ -22,14 +23,17 @@ type Sender struct {
 	Stats        Stats
 }
 
+// Info returns information about the current Sender
 func (s *Sender) Info() (*Sender, error) {
 	return globalClient.GetSenderInfo(s.Address)
 }
 
+// TimeSeries returns time-series data about the current Sender
 func (s *Sender) TimeSeries() ([]TimeSeries, error) {
 	return globalClient.GetSenderTimeSeries(s.Address)
 }
 
+// GetSenderTimeSeries returns time-series data about the provided email address
 func (c *Client) GetSenderTimeSeries(address string) ([]TimeSeries, error) {
 	req := &api.SendersTimeSeriesRequest{
 		Address: address,
@@ -58,6 +62,7 @@ func (c *Client) GetSenderTimeSeries(address string) ([]TimeSeries, error) {
 	return tsData, nil
 }
 
+// GetSenderInfo returns information about the provided sender email
 func (c *Client) GetSenderInfo(address string) (*Sender, error) {
 	req := &api.SendersInfoRequest{
 		Address: address,
@@ -83,6 +88,7 @@ func (c *Client) GetSenderInfo(address string) (*Sender, error) {
 	return sender, nil
 }
 
+// ListSenders lists all senders
 func (c *Client) ListSenders() ([]*Sender, error) {
 	req := &api.SendersListRequest{}
 	resp := &api.SendersListResponse{}
@@ -110,6 +116,7 @@ func (c *Client) ListSenders() ([]*Sender, error) {
 	return senders, nil
 }
 
+// AddSendingDomain adds a new sending domain
 func (c *Client) AddSendingDomain(domain string) (*SendingDomain, error) {
 	req := &api.SendersAddDomainRequest{
 		Domain: domain,
@@ -139,6 +146,7 @@ func (c *Client) AddSendingDomain(domain string) (*SendingDomain, error) {
 	return sDomain, nil
 }
 
+// CheckSendingDomain returns the status of the provided domain
 func (c *Client) CheckSendingDomain(domain string) (*SendingDomain, error) {
 	req := &api.SendersCheckDomainRequest{
 		Domain: domain,
@@ -168,6 +176,7 @@ func (c *Client) CheckSendingDomain(domain string) (*SendingDomain, error) {
 	return sDomain, nil
 }
 
+// VerifySendingDomain verifies the provided domain by sending an email to the provided mailbox
 func (c *Client) VerifySendingDomain(domain string, mailbox string) (string, string, error) {
 	req := &api.SendersVerifyDomainRequest{
 		Domain:  domain,

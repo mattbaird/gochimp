@@ -84,6 +84,7 @@ func WithEndpoint(s string) ClientOption {
 	}
 }
 
+// WithPing attempt to validate Mandrill connectivity at client creation time for fast failures
 func WithPing() ClientOption {
 	return func(c *Client) error {
 		c.doPing = true

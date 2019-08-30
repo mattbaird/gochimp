@@ -6,6 +6,7 @@ import (
 	"github.com/lusis/gochimp/mandrill/api"
 )
 
+// User is a Mandrill user
 type User struct {
 	Username    string
 	CreatedAt   time.Time

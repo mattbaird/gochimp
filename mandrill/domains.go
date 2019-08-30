@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// SendingDomain represents a sending domain in Mandrill
 type SendingDomain struct {
 	Name         string
 	CreatedAt    time.Time
@@ -14,6 +15,7 @@ type SendingDomain struct {
 	ValidSigning bool
 }
 
+// IsValid is a helper to determine if a sending domain is valid for use
 func (d *SendingDomain) IsValid() bool {
 	if d.SPF.Valid && d.DKIM.Valid && d.ValidSigning {
 		return true
@@ -21,30 +23,35 @@ func (d *SendingDomain) IsValid() bool {
 	return false
 }
 
+// SPF represents SPF record validity for a sending domain
 type SPF struct {
 	Valid      bool
 	ValidAfter time.Time
 	Error      string
 }
 
+// DKIM represents DKIM record validity for a sending domain
 type DKIM struct {
 	Valid      bool
 	ValidAfter time.Time
 	Error      string
 }
 
+// InboundDomain represents an inbound domain in Mandrill
 type InboundDomain struct {
 	Name      string
 	CreatedAt time.Time
 	ValidMX   bool
 }
 
+// CName represents CName validity for a tracking domain
 type CName struct {
 	Valid      bool
 	ValidAfter time.Time
 	Error      string
 }
 
+// TrackingDomain represents a tracking domain in Mandrill
 type TrackingDomain struct {
 	Domain        string
 	CreatedAt     time.Time
@@ -53,6 +60,7 @@ type TrackingDomain struct {
 	ValidTracking bool
 }
 
+// IsValid is a helper for verifying proper configuration of a tracking domain
 func (d *TrackingDomain) IsValid() (bool, error) {
 	res, err := globalClient.CheckTrackingDomain(d.Domain)
 	if err != nil {

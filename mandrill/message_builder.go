@@ -37,7 +37,7 @@ So the minimum JSON needed to send an mail is realistically
 }
 
 */
-
+// NewMessageBuilder returns a new MessageBuilder
 func NewMessageBuilder(from string, name string) *MessageBuilder {
 	// We're only ever going to have one "from" and the rest of the data may be variable
 	// So we start here requiring a from_email/from_name
@@ -50,6 +50,8 @@ func NewMessageBuilder(from string, name string) *MessageBuilder {
 	return builder
 }
 
+// MessageBuilder is a customized representation of a mandrill.Message
+// The goal is to facilitate Message creation
 type MessageBuilder struct {
 	lock            sync.RWMutex // ensure thread-safe message building
 	finalized       bool
@@ -61,6 +63,14 @@ type MessageBuilder struct {
 	templateContent []Var
 }
 
+// Recipient is a custom type that collocates all information about a recipient.
+//
+// When sending a message in Mandrill, you are required to populate the To data
+// However there may be commensurate data when using templates that needs to go
+// into RecipientMetaData or MergeVars for just that recipient.
+//
+// The Recipient type allows specifying all the information up front for later distribution to
+// the appropriate api format
 type Recipient struct {
 	Email     string
 	Name      string
@@ -68,11 +78,6 @@ type Recipient struct {
 	MergeVars []Var
 	MetaData  map[string]string
 }
-
-/*
-We use expose a sort of fluent pattern for folks to use with the following functions
-We will rely on actual api submission/validation for any missed fields
-*/
 
 // AddRecipients adds a collection of recipients to a message
 func (m *MessageBuilder) AddRecipients(recipients []Recipient) *MessageBuilder {
@@ -85,12 +90,14 @@ func (m *MessageBuilder) AddRecipients(recipients []Recipient) *MessageBuilder {
 	return m
 }
 
+// AddRecipient adds a single recipient to a message
 func (m *MessageBuilder) AddRecipient(recipient Recipient) *MessageBuilder {
 	rcpt := []Recipient{}
 	rcpt = append(rcpt, recipient)
 	return m.AddRecipients(rcpt)
 }
 
+// WithSubject sets the subject of the email
 func (m *MessageBuilder) WithSubject(subject string) *MessageBuilder {
 	m.lock.Lock()
 	m.message.Subject = subject
@@ -98,6 +105,8 @@ func (m *MessageBuilder) WithSubject(subject string) *MessageBuilder {
 	return m
 }
 
+// MergeAs sets the merge language to be used and enables merging
+// valid options are 'mailchimp' or 'handlebars'
 func (m *MessageBuilder) MergeAs(language string) *MessageBuilder {
 	m.lock.Lock()
 	m.message.MergeLanguage = language
@@ -106,6 +115,7 @@ func (m *MessageBuilder) MergeAs(language string) *MessageBuilder {
 	return m
 }
 
+// WithText specifies the text body of an email
 func (m *MessageBuilder) WithText(text string) *MessageBuilder {
 	m.lock.Lock()
 	m.message.Text = text
@@ -113,6 +123,7 @@ func (m *MessageBuilder) WithText(text string) *MessageBuilder {
 	return m
 }
 
+// WithHTML specifies the html version of the email body
 func (m *MessageBuilder) WithHTML(html string) *MessageBuilder {
 	m.lock.Lock()
 	m.message.HTML = html
@@ -130,6 +141,7 @@ func (m *MessageBuilder) WithTemplate(name string, vars []Var) *MessageBuilder {
 	return m
 }
 
+// WithHeaders specifies any custom headers to send with the message
 func (m *MessageBuilder) WithHeaders(headers map[string]string) *MessageBuilder {
 	m.lock.Lock()
 	m.message.Headers = headers
@@ -137,6 +149,7 @@ func (m *MessageBuilder) WithHeaders(headers map[string]string) *MessageBuilder 
 	return m
 }
 
+// WithAutoHTML enables generating html versions of emails automatically
 func (m *MessageBuilder) WithAutoHTML() *MessageBuilder {
 	m.lock.Lock()
 	m.message.AutoHTML = true
@@ -144,6 +157,7 @@ func (m *MessageBuilder) WithAutoHTML() *MessageBuilder {
 	return m
 }
 
+// WithAutoText enables generating text versions of emails automatically
 func (m *MessageBuilder) WithAutoText() *MessageBuilder {
 	m.lock.Lock()
 	m.message.AutoText = true
@@ -159,6 +173,7 @@ func (m *MessageBuilder) finalize() {
 	m.lock.Unlock()
 }
 
+// this converts the Recipient type to the format needed for Message
 func (m *MessageBuilder) rcptToMsg() {
 	// initialize our slices if needed
 	if len(m.message.MergeVars) == 0 {
@@ -194,7 +209,10 @@ func (m *MessageBuilder) rcptToMsg() {
 	}
 }
 
+// Send sends the current instances of the MessageBuilder
 func (m *MessageBuilder) Send() ([]MessageStatus, error) {
+	// This is somewhat unused right now
+	// The future idea is an additional immutability check where we only send finalized messages
 	if !m.finalized {
 		m.finalize()
 	}

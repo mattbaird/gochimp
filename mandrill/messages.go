@@ -4,12 +4,14 @@ import (
 	"github.com/lusis/gochimp/mandrill/api"
 )
 
+// TemplateMessage represents a templated message in Mandrill
 type TemplateMessage struct {
 	TemplateName    string
 	TemplateContent []Var
 	Message         Message
 }
 
+// Message represents a message in mandrill
 type Message struct {
 	HTML                    string
 	Text                    string
@@ -47,39 +49,46 @@ type Message struct {
 	IPPool                  string
 }
 
+// Var is an individual merge variable
 type Var struct {
 	Name    string
 	Content string
 }
 
+// MergeVar represents a destination-specific merge variable
 type MergeVar struct {
 	Rcpt string
 	Vars []Var
 }
 
+// To represents the destination of an email
 type To struct {
 	Email string
 	Name  string
 	Type  string
 }
 
+// Attachment represents a message attachment
 type Attachment struct {
 	Type    string
 	Name    string
 	Content string
 }
 
+// Image represents an image in a message
 type Image struct {
 	Type    string
 	Name    string
 	Content string
 }
 
+// RecipientMetaData represents per-recipient custom key/value data
 type RecipientMetaData struct {
 	Rcpt   string
 	Values map[string]string
 }
 
+// MessageStatus represents the send status of a message
 type MessageStatus struct {
 	Email        string
 	Status       string

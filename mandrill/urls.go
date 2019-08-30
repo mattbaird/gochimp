@@ -4,6 +4,7 @@ import (
 	"github.com/lusis/gochimp/mandrill/api"
 )
 
+// URL represents the data about a given url in Mandrill
 type URL struct {
 	URL          string
 	Sent         int32
@@ -11,6 +12,7 @@ type URL struct {
 	UniqueClicks int32
 }
 
+// ListURLS lists all URLs
 func (c *Client) ListURLS() ([]URL, error) {
 	req := &api.URLsListRequest{}
 	resp := &api.URLsListResponse{}
@@ -30,6 +32,7 @@ func (c *Client) ListURLS() ([]URL, error) {
 	return urls, nil
 }
 
+// SearchURLS searches for urls using the provided query
 func (c *Client) SearchURLS(q string) ([]URL, error) {
 	req := &api.URLsSearchRequest{
 		Q: q,
@@ -51,6 +54,7 @@ func (c *Client) SearchURLS(q string) ([]URL, error) {
 	return urls, nil
 }
 
+// GetURLTimeSeries returns time-series faceted stats about the provided url
 func (c *Client) GetURLTimeSeries(url string) ([]TimeSeries, error) {
 	req := &api.URLsTimeSeriesRequest{
 		URL: url,
@@ -72,6 +76,7 @@ func (c *Client) GetURLTimeSeries(url string) ([]TimeSeries, error) {
 	return tsData, nil
 }
 
+// AddTrackingDomain adds a new tracking domain
 func (c *Client) AddTrackingDomain(domain string) (*TrackingDomain, error) {
 	req := &api.URLsAddTrackingDomainRequest{
 		Domain: domain,
@@ -94,6 +99,7 @@ func (c *Client) AddTrackingDomain(domain string) (*TrackingDomain, error) {
 	}, nil
 }
 
+// CheckTrackingDomain checks the status of the provided tracking domain
 func (c *Client) CheckTrackingDomain(domain string) (*TrackingDomain, error) {
 	req := &api.URLsAddTrackingDomainRequest{
 		Domain: domain,
