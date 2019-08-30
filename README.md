@@ -21,6 +21,10 @@ Optional arguments should variadic functional options.
 
 This ensures that function signatures don't require multiple empty placeholders and can be modified with new functionality without breaking the existing function signature.
 
+## Configurability
+
+As part of the functional options, it allows you to make bits of the client configurable without needing private APIs for testing. This also benefits end-users in that using an alternate http.Client (perhaps with ochttp already wired up to it). Allowing users to use their own logging library (by accepting a stdlib-compatible logger such as zap's `NewStdLog`/`NewStdLogAt`)
+
 ## Optional simplified api
 
 In addition to operating directly on an instance of a `mandrill.Client` there are some additional "sugared" interfaces (such as the `MessageBuilder` )that can be invoked after calling `mandrill.Connect` (which doesn't require you to throw away the created client variable which is just ugly to read)
