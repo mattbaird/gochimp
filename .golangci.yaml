@@ -1,0 +1,19 @@
+run:
+  tests: true
+linters:
+  disable-all: true
+  enable:
+  - deadcode
+  - errcheck
+  - goconst
+  - goimports
+  - golint
+  - gosimple
+  - govet
+  - ineffassign
+issues:
+  exclude-rules:
+  # we don't care about repeated constants in test files
+  - path: _test\.go
+    linters:
+      - goconst 
