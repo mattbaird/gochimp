@@ -49,15 +49,13 @@ type TemplatesTimeSeriesRequest struct {
 	Name string `json:"name"`
 }
 
+type TemplatesRenderVars struct {
+	Name    string `json:"name"`
+	Content string `json:"content"`
+}
 type TemplatesRenderRequest struct {
-	Key             string `json:"key"`
-	TemplateName    string `json:"template_name"`
-	TemplateContent []struct {
-		Name    string `json:"name"`
-		Content string `json:"content"`
-	} `json:"template_content"`
-	MergeVars []struct {
-		Name    string `json:"name"`
-		Content string `json:"content"`
-	} `json:"merge_vars,omitempty"`
+	Key             string                `json:"key"`
+	TemplateName    string                `json:"template_name"`
+	TemplateContent []TemplatesRenderVars `json:"template_content"`
+	MergeVars       []TemplatesRenderVars `json:"merge_vars,omitempty"`
 }

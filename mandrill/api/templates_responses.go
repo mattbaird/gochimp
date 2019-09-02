@@ -2,6 +2,7 @@ package api
 
 type TemplatesInfoResponse struct {
 	Slug             string   `json:"slug"`
+	Subject          string   `json:"subject"`
 	Name             string   `json:"name"`
 	Labels           []string `json:"labels"`
 	Code             string   `json:"code"`

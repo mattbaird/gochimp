@@ -16,7 +16,6 @@ type Template struct {
 	Subject      string
 	Code         string
 	Text         string
-	Publish      bool
 	Labels       []string
 
 	// the values below are populated after creating the template via api call
@@ -84,11 +83,14 @@ func WithLabels(labels ...string) TemplateOption {
 	}
 }
 
+// NewTemplate creates a new Template
 func NewTemplate(name string, opts ...TemplateOption) (*Template, error) {
 	t := &Template{
 		Name: name,
 	}
 	for _, opt := range opts {
+		t.Lock()
+		defer t.Unlock()
 		if err := opt(t); err != nil {
 			return nil, err
 		}
@@ -96,6 +98,8 @@ func NewTemplate(name string, opts ...TemplateOption) (*Template, error) {
 	return t, nil
 }
 
+// AddTemplate adds the provided Template to Mandrill via the API
+// all templates added via this library are unpublished
 func (c *Client) AddTemplate(t *Template) error {
 	req := api.TemplatesAddRequest{
 		Name:      t.Name,
@@ -110,6 +114,7 @@ func (c *Client) AddTemplate(t *Template) error {
 	if err := c.post("templates/add", req, resp); err != nil {
 		return err
 	}
+	t.Lock()
 	t.Slug = resp.Slug
 	t.CreatedAt = resp.CreatedAt.Time
 	t.UpdatedAt = resp.UpdatedAt.Time
@@ -120,9 +125,172 @@ func (c *Client) AddTemplate(t *Template) error {
 	t.PublishFromEmail = resp.PublishFromEmail
 	t.PublishFromName = resp.PublishFromName
 	t.PublishText = resp.PublishText
+	t.Unlock()
 	return nil
 }
 
+// Add adds the current template by calling the Mandrill API
 func (t *Template) Add() error {
 	return globalClient.AddTemplate(t)
+}
+
+// PublishTemplate publishes the named template
+func (c *Client) PublishTemplate(name string) error {
+	req := api.TemplatesPublishRequest{
+		Name: name,
+	}
+	resp := api.TemplatesPublishResponse{}
+	if err := c.post("templates/publish", req, resp); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Publish publishes the current template
+func (t *Template) Publish() error {
+	return globalClient.PublishTemplate(t.Name)
+}
+
+// GetTemplateInfo gets the information about a template
+func (c *Client) GetTemplateInfo(name string) (*Template, error) {
+	req := api.TemplatesInfoRequest{
+		Name: name,
+	}
+	resp := api.TemplatesInfoResponse{}
+	if err := c.post("templates/info", req, resp); err != nil {
+		return nil, err
+	}
+	t := &Template{
+		Slug:             resp.Slug,
+		Name:             resp.Name,
+		Labels:           resp.Labels,
+		Code:             resp.Code,
+		Subject:          resp.Subject,
+		FromEmail:        resp.FromEmail,
+		FromName:         resp.FromName,
+		Text:             resp.Text,
+		PublishName:      resp.PublishName,
+		PublishCode:      resp.PublishCode,
+		PublishSubject:   resp.PublishSubject,
+		PublishFromEmail: resp.PublishFromEmail,
+		PublishFromName:  resp.PublishFromName,
+		PublishText:      resp.PublishText,
+		PublishedAt:      resp.PublishedAt.Time,
+		CreatedAt:        resp.CreatedAt.Time,
+		UpdatedAt:        resp.UpdatedAt.Time,
+	}
+	return t, nil
+
+}
+
+// Info gets info from the api about the current template
+// in reality this replaces the current template values with the version from the api
+func (t *Template) Info() error {
+	resp, err := globalClient.GetTemplateInfo(t.Name)
+	if err != nil {
+		return err
+	}
+	t.Lock()
+	t.Slug = resp.Slug
+	t.Name = resp.Name
+	t.Labels = resp.Labels
+	t.Code = resp.Code
+	t.Subject = resp.Subject
+	t.FromEmail = resp.FromEmail
+	t.FromName = resp.FromName
+	t.Text = resp.Text
+	t.PublishName = resp.PublishName
+	t.PublishCode = resp.PublishCode
+	t.PublishSubject = resp.PublishSubject
+	t.PublishFromEmail = resp.PublishFromEmail
+	t.PublishFromName = resp.PublishFromName
+	t.PublishText = resp.PublishText
+	t.PublishedAt = resp.PublishedAt
+	t.CreatedAt = resp.CreatedAt
+	t.UpdatedAt = resp.UpdatedAt
+	t.Unlock()
+	return nil
+}
+
+// DeleteTemplate deletes the named template
+func (c *Client) DeleteTemplate(name string) error {
+	req := api.TemplatesDeleteRequest{
+		Name: name,
+	}
+	resp := api.TemplatesDeleteResponse{}
+	if err := c.post("templates/delete", req, resp); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Delete deletes the current template
+func (t *Template) Delete() error {
+	return globalClient.DeleteTemplate(t.Name)
+}
+
+// ListTemplates lists all templates available to the current user
+func (c *Client) ListTemplates() ([]*Template, error) {
+	req := api.TemplatesListRequest{}
+	resp := api.TemplatesListResponse{}
+	if err := c.post("templates/list", req, resp); err != nil {
+		return nil, err
+	}
+	all := make([]*Template, len(resp))
+	for _, template := range resp {
+		t := &Template{
+			Slug:             template.Slug,
+			Name:             template.Name,
+			Labels:           template.Labels,
+			Code:             template.Code,
+			Subject:          template.Subject,
+			FromEmail:        template.FromEmail,
+			FromName:         template.FromName,
+			Text:             template.Text,
+			PublishName:      template.PublishName,
+			PublishCode:      template.PublishCode,
+			PublishSubject:   template.PublishSubject,
+			PublishFromEmail: template.PublishFromEmail,
+			PublishFromName:  template.PublishFromName,
+			PublishText:      template.PublishText,
+			PublishedAt:      template.PublishedAt.Time,
+			CreatedAt:        template.CreatedAt.Time,
+			UpdatedAt:        template.UpdatedAt.Time,
+		}
+		all = append(all, t)
+	}
+	return all, nil
+}
+
+// RenderTemplate renders the template with the provided values
+// content and vars maps will be converted like so:
+// given: {"foo": "bar"}
+// becomes: {Name: "foo", Content: "bar"}
+func (c *Client) RenderTemplate(name string, content []map[string]string, vars []map[string]string) (string, error) {
+	req := api.TemplatesRenderRequest{
+		TemplateName: name,
+	}
+	resp := api.TemplatesRenderResponse{}
+	for _, c := range content {
+		for k, v := range c {
+			req.TemplateContent = append(req.TemplateContent, api.TemplatesRenderVars{Name: k, Content: v})
+		}
+	}
+	for _, c := range vars {
+		for k, v := range c {
+			req.MergeVars = append(req.MergeVars, api.TemplatesRenderVars{Name: k, Content: v})
+		}
+	}
+	if err := c.post("templates/render", req, resp); err != nil {
+		return "", err
+	}
+	return resp.HTML, nil
+}
+
+// Render renders the current template with the supplied vars
+// content and vars maps will be converted like so:
+// given: {"foo": "bar"}
+// becomes: {Name: "foo", Content: "bar"}
+func (t *Template) Render(content []map[string]string, vars []map[string]string) (string, error) {
+	return globalClient.RenderTemplate(t.Name, content, vars)
 }
