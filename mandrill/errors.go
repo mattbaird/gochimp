@@ -97,8 +97,9 @@ func parseErrorJSON(b []byte) error {
 	decoder := json.NewDecoder(bytes.NewBuffer(b))
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&e); err != nil {
-		// response isn't a mandrill error we can parse so just bubble it up as is
-		return err
+		// response isn't a mandrill error we can parse so just return nil
+		// and let caller bubble up original error
+		return nil
 	}
 	switch e.Name {
 	case "Invalid_Key":
