@@ -135,7 +135,7 @@ func New(key string, opts ...ClientOption) (*Client, error) {
 
 func (c *Client) debugLog(msg string) {
 	if c.debug {
-		log.Println("DEBUG: " + msg)
+		c.logger.Println("DEBUG: " + msg)
 	}
 }
 
@@ -159,7 +159,7 @@ func (c *Client) post(path string, t interface{}, d interface{}) error {
 		return errors.Wrap(err, fmt.Sprintf("unable to marshal requested type %T to json", t))
 	}
 	c.debugLog("Request JSON: " + string(body))
-	u := fmt.Sprintf("%s/%s/%s.json", baseURL, apiVersion, path)
+	u := fmt.Sprintf("%s/%s.json", c.endpoint, path)
 	req, err := http.NewRequest(http.MethodPost, u, bytes.NewBuffer(body))
 	if err != nil {
 		return errors.Wrap(err, "unable to create a new http request")
