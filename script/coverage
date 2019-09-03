@@ -1,0 +1,7 @@
+#!/bin/bash
+set -Eeuo pipefail
+
+CI=${CI:-''}
+[ -n "$CI" ] && go get github.com/axw/gocov/gocov
+
+gocov test ./... | gocov report

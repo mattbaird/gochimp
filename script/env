@@ -1,0 +1,9 @@
+PATH=test/libs/bats/bin:${PATH}
+VERSION=$(cat VERSION)
+BUILDUSER=${CIRCLE_USER:-$(whoami)}
+BUILDHOST=$HOSTNAME
+BUILDDATE=$(date +%Y%m%d-%H:%M:%S)
+GITSHA=${CIRCLE_SHA1:-$(git rev-parse HEAD)}
+GITBRANCH=${CIRCLE_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}
+LD_FLAGS=("-s -X github.com/prometheus/common/version.Version=${VERSION} -X github.com/prometheus/common/version.Revision=${GITSHA} -X github.com/prometheus/common/version.Branch=${GITBRANCH} -X github.com/prometheus/common/version.BuildUser=${BUILDUSER}@${BUILDHOST} -X github.com/prometheus/common/version.BuildDate=${BUILDDATE}")
+BUILDTARGETS="linux/amd64 linux/386 darwin/amd64 darwin/386 windows/amd64 windows/386 freebsd/amd64 freebsd/386 openbsd/amd64 openbsd/386 netbsd/386 netbsd/amd64 dragonfly/amd64 linux/arm linux/arm64 freebsd/arm openbsd/arm netbsd/arm"

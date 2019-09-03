@@ -1,0 +1,8 @@
+#!/bin/bash
+set -Eeuo pipefail
+# shellcheck disable=SC1091
+source script/env
+
+go test -short --race -v ./...
+
+

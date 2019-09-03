@@ -1,0 +1,14 @@
+#!/bin/bash
+set -Eeuo pipefail
+
+LINTVER="1.16.0"
+LINTCMD="golangci-lint"
+
+CI=${CI:-''}
+if [ -n "${CI}" ]; then
+    curl -LO https://github.com/golangci/golangci-lint/releases/download/v${LINTVER}/golangci-lint-${LINTVER}-linux-amd64.tar.gz
+    tar -zxvf golangci-lint-${LINTVER}-linux-amd64.tar.gz
+    LINTCMD="./golangci-lint-1.16.0-linux-amd64/golangci-lint"
+fi
+
+${LINTCMD} run
