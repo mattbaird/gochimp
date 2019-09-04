@@ -90,10 +90,10 @@ func NewTemplate(name string, opts ...TemplateOption) (*Template, error) {
 	}
 	for _, opt := range opts {
 		t.Lock()
-		defer t.Unlock()
 		if err := opt(t); err != nil {
 			return nil, err
 		}
+		t.Unlock()
 	}
 	return t, nil
 }
@@ -101,7 +101,7 @@ func NewTemplate(name string, opts ...TemplateOption) (*Template, error) {
 // AddTemplate adds the provided Template to Mandrill via the API
 // all templates added via this library are unpublished
 func (c *Client) AddTemplate(t *Template) error {
-	req := api.TemplatesAddRequest{
+	req := &api.TemplatesAddRequest{
 		Name:      t.Name,
 		FromEmail: t.FromEmail,
 		FromName:  t.FromName,
@@ -110,7 +110,7 @@ func (c *Client) AddTemplate(t *Template) error {
 		Code:      t.Code,
 		Subject:   t.Subject,
 	}
-	resp := api.TemplatesAddResponse{}
+	resp := &api.TemplatesAddResponse{}
 	if err := c.post("templates/add", req, resp); err != nil {
 		return err
 	}

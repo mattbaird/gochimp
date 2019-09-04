@@ -147,6 +147,12 @@ func (c *Client) post(path string, t interface{}, d interface{}) error {
 	// this is the "cleanest" way to wrap all JSON post bodies with the apikey
 	// Another option would be to have all api types defined to satisfy
 	// an interface with a SetKey(string)
+	if reflect.ValueOf(t).Kind() != reflect.Ptr {
+		return fmt.Errorf("pointer to request type was not passed. This is a bug and needs to be fixed: %T", t)
+	}
+	if reflect.ValueOf(d).Kind() != reflect.Ptr {
+		return fmt.Errorf("pointer to response type was not passed. This is a bug and needs to be fixed: %T", t)
+	}
 	v := reflect.ValueOf(t).Elem().FieldByName("Key")
 	if v.IsValid() {
 		v.SetString(c.apiKey)
