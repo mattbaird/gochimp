@@ -73,7 +73,7 @@ func TestTemplateAddTemplate(t *testing.T) {
 		fmt.Fprintln(w, respBody)
 	}))
 	defer srv.Close()
-	client, err := New("abcdefg", WithEndpoint(srv.URL), WithDebug())
+	client, err := New("abcdefg", WithEndpoint(srv.URL))
 	require.NoError(t, err)
 	require.NotNil(t, client)
 	template, err := NewTemplate("test_template",
@@ -116,7 +116,7 @@ func TestTemplateAdd(t *testing.T) {
 		fmt.Fprintln(w, respBody)
 	}))
 	defer srv.Close()
-	err := Connect("abcdefg", WithEndpoint(srv.URL), WithDebug())
+	err := Connect("abcdefg", WithEndpoint(srv.URL))
 	require.NoError(t, err)
 	template, err := NewTemplate("test_template",
 		WithLabels("foo", "bar"),
@@ -129,5 +129,229 @@ func TestTemplateAdd(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, template)
 	err = template.Add()
+	require.NoError(t, err)
+}
+
+func TestPublishTemplate(t *testing.T) {
+	respBody := `{
+		"slug": "example-template",
+		"name": "Example Template",
+		"labels": [
+			"example-label"
+		],
+		"code": "<div mc:edit=\"editable\">editable content</div>",
+		"subject": "example subject",
+		"from_email": "from.email@example.com",
+		"from_name": "Example Name",
+		"text": "Example text",
+		"publish_name": "Example Template",
+		"publish_code": "<div mc:edit=\"editable\">different than draft content</div>",
+		"publish_subject": "example publish_subject",
+		"publish_from_email": "from.email.published@example.com",
+		"publish_from_name": "Example Published Name",
+		"publish_text": "Example published text",
+		"published_at": "2013-01-01 15:30:40",
+		"created_at": "2013-01-01 15:30:27",
+		"updated_at": "2013-01-01 15:30:49"
+	}`
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, respBody)
+	}))
+	defer srv.Close()
+	client, err := New("abcdefg", WithEndpoint(srv.URL))
+	require.NoError(t, err)
+	require.NotNil(t, client)
+	err = client.PublishTemplate("Example Template")
+	require.NoError(t, err)
+}
+
+func TestGetTemplateInfo(t *testing.T) {
+	respBody := `{
+		"slug": "example-template",
+		"name": "Example Template",
+		"labels": [
+			"example-label"
+		],
+		"code": "<div mc:edit=\"editable\">editable content</div>",
+		"subject": "example subject",
+		"from_email": "from.email@example.com",
+		"from_name": "Example Name",
+		"text": "Example text",
+		"publish_name": "Example Template",
+		"publish_code": "<div mc:edit=\"editable\">different than draft content</div>",
+		"publish_subject": "example publish_subject",
+		"publish_from_email": "from.email.published@example.com",
+		"publish_from_name": "Example Published Name",
+		"publish_text": "Example published text",
+		"published_at": "2013-01-01 15:30:40",
+		"created_at": "2013-01-01 15:30:27",
+		"updated_at": "2013-01-01 15:30:49"
+	}`
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, respBody)
+	}))
+	defer srv.Close()
+	client, err := New("abcdefg", WithEndpoint(srv.URL))
+	require.NoError(t, err)
+	require.NotNil(t, client)
+	template, err := client.GetTemplateInfo("Example Template")
+	require.NoError(t, err)
+	require.NotNil(t, template)
+	require.Equal(t, "example-template", template.Slug)
+	require.Equal(t, "Example Template", template.Name)
+	require.Equal(t, []string{"example-label"}, template.Labels)
+	require.Equal(t, "<div mc:edit=\"editable\">editable content</div>", template.Code)
+	require.Equal(t, "example subject", template.Subject)
+	require.Equal(t, "from.email@example.com", template.FromEmail)
+	require.Equal(t, "Example Name", template.FromName)
+	require.Equal(t, "Example text", template.Text)
+	require.Equal(t, "Example Template", template.PublishName)
+	require.NotNil(t, template.PublishedAt)
+}
+
+func TestTemplatePublish(t *testing.T) {
+	respBody := `{
+		"slug": "example-template",
+		"name": "Example Template",
+		"labels": [
+			"example-label"
+		],
+		"code": "<div mc:edit=\"editable\">editable content</div>",
+		"subject": "example subject",
+		"from_email": "from.email@example.com",
+		"from_name": "Example Name",
+		"text": "Example text",
+		"publish_name": "Example Template",
+		"publish_code": "<div mc:edit=\"editable\">different than draft content</div>",
+		"publish_subject": "example publish_subject",
+		"publish_from_email": "from.email.published@example.com",
+		"publish_from_name": "Example Published Name",
+		"publish_text": "Example published text",
+		"published_at": "2013-01-01 15:30:40",
+		"created_at": "2013-01-01 15:30:27",
+		"updated_at": "2013-01-01 15:30:49"
+	}`
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, respBody)
+	}))
+	defer srv.Close()
+	err := Connect("abcdefg", WithEndpoint(srv.URL))
+	require.NoError(t, err)
+	template, err := NewTemplate("test_template",
+		WithLabels("foo", "bar"),
+		WithFromEmail("test@test.com"),
+		WithFromName("administrator"),
+		WithSubject("my subject"),
+		WithText("abcdefg"),
+		WithCode("<div>foo</div>"),
+	)
+	require.NoError(t, err)
+	require.NotNil(t, template)
+	err = template.Publish()
+	require.NoError(t, err)
+}
+
+func TestTemplateInfo(t *testing.T) {
+	respBody := `{
+		"slug": "example-template",
+		"name": "Example Template",
+		"labels": [
+			"example-label"
+		],
+		"code": "<div mc:edit=\"editable\">editable content</div>",
+		"subject": "example subject",
+		"from_email": "from.email@example.com",
+		"from_name": "Example Name",
+		"text": "Example text",
+		"publish_name": "Example Template",
+		"publish_code": "<div mc:edit=\"editable\">different than draft content</div>",
+		"publish_subject": "example publish_subject",
+		"publish_from_email": "from.email.published@example.com",
+		"publish_from_name": "Example Published Name",
+		"publish_text": "Example published text",
+		"published_at": "2013-01-01 15:30:40",
+		"created_at": "2013-01-01 15:30:27",
+		"updated_at": "2013-01-01 15:30:49"
+	}`
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, respBody)
+	}))
+	defer srv.Close()
+	err := Connect("abcdefg", WithEndpoint(srv.URL))
+	require.NoError(t, err)
+	template, err := NewTemplate("test_template", WithLabels("foo", "bar"))
+	require.NoError(t, err)
+	require.NotNil(t, template)
+	require.Equal(t, []string{"foo", "bar"}, template.Labels)
+	err = template.Info()
+	require.NoError(t, err)
+	require.Equal(t, []string{"example-label"}, template.Labels)
+}
+
+func TestDeleteTemplate(t *testing.T) {
+	respBody := `{
+		"slug": "example-template",
+		"name": "Example Template",
+		"labels": [
+			"example-label"
+		],
+		"code": "<div mc:edit=\"editable\">editable content</div>",
+		"subject": "example subject",
+		"from_email": "from.email@example.com",
+		"from_name": "Example Name",
+		"text": "Example text",
+		"publish_name": "Example Template",
+		"publish_code": "<div mc:edit=\"editable\">different than draft content</div>",
+		"publish_subject": "example publish_subject",
+		"publish_from_email": "from.email.published@example.com",
+		"publish_from_name": "Example Published Name",
+		"publish_text": "Example published text",
+		"published_at": "2013-01-01 15:30:40",
+		"created_at": "2013-01-01 15:30:27",
+		"updated_at": "2013-01-01 15:30:49"
+	}`
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, respBody)
+	}))
+	defer srv.Close()
+	client, err := New("abcdefg", WithEndpoint(srv.URL))
+	require.NoError(t, err)
+	require.NotNil(t, client)
+	err = client.DeleteTemplate("Example Template")
+	require.NoError(t, err)
+}
+
+func TestTemplateDelete(t *testing.T) {
+	respBody := `{
+		"slug": "example-template",
+		"name": "Example Template",
+		"labels": [
+			"example-label"
+		],
+		"code": "<div mc:edit=\"editable\">editable content</div>",
+		"subject": "example subject",
+		"from_email": "from.email@example.com",
+		"from_name": "Example Name",
+		"text": "Example text",
+		"publish_name": "Example Template",
+		"publish_code": "<div mc:edit=\"editable\">different than draft content</div>",
+		"publish_subject": "example publish_subject",
+		"publish_from_email": "from.email.published@example.com",
+		"publish_from_name": "Example Published Name",
+		"publish_text": "Example published text",
+		"published_at": "2013-01-01 15:30:40",
+		"created_at": "2013-01-01 15:30:27",
+		"updated_at": "2013-01-01 15:30:49"
+	}`
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, respBody)
+	}))
+	defer srv.Close()
+	_, err := New("abcdefg", WithEndpoint(srv.URL))
+	require.NoError(t, err)
+	template, err := NewTemplate("foo")
+	require.NoError(t, err)
+	require.NotNil(t, template)
+	err = template.Delete()
 	require.NoError(t, err)
 }

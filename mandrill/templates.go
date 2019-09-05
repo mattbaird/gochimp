@@ -136,10 +136,10 @@ func (t *Template) Add() error {
 
 // PublishTemplate publishes the named template
 func (c *Client) PublishTemplate(name string) error {
-	req := api.TemplatesPublishRequest{
+	req := &api.TemplatesPublishRequest{
 		Name: name,
 	}
-	resp := api.TemplatesPublishResponse{}
+	resp := &api.TemplatesPublishResponse{}
 	if err := c.post("templates/publish", req, resp); err != nil {
 		return err
 	}
@@ -153,10 +153,10 @@ func (t *Template) Publish() error {
 
 // GetTemplateInfo gets the information about a template
 func (c *Client) GetTemplateInfo(name string) (*Template, error) {
-	req := api.TemplatesInfoRequest{
+	req := &api.TemplatesInfoRequest{
 		Name: name,
 	}
-	resp := api.TemplatesInfoResponse{}
+	resp := &api.TemplatesInfoResponse{}
 	if err := c.post("templates/info", req, resp); err != nil {
 		return nil, err
 	}
@@ -214,10 +214,10 @@ func (t *Template) Info() error {
 
 // DeleteTemplate deletes the named template
 func (c *Client) DeleteTemplate(name string) error {
-	req := api.TemplatesDeleteRequest{
+	req := &api.TemplatesDeleteRequest{
 		Name: name,
 	}
-	resp := api.TemplatesDeleteResponse{}
+	resp := &api.TemplatesDeleteResponse{}
 	if err := c.post("templates/delete", req, resp); err != nil {
 		return err
 	}
@@ -231,13 +231,13 @@ func (t *Template) Delete() error {
 
 // ListTemplates lists all templates available to the current user
 func (c *Client) ListTemplates() ([]*Template, error) {
-	req := api.TemplatesListRequest{}
-	resp := api.TemplatesListResponse{}
+	req := &api.TemplatesListRequest{}
+	resp := &api.TemplatesListResponse{}
 	if err := c.post("templates/list", req, resp); err != nil {
 		return nil, err
 	}
-	all := make([]*Template, len(resp))
-	for _, template := range resp {
+	all := make([]*Template, len(*resp))
+	for _, template := range *resp {
 		t := &Template{
 			Slug:             template.Slug,
 			Name:             template.Name,
@@ -267,10 +267,10 @@ func (c *Client) ListTemplates() ([]*Template, error) {
 // given: {"foo": "bar"}
 // becomes: {Name: "foo", Content: "bar"}
 func (c *Client) RenderTemplate(name string, content []map[string]string, vars []map[string]string) (string, error) {
-	req := api.TemplatesRenderRequest{
+	req := &api.TemplatesRenderRequest{
 		TemplateName: name,
 	}
-	resp := api.TemplatesRenderResponse{}
+	resp := &api.TemplatesRenderResponse{}
 	for _, c := range content {
 		for k, v := range c {
 			req.TemplateContent = append(req.TemplateContent, api.TemplatesRenderVars{Name: k, Content: v})
