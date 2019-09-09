@@ -68,7 +68,7 @@ func WithDebug() ClientOption {
 	}
 }
 
-// WithHTTPClient lets you set a custom http.Client for use with requests
+// WithHTTPClient lets you set a custom *http.Client for use with requests
 func WithHTTPClient(h *http.Client) ClientOption {
 	return func(c *Client) error {
 		c.httpClient = h

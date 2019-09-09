@@ -237,7 +237,7 @@ func (c *Client) ListTemplates() ([]*Template, error) {
 		return nil, err
 	}
 	all := make([]*Template, len(*resp))
-	for _, template := range *resp {
+	for idx, template := range *resp {
 		t := &Template{
 			Slug:             template.Slug,
 			Name:             template.Name,
@@ -257,7 +257,7 @@ func (c *Client) ListTemplates() ([]*Template, error) {
 			CreatedAt:        template.CreatedAt.Time,
 			UpdatedAt:        template.UpdatedAt.Time,
 		}
-		all = append(all, t)
+		all[idx] = t
 	}
 	return all, nil
 }
