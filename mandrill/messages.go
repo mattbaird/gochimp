@@ -222,6 +222,7 @@ func (m Message) toAPIMessage() api.MessageRequest {
 			Vars: amv,
 		})
 	}
+	apiMsg.MergeVars = apiMergeVars
 
 	// convert message.MetaData to api.MessageRecipientMetaData
 	apiMsg.RecipientMetaData = []api.MessageRecipientMetaData{}
