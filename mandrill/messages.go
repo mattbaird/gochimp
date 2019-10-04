@@ -184,6 +184,7 @@ func (m Message) toAPIMessage() api.MessageRequest {
 		SigningDomain:           m.SigningDomain,
 		ReturnPathDomain:        m.ReturnPathDomain,
 		Merge:                   m.Merge,
+		MergeLanguage:           m.MergeLanguage,
 		Tags:                    m.Tags,
 		GoogleAnalyticsDomains:  m.GoogleAnalyticsDomains,
 		GoogleAnalyticsCampaign: m.GoogleAnalyticsCampaign,
