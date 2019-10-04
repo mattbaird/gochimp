@@ -7,7 +7,7 @@ import (
 // TemplateMessage represents a templated message in Mandrill
 type TemplateMessage struct {
 	TemplateName    string
-	TemplateContent []Var
+	TemplateContent []TemplateVar
 	Message         Message
 }
 
@@ -49,10 +49,16 @@ type Message struct {
 	IPPool                  string
 }
 
+// TemplateVar is a variable for template content
+type TemplateVar struct {
+	Name    string
+	Content string
+}
+
 // Var is an individual merge variable
 type Var struct {
 	Name    string
-	Content string
+	Content interface{}
 }
 
 // MergeVar represents a destination-specific merge variable

@@ -60,7 +60,7 @@ type MessageBuilder struct {
 	recipients      []Recipient
 	message         *Message
 	templateName    string
-	templateContent []Var
+	templateContent []TemplateVar
 }
 
 // Recipient is a custom type that collocates all information about a recipient.
@@ -132,7 +132,7 @@ func (m *MessageBuilder) WithHTML(html string) *MessageBuilder {
 }
 
 // WithTemplate ensures that the minimum amount of required data is passed in
-func (m *MessageBuilder) WithTemplate(name string, vars []Var) *MessageBuilder {
+func (m *MessageBuilder) WithTemplate(name string, vars []TemplateVar) *MessageBuilder {
 	m.lock.Lock()
 	m.isTemplate = true
 	m.templateName = name

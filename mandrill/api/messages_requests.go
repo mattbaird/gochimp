@@ -48,8 +48,8 @@ type MessageMergeVar struct {
 	Vars []MessageVar `json:"vars,omitempty"`
 }
 type MessageVar struct {
-	Name    string `json:"name"`
-	Content string `json:"content"`
+	Name    string      `json:"name"`
+	Content interface{} `json:"content"`
 }
 
 type MessageRecipientMetaData struct {

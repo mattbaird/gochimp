@@ -29,7 +29,7 @@ func TestMessageBuilder(t *testing.T) {
 		WithText("text body").
 		WithHTML("<p>html body</p>").
 		WithHeaders(map[string]string{"fooheader": "fooheaderval"}).
-		WithTemplate("footemplate", []Var{{Name: "templatevar", Content: "templatecontent"}}).
+		WithTemplate("footemplate", []TemplateVar{{Name: "templatevar", Content: "templatecontent"}}).
 		MergeAs("handlebars")
 	mb.finalize()
 	require.Len(t, mb.message.To, 1)
@@ -82,7 +82,7 @@ func TestMessageBuilderSendTemplate(t *testing.T) {
 		WithText("text body").
 		WithHTML("<p>html body</p>").
 		WithHeaders(map[string]string{"fooheader": "fooheaderval"}).
-		WithTemplate("footemplate", []Var{{Name: "templatevar", Content: "templatecontent"}}).
+		WithTemplate("footemplate", []TemplateVar{{Name: "templatevar", Content: "templatecontent"}}).
 		MergeAs("handlebars").
 		Send()
 	require.NoError(t, err)
