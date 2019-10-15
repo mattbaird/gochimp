@@ -1,6 +1,8 @@
 package mandrill
 
 import (
+	"context"
+
 	"github.com/lusis/gochimp/mandrill/api"
 )
 
@@ -104,6 +106,11 @@ type MessageStatus struct {
 
 // SendMessage sends a mandrill.Message
 func (c *Client) SendMessage(m Message) ([]MessageStatus, error) {
+	return c.SendMessageContext(context.TODO(), m)
+}
+
+// SendMessageContext sends a mandrill.Message with context
+func (c *Client) SendMessageContext(ctx context.Context, m Message) ([]MessageStatus, error) {
 	msg := api.MessagesSendRequest{
 		Message: m.toAPIMessage(),
 	}
@@ -112,12 +119,21 @@ func (c *Client) SendMessage(m Message) ([]MessageStatus, error) {
 
 // SendTemplate sends a mandrill.TemplateMessage
 func (c *Client) SendTemplate(m TemplateMessage) ([]MessageStatus, error) {
-	return c.templateSend(m.toAPITemplateMessage())
+	return c.SendTemplateContext(context.TODO(), m)
+}
+
+// SendTemplateContext sends a mandrill.TemplateMessage
+func (c *Client) SendTemplateContext(ctx context.Context, m TemplateMessage) ([]MessageStatus, error) {
+	return c.templateSendContext(ctx, m.toAPITemplateMessage())
 }
 
 func (c *Client) messageSend(m api.MessagesSendRequest) ([]MessageStatus, error) {
+	return c.messageSendContext(context.TODO(), m)
+}
+
+func (c *Client) messageSendContext(ctx context.Context, m api.MessagesSendRequest) ([]MessageStatus, error) {
 	resp := &api.MessagesSendResponse{}
-	if err := c.post("messages/send", &m, resp); err != nil {
+	if err := c.postContext(ctx, "messages/send", &m, resp); err != nil {
 		return nil, err
 	}
 	status := []MessageStatus{}
@@ -133,8 +149,12 @@ func (c *Client) messageSend(m api.MessagesSendRequest) ([]MessageStatus, error)
 }
 
 func (c *Client) templateSend(m api.MessagesSendTemplateRequest) ([]MessageStatus, error) {
+	return c.templateSendContext(context.TODO(), m)
+}
+
+func (c *Client) templateSendContext(ctx context.Context, m api.MessagesSendTemplateRequest) ([]MessageStatus, error) {
 	resp := &api.MessagesSendResponse{}
-	if err := c.post("messages/send-template", &m, resp); err != nil {
+	if err := c.postContext(ctx, "messages/send-template", &m, resp); err != nil {
 		return nil, err
 	}
 	status := []MessageStatus{}

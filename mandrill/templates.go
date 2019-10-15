@@ -1,6 +1,7 @@
 package mandrill
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -136,11 +137,16 @@ func (t *Template) Add() error {
 
 // PublishTemplate publishes the named template
 func (c *Client) PublishTemplate(name string) error {
+	return c.PublishTemplateContext(context.TODO(), name)
+}
+
+// PublishTemplateContext publishes the named template with context
+func (c *Client) PublishTemplateContext(ctx context.Context, name string) error {
 	req := &api.TemplatesPublishRequest{
 		Name: name,
 	}
 	resp := &api.TemplatesPublishResponse{}
-	if err := c.post("templates/publish", req, resp); err != nil {
+	if err := c.postContext(ctx, "templates/publish", req, resp); err != nil {
 		return err
 	}
 	return nil

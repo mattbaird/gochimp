@@ -1,6 +1,7 @@
 package mandrill
 
 import (
+	"context"
 	"sync"
 )
 
@@ -211,6 +212,11 @@ func (m *MessageBuilder) rcptToMsg() {
 
 // Send sends the current instances of the MessageBuilder
 func (m *MessageBuilder) Send() ([]MessageStatus, error) {
+	return m.SendContext(context.TODO())
+}
+
+// SendContext sends the current instances of the MessageBuilder
+func (m *MessageBuilder) SendContext(ctx context.Context) ([]MessageStatus, error) {
 	// This is somewhat unused right now
 	// The future idea is an additional immutability check where we only send finalized messages
 	if !m.finalized {
@@ -224,5 +230,5 @@ func (m *MessageBuilder) Send() ([]MessageStatus, error) {
 		}
 		return globalClient.SendTemplate(t)
 	}
-	return globalClient.SendMessage(*m.message)
+	return globalClient.SendMessageContext(ctx, *m.message)
 }
