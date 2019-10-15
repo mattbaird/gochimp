@@ -2,6 +2,7 @@ package mandrill
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -140,6 +141,11 @@ func (c *Client) debugLog(msg string) {
 }
 
 func (c *Client) post(path string, t interface{}, d interface{}) error {
+	ctx := context.TODO()
+	return c.postContext(ctx, path, t, d)
+}
+
+func (c *Client) postContext(ctx context.Context, path string, t interface{}, d interface{}) error {
 	c.debugLog(fmt.Sprintf("Request Type: %T", t))
 	c.debugLog(fmt.Sprintf("Response Type: %T", d))
 	c.debugLog(fmt.Sprintf("Request: %+v", t))
@@ -166,12 +172,13 @@ func (c *Client) post(path string, t interface{}, d interface{}) error {
 	}
 	c.debugLog("Request JSON: " + string(body))
 	u := fmt.Sprintf("%s/%s.json", c.endpoint, path)
+
 	req, err := http.NewRequest(http.MethodPost, u, bytes.NewBuffer(body))
 	if err != nil {
 		return errors.Wrap(err, "unable to create a new http request")
 	}
 	c.debugLog("URL: " + req.URL.String())
-	resp, err := c.httpClient.Do(req)
+	resp, err := c.httpClient.Do(req.WithContext(ctx))
 	if err != nil {
 		return errors.Wrap(err, "error performing http request to endpoint")
 	}
