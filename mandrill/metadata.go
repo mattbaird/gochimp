@@ -1,6 +1,7 @@
 package mandrill
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/lusis/gochimp/mandrill/api"
@@ -15,9 +16,14 @@ type MetaData struct {
 
 // ListMetaData lists all the metadata from the mandrill api
 func (c *Client) ListMetaData() ([]*MetaData, error) {
+	return c.ListMetaDataContext(context.TODO())
+}
+
+// ListMetaDataContext lists all the metadata from the mandrill api
+func (c *Client) ListMetaDataContext(ctx context.Context) ([]*MetaData, error) {
 	req := &api.MetaDataListRequest{}
 	resp := &api.MetaDataListResponse{}
-	if err := c.post("metadata/list", req, resp); err != nil {
+	if err := c.postContext(ctx, "metadata/list", req, resp); err != nil {
 		return nil, err
 	}
 	md := make([]*MetaData, len(*resp))
@@ -36,11 +42,16 @@ func (c *Client) ListMetaData() ([]*MetaData, error) {
 
 // DeleteMetaData deletes the named metadata
 func (c *Client) DeleteMetaData(md string) error {
+	return c.DeleteMetaDataContext(context.TODO(), md)
+}
+
+// DeleteMetaDataContext deletes the named metadata
+func (c *Client) DeleteMetaDataContext(ctx context.Context, md string) error {
 	req := &api.MetaDataDeleteRequest{
 		Name: md,
 	}
 	resp := &api.MetaDataDeleteResponse{}
-	return c.post("metadata/delete", req, resp)
+	return c.postContext(ctx, "metadata/delete", req, resp)
 }
 
 // Delete deletes the current instance of MetaData

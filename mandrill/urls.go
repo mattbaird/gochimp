@@ -1,6 +1,8 @@
 package mandrill
 
 import (
+	"context"
+
 	"github.com/lusis/gochimp/mandrill/api"
 )
 
@@ -14,9 +16,14 @@ type URL struct {
 
 // ListURLS lists all URLs
 func (c *Client) ListURLS() ([]URL, error) {
+	return c.ListURLSContext(context.TODO())
+}
+
+// ListURLSContext lists all URLs
+func (c *Client) ListURLSContext(ctx context.Context) ([]URL, error) {
 	req := &api.URLsListRequest{}
 	resp := &api.URLsListResponse{}
-	err := c.post("urls/list", req, resp)
+	err := c.postContext(ctx, "urls/list", req, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -34,11 +41,16 @@ func (c *Client) ListURLS() ([]URL, error) {
 
 // SearchURLS searches for urls using the provided query
 func (c *Client) SearchURLS(q string) ([]URL, error) {
+	return c.SearchURLSContext(context.TODO(), q)
+}
+
+// SearchURLSContext searches for urls using the provided query
+func (c *Client) SearchURLSContext(ctx context.Context, q string) ([]URL, error) {
 	req := &api.URLsSearchRequest{
 		Q: q,
 	}
 	resp := &api.URLsSearchResponse{}
-	err := c.post("urls/list", req, resp)
+	err := c.postContext(ctx, "urls/list", req, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -56,11 +68,16 @@ func (c *Client) SearchURLS(q string) ([]URL, error) {
 
 // GetURLTimeSeries returns time-series faceted stats about the provided url
 func (c *Client) GetURLTimeSeries(url string) ([]TimeSeries, error) {
+	return c.GetURLTimeSeriesContext(context.TODO(), url)
+}
+
+// GetURLTimeSeriesContext returns time-series faceted stats about the provided url
+func (c *Client) GetURLTimeSeriesContext(ctx context.Context, url string) ([]TimeSeries, error) {
 	req := &api.URLsTimeSeriesRequest{
 		URL: url,
 	}
 	resp := &api.URLsTimeSeriesResponse{}
-	err := c.post("urls/time-series", req, resp)
+	err := c.postContext(ctx, "urls/time-series", req, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -78,11 +95,16 @@ func (c *Client) GetURLTimeSeries(url string) ([]TimeSeries, error) {
 
 // AddTrackingDomain adds a new tracking domain
 func (c *Client) AddTrackingDomain(domain string) (*TrackingDomain, error) {
+	return c.AddTrackingDomainContext(context.TODO(), domain)
+}
+
+// AddTrackingDomainContext adds a new tracking domain
+func (c *Client) AddTrackingDomainContext(ctx context.Context, domain string) (*TrackingDomain, error) {
 	req := &api.URLsAddTrackingDomainRequest{
 		Domain: domain,
 	}
 	resp := &api.URLsAddTrackingDomainResponse{}
-	err := c.post("urls/add-tracking-domain", req, resp)
+	err := c.postContext(ctx, "urls/add-tracking-domain", req, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -101,11 +123,16 @@ func (c *Client) AddTrackingDomain(domain string) (*TrackingDomain, error) {
 
 // CheckTrackingDomain checks the status of the provided tracking domain
 func (c *Client) CheckTrackingDomain(domain string) (*TrackingDomain, error) {
+	return c.CheckTrackingDomainContext(context.TODO(), domain)
+}
+
+// CheckTrackingDomainContext checks the status of the provided tracking domain
+func (c *Client) CheckTrackingDomainContext(ctx context.Context, domain string) (*TrackingDomain, error) {
 	req := &api.URLsAddTrackingDomainRequest{
 		Domain: domain,
 	}
 	resp := &api.URLsAddTrackingDomainResponse{}
-	err := c.post("urls/add-tracking-domain", req, resp)
+	err := c.postContext(ctx, "urls/add-tracking-domain", req, resp)
 	if err != nil {
 		return nil, err
 	}

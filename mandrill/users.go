@@ -1,6 +1,7 @@
 package mandrill
 
 import (
+	"context"
 	"time"
 
 	"github.com/lusis/gochimp/mandrill/api"
@@ -17,11 +18,11 @@ type User struct {
 	Stats       Stats
 }
 
-// UserInfo returns the information about the API-connected user
-func (c *Client) UserInfo() (*User, error) {
+// UserInfoWithContext returns the information about the API-connected user
+func (c *Client) UserInfoContext(ctx context.Context) (*User, error) {
 	userInfoReq := &api.UsersInfoRequest{}
 	userInfoResp := &api.UsersInfoResponse{}
-	err := c.post("users/info", userInfoReq, userInfoResp)
+	err := c.postContext(ctx, "users/info", userInfoReq, userInfoResp)
 	if err != nil {
 		return nil, err
 	}
@@ -37,6 +38,11 @@ func (c *Client) UserInfo() (*User, error) {
 	}, nil
 }
 
+// UserInfo returns the information about the API-connected user
+func (c *Client) UserInfo() (*User, error) {
+	return c.UserInfoContext(context.TODO())
+}
+
 // Ping calls users/ping2 to validate connectivity
 func (c *Client) Ping() error {
 	req := &api.UsersPing2Request{}
@@ -46,9 +52,14 @@ func (c *Client) Ping() error {
 
 // UserSenders calls users/senders
 func (c *Client) UserSenders() ([]*Sender, error) {
+	return c.UserSendersContext(context.TODO())
+}
+
+// UserSendersContext calls users/senders
+func (c *Client) UserSendersContext(ctx context.Context) ([]*Sender, error) {
 	req := &api.UsersSendersRequest{}
 	resp := &api.UsersSendersResponse{}
-	err := c.post("users/senders", req, resp)
+	err := c.postContext(ctx, "users/senders", req, resp)
 	if err != nil {
 		return nil, err
 	}

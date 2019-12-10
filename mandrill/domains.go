@@ -1,6 +1,7 @@
 package mandrill
 
 import (
+	"context"
 	"time"
 )
 
@@ -62,7 +63,12 @@ type TrackingDomain struct {
 
 // IsValid is a helper for verifying proper configuration of a tracking domain
 func (d *TrackingDomain) IsValid() (bool, error) {
-	res, err := globalClient.CheckTrackingDomain(d.Domain)
+	return d.IsValidContext(context.TODO())
+}
+
+// IsValidContext is a helper for verifying proper configuration of a tracking domain
+func (d *TrackingDomain) IsValidContext(ctx context.Context) (bool, error) {
+	res, err := globalClient.CheckTrackingDomainContext(ctx, d.Domain)
 	if err != nil {
 		return false, err
 	}

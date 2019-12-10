@@ -228,7 +228,7 @@ func (m *MessageBuilder) SendContext(ctx context.Context) ([]MessageStatus, erro
 			TemplateContent: m.templateContent,
 			Message:         *m.message,
 		}
-		return globalClient.SendTemplate(t)
+		return globalClient.SendTemplateContext(ctx, t)
 	}
 	return globalClient.SendMessageContext(ctx, *m.message)
 }

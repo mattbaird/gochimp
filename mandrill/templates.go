@@ -102,6 +102,12 @@ func NewTemplate(name string, opts ...TemplateOption) (*Template, error) {
 // AddTemplate adds the provided Template to Mandrill via the API
 // all templates added via this library are unpublished
 func (c *Client) AddTemplate(t *Template) error {
+	return c.AddTemplateContext(context.TODO(), t)
+}
+
+// AddTemplateContext adds the provided Template to Mandrill via the API
+// all templates added via this library are unpublished
+func (c *Client) AddTemplateContext(ctx context.Context, t *Template) error {
 	req := &api.TemplatesAddRequest{
 		Name:      t.Name,
 		FromEmail: t.FromEmail,
@@ -112,7 +118,7 @@ func (c *Client) AddTemplate(t *Template) error {
 		Subject:   t.Subject,
 	}
 	resp := &api.TemplatesAddResponse{}
-	if err := c.post("templates/add", req, resp); err != nil {
+	if err := c.postContext(ctx, "templates/add", req, resp); err != nil {
 		return err
 	}
 	t.Lock()
@@ -159,11 +165,16 @@ func (t *Template) Publish() error {
 
 // GetTemplateInfo gets the information about a template
 func (c *Client) GetTemplateInfo(name string) (*Template, error) {
+	return c.GetTemplateInfoContext(context.TODO(), name)
+}
+
+// GetTemplateInfoContext gets the information about a template
+func (c *Client) GetTemplateInfoContext(ctx context.Context, name string) (*Template, error) {
 	req := &api.TemplatesInfoRequest{
 		Name: name,
 	}
 	resp := &api.TemplatesInfoResponse{}
-	if err := c.post("templates/info", req, resp); err != nil {
+	if err := c.postContext(ctx, "templates/info", req, resp); err != nil {
 		return nil, err
 	}
 	t := &Template{

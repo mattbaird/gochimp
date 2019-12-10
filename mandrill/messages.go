@@ -114,7 +114,7 @@ func (c *Client) SendMessageContext(ctx context.Context, m Message) ([]MessageSt
 	msg := api.MessagesSendRequest{
 		Message: m.toAPIMessage(),
 	}
-	return c.messageSend(msg)
+	return c.messageSendContext(ctx, msg)
 }
 
 // SendTemplate sends a mandrill.TemplateMessage

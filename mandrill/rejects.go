@@ -1,6 +1,7 @@
 package mandrill
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -22,6 +23,11 @@ type Reject struct {
 
 // AddReject adds an explicit rejection for the provided email
 func (c *Client) AddReject(email string, comment string) error {
+	return c.AddRejectContext(context.TODO(), email, comment)
+}
+
+// AddRejectContext adds an explicit rejection for the provided email
+func (c *Client) AddRejectContext(ctx context.Context, email string, comment string) error {
 	req := &api.RejectsAddRequest{
 		Email: email,
 	}
@@ -34,15 +40,15 @@ func (c *Client) AddReject(email string, comment string) error {
 		req.Comment = comment
 	}
 	resp := &api.RejectsAddResponse{}
-	err := c.post("rejects/add", req, resp)
+	err := c.postContext(ctx, "rejects/add", req, resp)
 	if err != nil || !resp.Added {
 		return err
 	}
 	return nil
 }
 
-// ListRejects returns a list of all current Rejects
-func (c *Client) ListRejects(email string, includeExpired bool) ([]*Reject, error) {
+// ListRejectsContext returns a list of all current Rejects
+func (c *Client) ListRejectsContext(ctx context.Context, email string, includeExpired bool) ([]*Reject, error) {
 	req := &api.RejectsListRequest{
 		Email:          email,
 		IncludeExpired: includeExpired,
@@ -51,7 +57,7 @@ func (c *Client) ListRejects(email string, includeExpired bool) ([]*Reject, erro
 		req.SubAccount = c.subaccount
 	}
 	resp := &api.RejectsListResponse{}
-	err := c.post("rejects/list", req, resp)
+	err := c.postContext(ctx, "rejects/list", req, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +90,11 @@ func (c *Client) ListRejects(email string, includeExpired bool) ([]*Reject, erro
 		rejects = append(rejects, reject)
 	}
 	return rejects, nil
+}
+
+// ListRejects returns a list of all current Rejects
+func (c *Client) ListRejects(email string, includeExpired bool) ([]*Reject, error) {
+	return c.ListRejectsContext(context.TODO(), email, includeExpired)
 }
 
 // Delete deletes a reject

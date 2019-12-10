@@ -1,6 +1,7 @@
 package mandrill
 
 import (
+	"context"
 	"time"
 
 	"github.com/lusis/gochimp/mandrill/api"
@@ -35,11 +36,16 @@ func (s *Sender) TimeSeries() ([]TimeSeries, error) {
 
 // GetSenderTimeSeries returns time-series data about the provided email address
 func (c *Client) GetSenderTimeSeries(address string) ([]TimeSeries, error) {
+	return c.GetSenderTimeSeriesContext(context.TODO(), address)
+}
+
+// GetSenderTimeSeriesContext returns time-series data about the provided email address
+func (c *Client) GetSenderTimeSeriesContext(ctx context.Context, address string) ([]TimeSeries, error) {
 	req := &api.SendersTimeSeriesRequest{
 		Address: address,
 	}
 	resp := &api.SendersTimeSeriesResponse{}
-	err := c.post("senders/time-series", req, resp)
+	err := c.postContext(ctx, "senders/time-series", req, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -64,11 +70,16 @@ func (c *Client) GetSenderTimeSeries(address string) ([]TimeSeries, error) {
 
 // GetSenderInfo returns information about the provided sender email
 func (c *Client) GetSenderInfo(address string) (*Sender, error) {
+	return c.GetSenderInfoContext(context.TODO(), address)
+}
+
+// GetSenderInfoContext returns information about the provided sender email
+func (c *Client) GetSenderInfoContext(ctx context.Context, address string) (*Sender, error) {
 	req := &api.SendersInfoRequest{
 		Address: address,
 	}
 	resp := &api.SendersInfoResponse{}
-	err := c.post("senders/info", req, resp)
+	err := c.postContext(ctx, "senders/info", req, resp)
 	if err != nil {
 		return nil, err
 	}

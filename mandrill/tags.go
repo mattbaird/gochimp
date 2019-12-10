@@ -1,6 +1,8 @@
 package mandrill
 
 import (
+	"context"
+
 	"github.com/lusis/gochimp/mandrill/api"
 )
 
@@ -22,9 +24,14 @@ type Tag struct {
 
 // ListTags lists all tags
 func (c *Client) ListTags() ([]*Tag, error) {
+	return c.ListTagsContext(context.TODO())
+}
+
+// ListTagsContext lists all tags
+func (c *Client) ListTagsContext(ctx context.Context) ([]*Tag, error) {
 	req := &api.TagsListRequest{}
 	resp := &api.TagsListResponse{}
-	err := c.post("tags/list", req, resp)
+	err := c.postContext(ctx, "tags/list", req, resp)
 	if err != nil {
 		return nil, err
 	}
