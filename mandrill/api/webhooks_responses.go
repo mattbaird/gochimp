@@ -8,8 +8,8 @@ type WebhooksInfoResponse struct {
 	Events      []string `json:"events"`
 	CreatedAt   Time     `json:"created_at"`
 	LastSentAt  Time     `json:"last_sent_at"`
-	BatchesSent int      `json:"batches_sent"`
-	EventsSent  int      `json:"events_sent"`
+	BatchesSent int32    `json:"batches_sent"`
+	EventsSent  int32    `json:"events_sent"`
 	LastError   string   `json:"last_error"`
 }
 
