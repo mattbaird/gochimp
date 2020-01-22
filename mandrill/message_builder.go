@@ -38,6 +38,7 @@ So the minimum JSON needed to send an mail is realistically
 }
 
 */
+
 // NewMessageBuilder returns a new MessageBuilder
 func NewMessageBuilder(from string, name string) *MessageBuilder {
 	// We're only ever going to have one "from" and the rest of the data may be variable

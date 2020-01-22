@@ -2,6 +2,8 @@ package mandrill
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/lusis/gochimp/mandrill/api"
 )
@@ -102,6 +104,127 @@ type MessageStatus struct {
 	Status       string
 	RejectReason string
 	ID           string
+}
+
+// MessageInfo represents the result of a message search
+type MessageInfo struct {
+	Timestamp     time.Time
+	ID            string
+	Sender        string
+	Template      string
+	Subject       string
+	Email         string
+	Tags          []string
+	Opens         int
+	OpensDetails  []ClicksOpensDetail
+	Clicks        int
+	ClicksDetails []ClicksOpensDetail
+	State         string
+	MetaData      map[string]string
+}
+
+// ClicksOpensDetail represents the clicks/opens details
+type ClicksOpensDetail struct {
+	Timestamp time.Time
+	URL       string
+	IP        string
+	Location  string
+	UserAgent string
+}
+
+// MessageSearchParams represents the params for searching messages
+type MessageSearchParams struct {
+	Query    string
+	DateFrom *time.Time
+	DateTo   *time.Time
+	Tags     []string
+	Senders  []string
+	APIKeys  []string
+	Limit    int
+}
+
+// SearchMessages calls messages/search
+func (c *Client) SearchMessages(m MessageSearchParams) ([]MessageInfo, error) {
+	return c.SearchMessagesContext(context.TODO(), m)
+}
+
+// SearchMessagesContext calls messages/search with the provided context
+func (c *Client) SearchMessagesContext(ctx context.Context, m MessageSearchParams) ([]MessageInfo, error) {
+	resp := &api.MessagesSearchResponse{}
+	req := api.MessagesSearchRequest{
+		Query:   m.Query,
+		Tags:    m.Tags,
+		Senders: m.Senders,
+		APIKeys: m.APIKeys,
+		Limit:   m.Limit,
+	}
+	if m.DateTo != nil {
+		req.DateTo = fmt.Sprintf("%d-%d-%d", m.DateTo.Year(), m.DateTo.Month(), m.DateTo.Day())
+	}
+	if m.DateFrom != nil {
+		req.DateFrom = fmt.Sprintf("%d-%d-%d", m.DateFrom.Year(), m.DateFrom.Month(), m.DateFrom.Day())
+	}
+	if err := c.postContext(ctx, "messages/search", &req, resp); err != nil {
+		return nil, err
+	}
+	results := []MessageInfo{}
+	for _, res := range *resp {
+		r := toMessageInfo(res)
+		results = append(results, r)
+	}
+	return results, nil
+}
+
+// MessageInfo returns the messages/info api call
+func (c *Client) MessageInfo(id string) (*MessageInfo, error) {
+	return c.MessageInfoContext(context.TODO(), id)
+}
+
+// MessageInfoContext returns the messages/info api call with provided context
+func (c *Client) MessageInfoContext(ctx context.Context, id string) (*MessageInfo, error) {
+	resp := &api.MessagesInfoResponse{}
+	req := &api.MessagesInfoRequest{ID: id}
+	if err := c.postContext(ctx, "messages/info", req, resp); err != nil {
+		return nil, err
+	}
+	r := toMessageInfo(*resp)
+	return &r, nil
+}
+
+func toMessageInfo(res api.MessagesInfoResponse) MessageInfo {
+	r := MessageInfo{
+		ID:       res.ID,
+		Sender:   res.Sender,
+		Template: res.Template,
+		Subject:  res.Subject,
+		Email:    res.Email,
+		Tags:     res.Tags,
+		State:    res.State,
+		MetaData: res.MetaData,
+		Opens:    res.Opens,
+		Clicks:   res.Clicks,
+	}
+	r.Timestamp = time.Unix(int64(res.TS), 0)
+	for _, d := range res.OpensDetail {
+		od := ClicksOpensDetail{
+			Timestamp: time.Unix(int64(d.TS), 0),
+			IP:        d.IP,
+			UserAgent: d.UA,
+			Location:  d.Location,
+		}
+		r.OpensDetails = append(r.OpensDetails, od)
+	}
+	for _, d := range res.ClicksDetail {
+		cd := ClicksOpensDetail{
+			Timestamp: time.Unix(int64(d.TS), 0),
+			IP:        d.IP,
+			UserAgent: d.UA,
+			Location:  d.Location,
+			URL:       d.URL,
+		}
+		r.ClicksDetails = append(r.ClicksDetails, cd)
+	}
+	return r
 }
 
 // SendMessage sends a mandrill.Message

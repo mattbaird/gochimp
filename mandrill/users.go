@@ -18,7 +18,7 @@ type User struct {
 	Stats       Stats
 }
 
-// UserInfoWithContext returns the information about the API-connected user
+// UserInfoContext returns the information about the API-connected user
 func (c *Client) UserInfoContext(ctx context.Context) (*User, error) {
 	userInfoReq := &api.UsersInfoRequest{}
 	userInfoResp := &api.UsersInfoResponse{}
@@ -63,7 +63,7 @@ func (c *Client) UserSendersContext(ctx context.Context) ([]*Sender, error) {
 	if err != nil {
 		return nil, err
 	}
-	senders := make([]*Sender, len(*resp))
+	senders := make([]*Sender, 0)
 	for _, s := range *resp {
 		senders = append(senders, &Sender{
 			Address:      s.Address,

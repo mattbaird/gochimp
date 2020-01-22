@@ -32,6 +32,7 @@ type MessagesInfoResponse struct {
 		IP       string `json:"ip"`
 		Location string `json:"location"`
 		UA       string `json:"ua"`
+		URL      string `json:"url"`
 	} `json:"clicks_detail"`
 	State      string            `json:"state"`
 	MetaData   map[string]string `json:"metadata"`

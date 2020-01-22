@@ -49,7 +49,7 @@ func (e *TemplateError) Error() string {
 	return fmt.Sprintf("the provided template did not exist: %s", e.err)
 }
 
-// ServiceUnavailbleError is the error returned when a required subservice is unavailble for an api call (i.e. search)
+// ServiceUnavailableError is the error returned when a required subservice is unavailble for an api call (i.e. search)
 type ServiceUnavailableError APIError
 
 // Error returns the error message

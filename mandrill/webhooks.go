@@ -106,7 +106,7 @@ func (c *Client) AddWebhook(w *Webhook) error {
 	return c.AddWebHookContext(context.TODO(), w)
 }
 
-// AddWebhookContext adds a webhook
+// AddWebHookContext adds a webhook
 func (c *Client) AddWebHookContext(ctx context.Context, w *Webhook) error {
 	req := &api.WebhooksAddRequest{
 		URL:         w.URL,
