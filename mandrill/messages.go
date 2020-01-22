@@ -15,6 +15,22 @@ type TemplateMessage struct {
 	Message         Message
 }
 
+// Content represents the results of a messages/content api call
+type Content struct {
+	FromEmail   string
+	FromName    string
+	Subject     string
+	To          []To
+	Text        string
+	HTML        string
+	Headers     map[string]string
+	Timestamp   time.Time
+	Tags        []string
+	ID          string
+	Attachments []Attachment
+	Images      []Image
+}
+
 // Message represents a message in mandrill
 type Message struct {
 	HTML                    string
@@ -83,6 +99,7 @@ type Attachment struct {
 	Type    string
 	Name    string
 	Content string
+	Binary  bool
 }
 
 // Image represents an image in a message
@@ -121,6 +138,17 @@ type MessageInfo struct {
 	ClicksDetails []ClicksOpensDetail
 	State         string
 	MetaData      map[string]string
+	SMTPEvents    []SMTPEvent
+}
+
+// SMTPEvent represents the smtp_events details
+type SMTPEvent struct {
+	Timestamp     time.Time
+	Type          string
+	Diag          string
+	SourceIP      string
+	DestinationIP string
+	Size          int32
 }
 
 // ClicksOpensDetail represents the clicks/opens details
@@ -141,6 +169,43 @@ type MessageSearchParams struct {
 	Senders  []string
 	APIKeys  []string
 	Limit    int
+}
+
+// MessageContent represents a call to messages/content
+func (c *Client) MessageContent(id string) (*Content, error) {
+	return c.MessageContentContext(context.TODO(), id)
+}
+
+// MessageContentContext makes a call to messages/content with the provided context
+func (c *Client) MessageContentContext(ctx context.Context, id string) (*Content, error) {
+	resp := &api.MessagesContentResponse{}
+	req := &api.MessagesContentRequest{
+		ID: id,
+	}
+	if err := c.postContext(ctx, "messages/content", req, resp); err != nil {
+		return nil, err
+	}
+	res := &Content{
+		ID:        resp.ID,
+		Text:      resp.Text,
+		HTML:      resp.HTML,
+		Timestamp: time.Unix(int64(resp.TS), 0),
+		FromEmail: resp.FromEmail,
+		FromName:  resp.FromName,
+		Subject:   resp.Subject,
+		Tags:      resp.Tags,
+		Headers:   resp.Headers,
+	}
+	for _, t := range resp.To {
+		res.To = append(res.To, To{Email: t.Email, Name: t.Name})
+	}
+	for _, a := range resp.Attachments {
+		res.Attachments = append(res.Attachments, Attachment{Name: a.Name, Type: a.Type, Binary: a.Binary, Content: a.Content})
+	}
+	for _, i := range resp.Images {
+		res.Images = append(res.Images, Image{Name: i.Name, Type: i.Type, Content: i.Content})
+	}
+	return res, nil
 }
 
 // SearchMessages calls messages/search
@@ -223,6 +288,17 @@ func toMessageInfo(res api.MessagesInfoResponse) MessageInfo {
 			URL:       d.URL,
 		}
 		r.ClicksDetails = append(r.ClicksDetails, cd)
+	}
+	for _, d := range res.SMTPEvents {
+		se := SMTPEvent{
+			Timestamp:     time.Unix(int64(d.TS), 0),
+			Type:          d.Type,
+			Diag:          d.Diag,
+			SourceIP:      d.SourceIP,
+			DestinationIP: d.DestinationIP,
+			Size:          d.Size,
+		}
+		r.SMTPEvents = append(r.SMTPEvents, se)
 	}
 	return r
 }

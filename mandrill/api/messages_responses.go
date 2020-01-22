@@ -37,9 +37,12 @@ type MessagesInfoResponse struct {
 	State      string            `json:"state"`
 	MetaData   map[string]string `json:"metadata"`
 	SMTPEvents []struct {
-		TS   int32  `json:"ts"`
-		Type string `json:"type"`
-		Diag string `json:"diag"`
+		TS            int32  `json:"ts"`
+		Type          string `json:"type"`
+		Diag          string `json:"diag"`
+		SourceIP      string `json:"source_ip"`
+		DestinationIP string `json:"destination_ip"`
+		Size          int32  `json:"size"`
 	} `json:"smtp_events"`
 }
 
@@ -66,7 +69,7 @@ type MessagesContentResponse struct {
 	FromEmail string `json:"from_email"`
 	FromName  string `json:"from_name"`
 	Subject   string `json:"subject"`
-	To        struct {
+	To        []struct {
 		Email string `json:"email"`
 		Name  string `json:"name"`
 	} `json:"to"`
@@ -78,7 +81,13 @@ type MessagesContentResponse struct {
 		Name    string `json:"name"`
 		Type    string `json:"type"`
 		Content string `json:"content"`
+		Binary  bool   `json:"binary"`
 	} `json:"attachments"`
+	Images []struct {
+		Name    string `json:"name"`
+		Type    string `json:"type"`
+		Content string `json:"content"`
+	} `json:"images"`
 }
 
 type MessagesParseResponse struct {

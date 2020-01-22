@@ -132,7 +132,14 @@ func TestMessageSearchParams(t *testing.T) {
         "metadata": {
             "user_id": "123",
             "website": "www.example.com"
-        }
+		},
+		"smtp_events": [
+			{
+				"ts": 1365190001,
+				"type": "sent",
+				"diag": "250 OK"
+			}
+		]
     }
 	]
 	`
@@ -149,6 +156,7 @@ func TestMessageSearchParams(t *testing.T) {
 	require.Len(t, res, 1)
 	require.Len(t, res[0].ClicksDetails, 1)
 	require.Len(t, res[0].OpensDetails, 1)
+	require.Len(t, res[0].SMTPEvents, 1)
 }
 
 func TestMessageInfo(t *testing.T) {
@@ -207,4 +215,54 @@ func TestMessageInfo(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, res.ClicksDetails, 1)
 	require.Len(t, res.OpensDetails, 1)
+	require.Len(t, res.SMTPEvents, 1)
+}
+
+func TestMessageContent(t *testing.T) {
+	resp := `
+	{
+		"subject": "Some Subject",
+		"from_email": "sender@example.com",
+		"from_name": "Sender Name",
+		"to": [
+			{
+				"email": "recipient.email@example.com",
+				"name": "Recipient Name"
+			}
+		],
+		"headers": {
+			"Reply-To": "replies@example.com"
+		},
+		"text": "Some text content",
+		"html": "<p>Some HTML content</p>",
+		"attachments": [
+			{
+				"name": "example.txt",
+				"type": "text/plain",
+				"binary": false,
+				"content": "example non-binary content"
+			}
+		],
+		"images": [
+			{
+				"name": "IMAGEID",
+				"type": "image/png",
+				"content": "ZXhhbXBsZSBmaWxl"
+			}
+		]
+	}
+	`
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, resp)
+	}))
+	defer srv.Close()
+	client, err := New("abcdefg", WithEndpoint(srv.URL))
+	require.NoError(t, err)
+	require.NotNil(t, client)
+	res, err := client.MessageContent("123456")
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	require.Len(t, res.To, 1)
+	require.Len(t, res.Attachments, 1)
+	require.Len(t, res.Images, 1)
 }
