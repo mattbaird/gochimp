@@ -89,3 +89,46 @@ func TestWebHookAdd(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "http://example/webhook-url", hook.URL)
 }
+
+func TestWebHookList(t *testing.T) {
+	resp := `
+	[
+    {
+        "id": 42,
+        "url": "http://example/webhook-url",
+        "description": "My Example Webhook",
+        "auth_key": "XXXXXXX",
+        "events": [
+            "send",
+            "open",
+            "click"
+        ],
+        "created_at": "2013-01-01 15:30:27",
+        "last_sent_at": "2013-01-01 15:30:49",
+        "batches_sent": 42,
+        "events_sent": 42,
+        "last_error": "example last_error"
+    }
+	]
+	`
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, resp)
+	}))
+	defer srv.Close()
+	client, err := New("abcdefg", WithEndpoint(srv.URL))
+	require.NoError(t, err)
+	require.NotNil(t, client)
+
+	hooks, err := client.ListWebhooks()
+	require.NoError(t, err)
+	require.Len(t, hooks, 1)
+	require.Equal(t, 42, hooks[0].ID)
+	require.Equal(t, int32(42), hooks[0].BatchesSent)
+	require.Equal(t, int32(42), hooks[0].EventsSent)
+	require.Equal(t, "http://example/webhook-url", hooks[0].URL)
+	require.Equal(t, "My Example Webhook", hooks[0].Description)
+	require.Equal(t, "XXXXXXX", hooks[0].AuthKey)
+	require.Contains(t, hooks[0].Events, "send")
+	require.Contains(t, hooks[0].Events, "open")
+	require.Contains(t, hooks[0].Events, "click")
+}

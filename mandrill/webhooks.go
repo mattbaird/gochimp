@@ -98,7 +98,28 @@ func (c *Client) ListWebhooks() ([]*Webhook, error) {
 
 // ListWebhooksContext lists all webhooks
 func (c *Client) ListWebhooksContext(ctx context.Context) ([]*Webhook, error) {
-	return nil, nil
+	req := &api.WebhooksListRequest{}
+	resp := &api.WebhooksListResponse{}
+	if err := c.postContext(ctx, "webhooks/list", req, resp); err != nil {
+		return nil, err
+	}
+	res := []*Webhook{}
+	for _, h := range *resp {
+		hook := &Webhook{
+			ID:          h.ID,
+			URL:         h.URL,
+			Description: h.Description,
+			Events:      h.Events,
+			AuthKey:     h.AuthKey,
+			CreatedAt:   h.CreatedAt.Time,
+			LastSentAt:  h.LastSentAt.Time,
+			BatchesSent: h.BatchesSent,
+			EventsSent:  h.EventsSent,
+			LastError:   h.LastError,
+		}
+		res = append(res, hook)
+	}
+	return res, nil
 }
 
 // AddWebhook adds a webhook
