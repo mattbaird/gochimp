@@ -21,7 +21,7 @@ type Sender struct {
 	Clicks       int32
 	UniqueOpens  int32
 	UniqueClicks int32
-	Stats        Stats
+	Stats        map[string]Stats
 }
 
 // Info returns information about the current Sender
@@ -49,7 +49,7 @@ func (c *Client) GetSenderTimeSeriesContext(ctx context.Context, address string)
 	if err != nil {
 		return nil, err
 	}
-	tsData := make([]TimeSeries, len(*resp))
+	tsData := []TimeSeries{}
 	for _, t := range *resp {
 		tsData = append(tsData, TimeSeries{
 			Time:         t.Time.Time,
@@ -85,7 +85,7 @@ func (c *Client) GetSenderInfoContext(ctx context.Context, address string) (*Sen
 	}
 	sender := &Sender{
 		Address:     resp.Address,
-		CreatedAt:   resp.CreatedAt,
+		CreatedAt:   resp.CreatedAt.Time,
 		Sent:        resp.Sent,
 		HardBounces: resp.HardBounces,
 		SoftBounces: resp.SoftBounces,
@@ -94,7 +94,10 @@ func (c *Client) GetSenderInfoContext(ctx context.Context, address string) (*Sen
 		Unsubs:      resp.Unsubs,
 		Opens:       resp.Opens,
 		Clicks:      resp.Clicks,
-		Stats:       resp.Stats,
+		Stats:       make(map[string]Stats),
+	}
+	for k, v := range resp.Stats {
+		sender.Stats[k] = statsResponseToStats(v)
 	}
 	return sender, nil
 }
@@ -107,7 +110,7 @@ func (c *Client) ListSenders() ([]*Sender, error) {
 	if err != nil {
 		return nil, err
 	}
-	senders := make([]*Sender, len(*resp))
+	senders := []*Sender{}
 	for _, s := range *resp {
 		senders = append(senders, &Sender{
 			Address:      s.Address,
@@ -199,4 +202,39 @@ func (c *Client) VerifySendingDomain(domain string, mailbox string) (string, str
 		return "", "", err
 	}
 	return resp.Status, resp.Email, nil
+}
+
+// SendersDomains lists sending domains
+func (c *Client) SendersDomains() ([]*SendingDomain, error) {
+	return c.SendersDomainsContext(context.TODO())
+}
+
+// SendersDomainsContext lists sending domains with context
+func (c *Client) SendersDomainsContext(ctx context.Context) ([]*SendingDomain, error) {
+	req := &api.SendersDomainsRequest{}
+	resp := &api.SendersDomainsResponse{}
+	if err := c.postContext(ctx, "senders/domains", req, resp); err != nil {
+		return nil, err
+	}
+	sendingDomains := []*SendingDomain{}
+	for _, d := range *resp {
+		sendingDomains = append(sendingDomains, &SendingDomain{
+			Name:         d.Domain,
+			CreatedAt:    d.CreatedAt.Time,
+			LastTestedAt: d.LastTestedAt.Time,
+			SPF: SPF{
+				Valid:      d.SPF.Valid,
+				ValidAfter: d.SPF.ValidAfter.Time,
+				Error:      d.SPF.Error,
+			},
+			DKIM: DKIM{
+				Valid:      d.DKIM.Valid,
+				ValidAfter: d.DKIM.ValidAfter.Time,
+				Error:      d.DKIM.Error,
+			},
+			VerifiedAt:   d.VerifiedAt.Time,
+			ValidSigning: d.ValidSigning,
+		})
+	}
+	return sendingDomains, nil
 }

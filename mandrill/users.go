@@ -15,7 +15,7 @@ type User struct {
 	Reputation  int32
 	HourlyQuota int32
 	Backlog     int32
-	Stats       Stats
+	Stats       map[string]Stats
 }
 
 // UserInfoContext returns the information about the API-connected user
@@ -27,15 +27,19 @@ func (c *Client) UserInfoContext(ctx context.Context) (*User, error) {
 		return nil, err
 	}
 
-	return &User{
+	u := &User{
 		Username:    userInfoResp.Username,
 		CreatedAt:   userInfoResp.CreatedAt.Time,
 		PublicID:    userInfoResp.PublicID,
 		Reputation:  userInfoResp.Reputation,
 		HourlyQuota: userInfoResp.HourlyQuota,
 		Backlog:     userInfoResp.Backlog,
-		Stats:       userInfoResp.Stats,
-	}, nil
+		Stats:       make(map[string]Stats),
+	}
+	for k, v := range userInfoResp.Stats {
+		u.Stats[k] = statsResponseToStats(v)
+	}
+	return u, nil
 }
 
 // UserInfo returns the information about the API-connected user

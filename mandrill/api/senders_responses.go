@@ -1,9 +1,5 @@
 package api
 
-import (
-	"time"
-)
-
 // SenderResponse represents the elements in a senders/list.json api call
 type SenderResponse struct {
 	Address      string `json:"address"`
@@ -23,7 +19,7 @@ type SenderResponse struct {
 // SendersInfoResponse represents the response from a senders/info.json call to the api
 type SendersInfoResponse struct {
 	Address     string        `json:"address"`
-	CreatedAt   time.Time     `json:"created_at"`
+	CreatedAt   Time          `json:"created_at"`
 	Sent        int32         `json:"sent"`
 	HardBounces int32         `json:"hard_bounces"`
 	SoftBounces int32         `json:"soft_bounces"`
