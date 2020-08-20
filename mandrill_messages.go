@@ -43,14 +43,22 @@ func (a *MandrillAPI) MessageInfo(id string) (map[string]interface{}, error) {
 	return response, err
 }
 
-//todo: add send_at, ip_pool and key to messagesend
-func (a *MandrillAPI) MessageSend(message Message, async bool) ([]SendResponse, error) {
+// MessageSendWithOptions sends messages, allowing for a few configuration options
+// todo: add ip_pool and key to MessageSendOptions
+func (a *MandrillAPI) MessageSendWithOptions(message Message, opts MessageSendOptions) ([]SendResponse, error) {
 	var response []SendResponse
-	var params map[string]interface{} = make(map[string]interface{})
+	var params = make(map[string]interface{})
 	params["message"] = message
-	params["async"] = async
+	params["async"] = opts.Async
+	if opts.SendAt != nil {
+		params["send_at"] = opts.SendAt.UTC().Format("2006-01-02 15:04:05")
+	}
 	err := parseMandrillJson(a, messages_send_endpoint, params, &response)
 	return response, err
+}
+
+func (a *MandrillAPI) MessageSend(message Message, async bool) ([]SendResponse, error) {
+	return a.MessageSendWithOptions(message, MessageSendOptions{Async: async})
 }
 
 func (a *MandrillAPI) MessageSendTemplate(templateName string, templateContent []Var, message Message, async bool) ([]SendResponse, error) {
@@ -319,6 +327,12 @@ type Recipient struct {
 	Email string `json:"email"`
 	Name  string `json:"name"`
 	Type  string `json:"type"`
+}
+
+// MessageSendOptions wraps options for MessageSend API call
+type MessageSendOptions struct {
+	Async  bool
+	SendAt *time.Time
 }
 
 type SendResponse struct {
