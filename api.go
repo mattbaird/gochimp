@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"mime"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -131,6 +132,9 @@ func runMandrill(api *MandrillAPI, path string, parameters map[string]interface{
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if debug {
+		log.Printf("Response Code:%d", resp.StatusCode)
+	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -138,8 +142,19 @@ func runMandrill(api *MandrillAPI, path string, parameters map[string]interface{
 	if debug {
 		log.Printf("Response Body:%s", string(body))
 	}
-	if err = mandrillErrorCheck(body); err != nil {
+	if err := mandrillErrorCheck(body); err != nil {
 		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		if debug {
+			log.Printf("Response Content-Type:%s", resp.Header.Get("Content-Type"))
+		}
+		typ, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil || typ != "application/json" {
+			// response doesn't look like JSON; don't bother trying to parse (so that we can return a more
+			// user-friendly error)
+			return nil, fmt.Errorf("request failure: HTTP %s", resp.Status)
+		}
 	}
 	return body, nil
 }
