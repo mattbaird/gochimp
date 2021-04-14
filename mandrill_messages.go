@@ -61,16 +61,19 @@ func (a *MandrillAPI) MessageSend(message Message, async bool) ([]SendResponse, 
 	return a.MessageSendWithOptions(message, MessageSendOptions{Async: async})
 }
 
-func (a *MandrillAPI) MessageSendTemplate(templateName string, templateContent []Var, message Message, async bool) ([]SendResponse, error) {
+func (a *MandrillAPI) MessageSendTemplate(templateName string, templateContent []Var, message Message, async bool, sendAt *time.Time) ([]SendResponse, error) {
 	var response []SendResponse
 	if templateName == "" {
 		return response, errors.New("templateName cannot be blank")
 	}
-	var params map[string]interface{} = make(map[string]interface{})
+	params := make(map[string]interface{})
 	params["message"] = message
 	params["template_name"] = templateName
 	params["async"] = async
 	params["template_content"] = templateContent
+	if sendAt != nil {
+		params["send_at"] = sendAt.UTC().Format("2006-01-02 15:04:05")
+	}
 	err := parseMandrillJson(a, messages_send_template_endpoint, params, &response)
 	return response, err
 }
