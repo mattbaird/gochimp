@@ -16,6 +16,7 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 )
 
 var mandrill, err = NewMandrill(os.Getenv("MANDRILL_KEY"))
@@ -204,7 +205,8 @@ func TestMessageTemplateSend(t *testing.T) {
 	var message Message = Message{Subject: "Test Template Mail", FromEmail: user,
 		FromName: user, GlobalMergeVars: mergeVars}
 	message.AddRecipients(Recipient{Email: user, Name: user})
-	_, err := mandrill.MessageSendTemplate(testTemplateName, templateContent, message, true)
+	sendAt := time.Now()
+	_, err := mandrill.MessageSendTemplate(testTemplateName, templateContent, message, true, &sendAt)
 	if err != nil {
 		t.Errorf("Error:%v", err)
 	}
